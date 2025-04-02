@@ -37,4 +37,28 @@ router.get("/category/:id", async (req, res) => {
   }
 });
 
+// API: Tìm kiếm sản phẩm
+router.get("/search", async (req, res) => {
+  try {
+    const { keyword, categoryId, minPrice, maxPrice } = req.query;
+    
+    let products = await searchProducts(
+      keyword, 
+      categoryId ? parseInt(categoryId) : null,
+      minPrice ? parseFloat(minPrice) : null,
+      maxPrice ? parseFloat(maxPrice) : null
+    );
+    
+    products = products.map((product) => ({
+      ...product,
+      imageUrl: `http://localhost:5000/uploads/${product.ImageURL}`,
+    }));
+    
+    res.json(products);
+  } catch (err) {
+    console.error("❌ Lỗi tìm kiếm sản phẩm:", err);
+    res.status(500).send("❌ Lỗi server!");
+  }
+});
+
 module.exports = router;
