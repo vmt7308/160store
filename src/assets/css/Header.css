@@ -1,0 +1,477 @@
+/* Reset CSS */
+:root {
+    --primary: rgb(255, 172, 25);
+    --black: #000;
+    --white: #fff;
+    --text-color: #161823;
+}
+
+* {
+    /* Emmet */
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 62.5%;
+    scroll-behavior: smooth;
+}
+
+@font-face {
+    font-family: SFProDisplay;
+    src: url('../font/SFPRODISPLAY/SFProDisplay-Regular.ttf');
+    font-weight: 400;
+}
+
+body {
+    font-family: SFProDisplay, sans-serif;
+    font-size: 1.6rem;
+    line-height: 1.5;
+    text-rendering: optimizeSpeed;
+    color: var(--text-color);
+    overflow-y: overlay;
+    padding-top: 175px;
+}
+
+/* Đảm bảo header luôn cố định */
+.header-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: var(--white);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Hiệu ứng khi cuộn */
+.header-container.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+    transition: background 0.3s ease-in-out;
+}
+
+/* VOUCHER chạy từ phải sang trái */
+.voucher-container {
+    width: 100%;
+    height: 42px;
+    overflow: hidden;
+    background: var(--white);
+    padding: 12px 0;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.voucher-scroll {
+    display: flex;
+    gap: 120px;
+    white-space: nowrap;
+    animation: scroll-left 30s linear infinite;
+}
+
+@keyframes scroll-left {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+/* Header chính */
+.header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--black);
+    padding: 10px 100px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+}
+
+.logo img {
+    display: block;
+    margin: auto;
+    height: 45px;
+}
+
+.search-bar {
+    display: flex;
+    border: 1px solid var(--white);
+    background: var(--white);
+    border-radius: 5px;
+}
+
+.search-bar input {
+    height: 40px;
+    border: none;
+    outline: none;
+    padding: 5px;
+    width: 450px;
+    font-size: 1.4rem;
+}
+
+.search-bar button {
+    width: 80px;
+    height: 40px;
+    background: var(--black);
+    color: var(--white);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.search-bar button:hover {
+    color: var(--primary);
+}
+
+.search-bar button i {
+    font-size: 2rem;
+}
+
+.header-icons {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+}
+
+.header-icons a,
+.header-icons button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--white);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.4rem;
+    position: relative;
+    /* Để định vị badge */
+}
+
+.header-icons i {
+    font-size: 2.6rem;
+    margin: 5px;
+}
+
+/* Badge hiển thị số lượng */
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: 5px;
+    background-color: var(--white);
+    color: var(--black);
+    font-size: 1.2rem;
+    font-weight: bold;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.header-icons a:hover,
+.header-icons button:hover {
+    color: var(--primary);
+}
+
+/* Menu sản phẩm */
+.nav-menu {
+    background: var(--white);
+    padding: 10px 0;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.nav-menu ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    gap: 25px;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-menu li {
+    position: relative;
+}
+
+/* Hiệu ứng chữ New */
+@keyframes bounceShake {
+    0% {
+        transform: translate(-50%, 0);
+    }
+
+    25% {
+        transform: translate(-50%, -5px);
+    }
+
+    50% {
+        transform: translate(-50%, 0px);
+    }
+
+    75% {
+        transform: translate(-50%, -5px) rotate(-5deg);
+    }
+
+    100% {
+        transform: translate(-50%, 0px) rotate(5deg);
+    }
+}
+
+.badge {
+    color: red;
+    font-size: 1.2rem;
+    font-weight: bold;
+    position: absolute;
+    top: -5px;
+    left: 100%;
+    transform: translateX(-50%);
+    animation: bounceShake 0.8s infinite alternate ease-in-out;
+}
+
+/* Link menu */
+.nav-menu a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: bold;
+    position: relative;
+    padding: 5px 0;
+    display: inline-block;
+    transition: color 0.3s ease-in-out;
+}
+
+/* Hiệu ứng gạch chân */
+.menu-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.underline {
+    width: 0%;
+    height: 2.5px;
+    background-color: var(--primary);
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transition: width 0.3s ease-in-out, left 0.3s ease-in-out;
+}
+
+/* Hover: đổi màu và gạch chân từ giữa */
+.nav-menu a:hover {
+    color: var(--primary);
+}
+
+.menu-item:hover .underline {
+    width: 100%;
+    left: 0;
+}
+
+/* Lớp phủ mờ khi mở popup */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9;
+}
+
+/* Popup */
+.popup-login {
+    position: fixed;
+    top: 118px;
+    right: 174px;
+    background: var(--white);
+    padding: 20px;
+    width: 400px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    z-index: 10;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Mũi tên popup */
+.popup-arrow-login {
+    position: absolute;
+    top: -10px;
+    right: 30px;
+    width: 20px;
+    height: 20px;
+    background: var(--white);
+    transform: rotate(45deg);
+    box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Nội dung popup */
+.popup-content {
+    position: relative;
+}
+
+.popup-content i,
+.popup-content .cart-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.fa-cart-shopping {
+    font-size: 80px;
+    margin-bottom: 10px;
+}
+
+/* Nút đóng */
+.close-btn {
+    position: absolute;
+    padding: 2px 6px;
+    top: 5px;
+    right: 10px;
+    background: none;
+    border-radius: 5px;
+    font-size: 1.6rem;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    background: red;
+    color: var(--black);
+}
+
+/* Ô nhập liệu */
+.popup-content input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+}
+
+/* Nút đăng nhập */
+.login-btn {
+    width: 100%;
+    padding: 10px;
+    background: var(--black);
+    color: var(--white);
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px 0;
+    overflow: hidden;
+}
+
+/* Link */
+.link {
+    color: var(--text-color);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.link:hover,
+.login-btn:hover {
+    color: var(--primary);
+}
+
+/* Popup giỏ hàng */
+.popup-cart {
+    position: fixed;
+    top: 118px;
+    right: 86px;
+    background: var(--white);
+    padding: 20px;
+    width: 450px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    z-index: 10;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Mũi tên popup */
+.popup-arrow-cart {
+    position: absolute;
+    top: -10px;
+    right: 30px;
+    width: 20px;
+    height: 20px;
+    background: var(--white);
+    transform: rotate(45deg);
+    box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.cart-popup h2 {
+    margin-bottom: 10px;
+}
+
+.cart-empty {
+    font-size: 1.4rem;
+    color: #777;
+}
+
+.cart-discount {
+    font-size: 1.4rem;
+}
+
+.cart-total {
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+    margin-top: 10px;
+}
+
+.cart-total p {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.total-amount {
+    font-weight: bold;
+    color: red;
+}
+
+/* Nút giỏ hàng */
+.cart-edit,
+.cart-checkout {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.cart-edit {
+    background: var(--white);
+    border: 1px solid var(--black);
+}
+
+.cart-checkout {
+    background: var(--black);
+    color: var(--white);
+}
+
+.cart-edit:hover,
+.cart-checkout:hover {
+    color: var(--primary);
+}
+
+/* Hiệu ứng hiển thị popup */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

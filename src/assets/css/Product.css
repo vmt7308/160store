@@ -1,0 +1,188 @@
+/* Banner trên cùng */
+.banner {
+    background-size: cover;
+    text-align: center;
+    animation: fadeIn 1.2s ease-in-out;
+}
+
+/* Danh sách sản phẩm */
+.product-list {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px 10px;
+    width: 90%;
+    margin: 0 auto;
+    animation: slideUp 0.8s ease-in-out;
+}
+
+/* Card sản phẩm */
+.product-card {
+    flex: 0 0 auto;
+    width: 220px;
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    cursor: pointer;
+}
+
+.product-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* Hình ảnh sản phẩm */
+.product-image {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.product-image img {
+    width: 100%;
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.1);
+}
+
+/* Nhãn sản phẩm */
+.product-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.product-card:hover .product-label {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Màu sắc cho nhãn */
+.product-label.blue {
+    background-color: #3498db;
+}
+
+.product-label.yellow {
+    background-color: #f1c40f;
+}
+
+.product-label.red {
+    background-color: #e74c3c;
+}
+
+.product-label.green {
+    background-color: #2ecc71;
+}
+
+/* Tên sản phẩm */
+.product-card h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: center;
+    transition: color 0.3s ease-in-out;
+}
+
+.product-card:hover h3 {
+    color: #e74c3c;
+}
+
+/* Giá tiền */
+.price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #e74c3c;
+    text-align: center;
+    margin-top: 5px;
+}
+
+/* Phân trang dạng dot */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.pagination .dot {
+    height: 12px;
+    width: 12px;
+    margin: 0 6px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.pagination .dot:hover,
+.pagination .dot.active {
+    background-color: black;
+    transform: scale(1.2);
+}
+
+/* Nút Xem tất cả */
+.view-all-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.view-all-btn {
+    background-color: black;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.view-all-btn:hover {
+    background-color: white;
+    color: black;
+    border: 2px solid black;
+    transform: scale(1.05);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

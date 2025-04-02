@@ -1,0 +1,225 @@
+/* Banner */
+.banner-container {
+    position: relative;
+    height: 400px;
+    width: 90%;
+    margin: 10px auto;
+    overflow: hidden;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Nút chuyển slide */
+.prev,
+.next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.prev {
+    left: 15px;
+}
+
+.next {
+    right: 15px;
+}
+
+.prev:hover,
+.next:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+/* Dots phân trang */
+.dots {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.5;
+    cursor: pointer;
+    transition: opacity 0.3s;
+    border: 2px solid transparent;
+}
+
+.dot.active {
+    opacity: 1;
+    background: yellow;
+    border: 2px solid white;
+}
+
+.dot:hover {
+    opacity: 1;
+}
+
+/* Nút quay lại đầu trang */
+.scroll-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #000;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.scroll-to-top:hover {
+    background-color: #333;
+    transform: scale(1.1);
+}
+
+/* Hiệu ứng nhấp nháy */
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Nút liên hệ */
+.contact-container {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 20;
+}
+
+.contact-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 15px;
+    font-size: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    animation: blink 1.5s infinite;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s;
+}
+
+.contact-btn.active {
+    background-color: #c0392b;
+}
+
+.contact-btn:hover {
+    background-color: #c0392b;
+    transform: scale(1.1);
+}
+
+/* Danh sách tùy chọn liên hệ */
+.contact-options {
+    position: absolute;
+    bottom: 100%;
+    /* Đẩy danh sách lên trên */
+    right: 0;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: fadeIn 0.5s ease-in-out;
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Từng tùy chọn liên hệ */
+.contact-option {
+    text-decoration: none;
+    color: white;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 20px;
+    transition: transform 0.3s, background-color 0.3s;
+    text-align: center;
+    width: 130px;
+}
+
+.contact-option.phone {
+    background-color: #27ae60;
+}
+
+.contact-option.phone:hover {
+    background-color: #219150;
+    transform: scale(1.05);
+}
+
+.contact-option.facebook {
+    background-color: #3498db;
+}
+
+.contact-option.facebook:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
+}
+
+.contact-option.zalo {
+    background-color: #8e44ad;
+}
+
+.contact-option.zalo:hover {
+    background-color: #732d91;
+    transform: scale(1.05);
+}
+
+/* Hiệu ứng xuất hiện */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
