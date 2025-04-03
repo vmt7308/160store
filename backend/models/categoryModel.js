@@ -1,4 +1,4 @@
-const { poolPromise, sql } = require("../db");
+const { poolPromise } = require("../db");
 
 exports.getAllCategories = async () => {
   try {
