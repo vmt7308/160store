@@ -45,9 +45,9 @@ function Header({ scrollToSection }) {
       try {
         const response = await axios.get("http://localhost:5000/api/categories");
         setCategories(response.data);
-        setLoading(false);
       } catch (error) {
         console.error("Lỗi khi tải danh mục:", error);
+      } finally {
         setLoading(false);
       }
     };
@@ -216,18 +216,12 @@ function Header({ scrollToSection }) {
     }
   };
 
-  // Chuyển đổi tên danh mục thành id section tương ứng
+  // Tự động chuyển đổi tên danh mục thành ID hợp lệ
   const getCategorySectionId = (categoryName) => {
-    // Chuyển đổi tên danh mục thành id section
-    // ví dụ: "HÀNG MỚI MỖI NGÀY" -> "new-arrivals"
-    const categoryMap = {
-      "HÀNG MỚI MỖI NGÀY": "new-arrivals",
-      "HÀNG BÁN CHẠY": "best-sellers",
-      "TỦ ĐỒ MÙA HÈ": "summer-collection",
-      "COMBO MIX & MATCH": "combo-mix-match"
-    };
-    
-    return categoryMap[categoryName] || categoryName.toLowerCase().replace(/ /g, "-");
+    return categoryName
+      .toLowerCase()
+      .replace(/ /g, "-") // Thay dấu cách bằng "-"
+      .replace(/[^\w-]+/g, ""); // Xóa ký tự đặc biệt
   };
 
   // Format giá tiền
@@ -394,16 +388,16 @@ function Header({ scrollToSection }) {
         </div>
       </div>
 
-      {/* Menu danh mục sản phẩm */}
+      {/* Menu danh mục sản phẩm có thanh cuộn ngang nếu danh mục quá nhiều */}
       <nav className="nav-menu">
-        <ul>
+        <ul className="category-list">
           {loading ? (
             <li>Đang tải danh mục...</li>
           ) : (
             categories.map((category, index) => (
               <li key={category.CategoryID}>
                 <div className="menu-item">
-                  {index === 0 && <span className="badge">New</span>}
+                  {category.CategoryID === 1 && <span className="badge">New</span>}
                   <Link onClick={() => scrollToSection(getCategorySectionId(category.CategoryName))}>
                     {category.CategoryName}
                   </Link>
