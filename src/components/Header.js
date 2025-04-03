@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import logo from "../assets/img/logo.png";
@@ -9,6 +9,25 @@ function Header({ scrollToSection }) {
   // Header luôn luôn hiển thị
   const [isScrolled, setIsScrolled] = useState(false);
 
+  // State cho tìm kiếm
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+
+  // State lưu danh mục sản phẩm
+  const [loading, setLoading] = useState(true);
+
+  // Debounce tìm kiếm để tránh gọi API quá nhiều lần
+  const searchTimeoutRef = useRef(null);
+
+  // Ref cho dropdown tìm kiếm để xử lý click outside
+  const searchResultsRef = useRef(null);
+  
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -20,11 +39,153 @@ function Header({ scrollToSection }) {
     };
   }, []);
 
+  // Fetch danh mục sản phẩm từ API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/categories");
+        setCategories(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Lỗi khi tải danh mục:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Xử lý tìm kiếm khi người dùng nhập
+  useEffect(() => {
+    // Clear timeout cũ nếu có
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    // Nếu từ khóa trống, ẩn kết quả
+    if (!searchKeyword.trim()) {
+      setSearchResults([]);
+      setShowSearchResults(false);
+      return;
+    }
+
+    // Set timeout mới để debounce
+    searchTimeoutRef.current = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        // Tạo tham số query
+        const params = new URLSearchParams();
+        params.append('keyword', searchKeyword);
+        
+        if (selectedCategory) {
+          params.append('categoryId', selectedCategory);
+        }
+        
+        if (priceRange.min) {
+          params.append('minPrice', priceRange.min);
+        }
+        
+        if (priceRange.max) {
+          params.append('maxPrice', priceRange.max);
+        }
+
+        const response = await axios.get(`http://localhost:5000/api/products/search?${params.toString()}`);
+        setSearchResults(response.data);
+        setShowSearchResults(true);
+      } catch (error) {
+        console.error("Lỗi khi tìm kiếm:", error);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 500); // Delay 500ms
+
+    // Cleanup function
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [searchKeyword, selectedCategory, priceRange.min, priceRange.max]);
+
+  // Xử lý click outside để ẩn kết quả tìm kiếm
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchResultsRef.current && !searchResultsRef.current.contains(event.target)) {
+        setShowSearchResults(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Handle khi reset tìm kiếm
+  const resetSearch = () => {
+    setSearchKeyword("");
+    setSelectedCategory(null);
+    setPriceRange({ min: "", max: "" });
+    setSearchResults([]);
+    setShowSearchResults(false);
+    setShowAdvancedSearch(false);
+  };
+
+  // Handle advanced search toggle
+  const toggleAdvancedSearch = () => {
+    setShowAdvancedSearch(!showAdvancedSearch);
+  };
+
+  // Handle submit tìm kiếm
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchKeyword.trim()) {
+      // Thực hiện tìm kiếm ngay lập tức
+      searchProducts();
+    }
+  };
+
+  // Hàm tìm kiếm
+  const searchProducts = async () => {
+    if (!searchKeyword.trim()) return;
+
+    setIsSearching(true);
+    try {
+      const params = new URLSearchParams();
+      params.append('keyword', searchKeyword);
+      
+      if (selectedCategory) {
+        params.append('categoryId', selectedCategory);
+      }
+      
+      if (priceRange.min) {
+        params.append('minPrice', priceRange.min);
+      }
+      
+      if (priceRange.max) {
+        params.append('maxPrice', priceRange.max);
+      }
+
+      const response = await axios.get(`http://localhost:5000/api/products/search?${params.toString()}`);
+      setSearchResults(response.data);
+      setShowSearchResults(true);
+    } catch (error) {
+      console.error("Lỗi khi tìm kiếm:", error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // Chuyển về trang chi tiết sản phẩm khi click vào sản phẩm
+  const navigate = useNavigate();
+  const goToProductDetail = (productId) => {
+    navigate(`/product/${productId}`);
+    setShowSearchResults(false);
+  };
+
   // Nhận prop scrollToSection từ Home.js
   const [showLogin, setShowLogin] = useState(false);
   const [showCart, setShowCart] = useState(false);
-
-  const navigate = useNavigate(); // Hook để điều hướng trang đến Cart (Chi tiết giỏ hàng)
 
   // Đóng popup khi click bên ngoài
   const closePopup = () => {
@@ -55,6 +216,27 @@ function Header({ scrollToSection }) {
     }
   };
 
+  // Chuyển đổi tên danh mục thành id section tương ứng
+  const getCategorySectionId = (categoryName) => {
+    // Chuyển đổi tên danh mục thành id section
+    // ví dụ: "HÀNG MỚI MỖI NGÀY" -> "new-arrivals"
+    const categoryMap = {
+      "HÀNG MỚI MỖI NGÀY": "new-arrivals",
+      "HÀNG BÁN CHẠY": "best-sellers",
+      "TỦ ĐỒ MÙA HÈ": "summer-collection",
+      "COMBO MIX & MATCH": "combo-mix-match"
+    };
+    
+    return categoryMap[categoryName] || categoryName.toLowerCase().replace(/ /g, "-");
+  };
+
+  // Format giá tiền
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
+      .format(price)
+      .replace('₫', 'đ');
+  };
+
   return (
     <header className={`header-container ${isScrolled ? "scrolled" : ""}`}>
       {/* VOUCHER chạy từ phải sang trái */}
@@ -75,11 +257,117 @@ function Header({ scrollToSection }) {
         </Link>
 
         {/* Thanh tìm kiếm */}
-        <div className="search-bar">
-          <input type="text" placeholder="Bạn đang tìm gì..." />
-          <button>
-            <i className="fa-solid fa-magnifying-glass"></i>
-          </button>
+        <div className="search-container" ref={searchResultsRef}>
+          <form onSubmit={handleSearchSubmit} className="search-form">
+            <div className="search-bar">
+              <input 
+                type="text" 
+                placeholder="Bạn đang tìm gì..." 
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                onFocus={() => {
+                  if (searchResults.length > 0) {
+                    setShowSearchResults(true);
+                  }
+                }}
+              />
+              {searchKeyword && (
+                <button type="button" className="clear-search" onClick={resetSearch}>
+                  <i className="fa-solid fa-times"></i>
+                </button>
+              )}
+              <button type="button" className="advanced-search-toggle" onClick={toggleAdvancedSearch}>
+                <i className={`fa-solid ${showAdvancedSearch ? 'fa-chevron-up' : 'fa-sliders'}`}></i>
+              </button>
+              <button type="submit">
+                {isSearching ? (
+                  <i className="fa-solid fa-spinner fa-spin"></i>
+                ) : (
+                  <i className="fa-solid fa-magnifying-glass"></i>
+                )}
+              </button>
+            </div>
+            
+            {/* Advanced Search */}
+            {showAdvancedSearch && (
+              <div className="advanced-search">
+                <div className="search-filter">
+                  <div className="filter-section">
+                    <label>Danh mục:</label>
+                    <select 
+                      value={selectedCategory || ''} 
+                      onChange={(e) => setSelectedCategory(e.target.value ? Number(e.target.value) : null)}
+                    >
+                      <option value="">Tất cả danh mục</option>
+                      {categories.map(cat => (
+                        <option key={cat.CategoryID} value={cat.CategoryID}>
+                          {cat.CategoryName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="filter-section price-range">
+                    <label>Khoảng giá:</label>
+                    <div className="price-inputs">
+                      <input
+                        type="number"
+                        placeholder="Từ"
+                        value={priceRange.min}
+                        onChange={(e) => setPriceRange({...priceRange, min: e.target.value})}
+                      />
+                      <span>-</span>
+                      <input
+                        type="number"
+                        placeholder="Đến"
+                        value={priceRange.max}
+                        onChange={(e) => setPriceRange({...priceRange, max: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="filter-actions">
+                  <button type="button" className="reset-filters" onClick={resetSearch}>
+                    Xóa bộ lọc
+                  </button>
+                  <button type="submit" className="apply-filters">
+                    Áp dụng
+                  </button>
+                </div>
+              </div>
+            )}
+          </form>
+
+          {/* Kết quả tìm kiếm */}
+          {showSearchResults && searchResults.length > 0 && (
+            <div className="search-results">
+              <h3>Kết quả tìm kiếm ({searchResults.length})</h3>
+              <ul>
+                {searchResults.map((product) => (
+                  <li key={product.ProductID} onClick={() => goToProductDetail(product.ProductID)}>
+                    <div className="product-image">
+                      <img src={product.imageUrl} alt={product.ProductName} />
+                    </div>
+                    <div className="product-info">
+                      <h4>{product.ProductName}</h4>
+                      <p className="product-price">{formatPrice(product.Price)}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <div className="view-all-results">
+                <Link to={`/search?keyword=${encodeURIComponent(searchKeyword)}`}>
+                  Xem tất cả kết quả
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {/* Không có kết quả */}
+          {showSearchResults && searchKeyword && searchResults.length === 0 && !isSearching && (
+            <div className="search-results no-results">
+              <p>Không tìm thấy sản phẩm phù hợp!</p>
+            </div>
+          )}
         </div>
 
         {/* Icon điều hướng */}
@@ -109,39 +397,21 @@ function Header({ scrollToSection }) {
       {/* Menu danh mục sản phẩm */}
       <nav className="nav-menu">
         <ul>
-          <li>
-            <div className="menu-item">
-              <span className="badge">New</span>
-              <Link onClick={() => scrollToSection("new-arrivals")}>
-                HÀNG MỚI MỖI NGÀY
-              </Link>
-              <span className="underline"></span>
-            </div>
-          </li>
-          <li>
-            <div className="menu-item">
-              <Link onClick={() => scrollToSection("best-sellers")}>
-                HÀNG BÁN CHẠY
-              </Link>
-              <span className="underline"></span>
-            </div>
-          </li>
-          <li>
-            <div className="menu-item">
-              <Link onClick={() => scrollToSection("summer-collection")}>
-                TỦ ĐỒ MÙA HÈ
-              </Link>
-              <span className="underline"></span>
-            </div>
-          </li>
-          <li>
-            <div className="menu-item">
-              <Link onClick={() => scrollToSection("combo-mix-match")}>
-                COMBO MIX & MATCH
-              </Link>
-              <span className="underline"></span>
-            </div>
-          </li>
+          {loading ? (
+            <li>Đang tải danh mục...</li>
+          ) : (
+            categories.map((category, index) => (
+              <li key={category.CategoryID}>
+                <div className="menu-item">
+                  {index === 0 && <span className="badge">New</span>}
+                  <Link onClick={() => scrollToSection(getCategorySectionId(category.CategoryName))}>
+                    {category.CategoryName}
+                  </Link>
+                  <span className="underline"></span>
+                </div>
+              </li>
+            ))
+          )}
         </ul>
       </nav>
 
@@ -151,9 +421,6 @@ function Header({ scrollToSection }) {
       )}
 
       {/* Popup Đăng nhập */}
-      {(showLogin || showCart) && (
-        <div className="overlay" onClick={closePopup}></div>
-      )}
       {showLogin && (
         <div className="popup-login login-popup">
           <div className="popup-arrow-login"></div>
