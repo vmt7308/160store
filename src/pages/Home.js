@@ -85,18 +85,20 @@ function Home() {
     const fetchData = async () => {
       try {
         const catRes = await axios.get(
-          "http://localhost:5000/api/new-categories"
+          "http://localhost:5000/api/list-categories"
         );
         setCategories(catRes.data);
 
         const productsData = {};
         for (let category of catRes.data) {
           const res = await axios.get(
-            `http://localhost:5000/api/new-products?categoryId=${category.CategoryID}`
+            `http://localhost:5000/api/list-products?categoryId=${category.CategoryID}`
           );
           productsData[category.CategoryID] = res.data;
         }
         setProductsByCategory(productsData);
+        console.log("Categories:", catRes.data);
+        console.log("Products:", productsData);
       } catch (error) {
         console.error("Lỗi tải dữ liệu: ", error);
       } finally {
@@ -106,6 +108,12 @@ function Home() {
 
     fetchData();
   }, []);
+
+  // Hàm xử lý lỗi hình ảnh
+  const handleImageError = (e) => {
+    e.target.onerror = null;
+    e.target.src = product1; // Thay thế bằng ảnh mặc định
+  };
 
   return (
     <div>
@@ -144,116 +152,6 @@ function Home() {
         </div>
 
         {/* Danh mục sản phẩm */}
-        {/* <section className="product-categories">
-          <h2 className="category-title">HÀNG MỚI MỖI NGÀY</h2>
-          <div className="product-grid">
-            <div className="product-item">
-              <div className="product-image-container">
-                <div className="product-tag">Hàng Mới</div>
-                <img
-                  src={product1}
-                  alt="Set Đồ Nam ICONDENIM"
-                  className="product-image"
-                />
-                <button className="quick-view-btn">
-                  <span>🔍</span>
-                </button>
-              </div>
-              <div className="product-info">
-                <h3 className="product-name">
-                  Set Đồ Nam ICONDENIM Rugby Football
-                </h3>
-                <p className="product-price">419,000₫</p>
-              </div>
-            </div>
-            <div className="product-item">
-              <div className="product-image-container">
-                <div className="product-tag">Hàng Mới</div>
-                <img
-                  src={product1}
-                  alt="Áo Polo Nam ICONDENIM"
-                  className="product-image"
-                />
-                <button className="quick-view-btn">
-                  <span>🔍</span>
-                </button>
-              </div>
-              <div className="product-info">
-                <h3 className="product-name">
-                  Áo Polo Nam ICONDENIM Horizontal Striped
-                </h3>
-                <p className="product-price">349,000₫</p>
-              </div>
-            </div>
-            <div className="product-item">
-              <div className="product-image-container">
-                <div className="product-tag">Hàng Mới</div>
-                <img
-                  src={product1}
-                  alt="Áo Thun Nam ICONDENIM"
-                  className="product-image"
-                />
-                <button className="quick-view-btn">
-                  <span>🔍</span>
-                </button>
-              </div>
-              <div className="product-info">
-                <h3 className="product-name">
-                  Áo Thun Nam ICONDENIM Edge Striped
-                </h3>
-                <p className="product-price">299,000₫</p>
-              </div>
-            </div>
-            <div className="product-item">
-              <div className="product-image-container">
-                <div className="product-tag">Hàng Mới</div>
-                <img
-                  src={product1}
-                  alt="Áo Somi Cuban Nam ICONDENIM"
-                  className="product-image"
-                />
-                <button className="quick-view-btn">
-                  <span>🔍</span>
-                </button>
-              </div>
-              <div className="product-info">
-                <h3 className="product-name">
-                  Áo Somi Cuban Nam ICONDENIM Nomadic Dreams
-                </h3>
-                <p className="product-price">349,000₫</p>
-              </div>
-            </div>
-            <div className="product-item">
-              <div className="product-image-container">
-                <div className="product-tag">Siêu Nhẹ</div>
-                <img
-                  src={product1}
-                  alt="Quần Jean Nam ICON105"
-                  className="product-image"
-                />
-                <button className="quick-view-btn">
-                  <span>🔍</span>
-                </button>
-              </div>
-              <div className="product-info">
-                <h3 className="product-name">
-                  Quần Jean Nam ICON105 Lightweight™ Straight Fit Dark Blue
-                </h3>
-                <p className="product-price">590,000₫</p>
-              </div>
-            </div>
-          </div>
-          <div className="product-pagination">
-            <span className="dot active"></span>
-            <span className="dot"></span>
-          </div>
-          <div className="view-all-container">
-            <a href="/collections/hang-moi" className="view-all-btn">
-              Xem tất cả »
-            </a>
-          </div>
-        </section> */}
-
         <div className="category-product-section">
           {categories.map((category) => {
             const sectionId = getCategorySectionId(category.CategoryName);
@@ -269,27 +167,37 @@ function Home() {
                 <h2 className="category-title">{category.CategoryName}</h2>
 
                 <div className="product-grid">
-                  {products.map((product) => (
-                    <div key={product.ProductID} className="product-item">
-                      <div className="product-image-container">
-                        <div className="product-tag">Hàng Mới</div>
-                        <img
-                          src={product.ImageURL}
-                          alt={product.ProductName}
-                          className="product-image"
-                        />
-                        <button className="quick-view-btn">
-                          <span>🔍</span>
-                        </button>
+                  {products.length > 0 ? (
+                    products.map((product) => (
+                      <div key={product.ProductID} className="product-item">
+                        <div className="product-image-container">
+                          <div className="product-tag">
+                            {category.CategoryName}
+                          </div>
+
+                          <img
+                            src={product.ImageURL || product1}
+                            alt={product.ProductName}
+                            className="product-image"
+                            onError={handleImageError}
+                          />
+                          <button className="quick-view-btn">
+                            <span>🔍</span>
+                          </button>
+                        </div>
+                        <div className="product-info">
+                          <h3 className="product-name">
+                            {product.ProductName}
+                          </h3>
+                          <p className="product-price">
+                            {Number(product.Price).toLocaleString()}₫
+                          </p>
+                        </div>
                       </div>
-                      <div className="product-info">
-                        <h3 className="product-name">{product.ProductName}</h3>
-                        <p className="product-price">
-                          {Number(product.Price).toLocaleString()}₫
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                    ))
+                  ) : (
+                    <div className="no-products">Không có sản phẩm</div>
+                  )}
                 </div>
 
                 <div className="product-pagination">
