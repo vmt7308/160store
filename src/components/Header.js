@@ -27,7 +27,7 @@ function Header({ scrollToSection }) {
 
   // Ref cho dropdown tìm kiếm để xử lý click outside
   const searchResultsRef = useRef(null);
-  
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -43,7 +43,9 @@ function Header({ scrollToSection }) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/categories");
+        const response = await axios.get(
+          "http://localhost:5000/api/categories"
+        );
         setCategories(response.data);
       } catch (error) {
         console.error("Lỗi khi tải danh mục:", error);
@@ -75,21 +77,23 @@ function Header({ scrollToSection }) {
       try {
         // Tạo tham số query
         const params = new URLSearchParams();
-        params.append('keyword', searchKeyword);
-        
+        params.append("keyword", searchKeyword);
+
         if (selectedCategory) {
-          params.append('categoryId', selectedCategory);
-        }
-        
-        if (priceRange.min) {
-          params.append('minPrice', priceRange.min);
-        }
-        
-        if (priceRange.max) {
-          params.append('maxPrice', priceRange.max);
+          params.append("categoryId", selectedCategory);
         }
 
-        const response = await axios.get(`http://localhost:5000/api/products/search?${params.toString()}`);
+        if (priceRange.min) {
+          params.append("minPrice", priceRange.min);
+        }
+
+        if (priceRange.max) {
+          params.append("maxPrice", priceRange.max);
+        }
+
+        const response = await axios.get(
+          `http://localhost:5000/api/products/search?${params.toString()}`
+        );
         setSearchResults(response.data);
         setShowSearchResults(true);
       } catch (error) {
@@ -110,7 +114,10 @@ function Header({ scrollToSection }) {
   // Xử lý click outside để ẩn kết quả tìm kiếm
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (searchResultsRef.current && !searchResultsRef.current.contains(event.target)) {
+      if (
+        searchResultsRef.current &&
+        !searchResultsRef.current.contains(event.target)
+      ) {
         setShowSearchResults(false);
       }
     };
@@ -152,21 +159,23 @@ function Header({ scrollToSection }) {
     setIsSearching(true);
     try {
       const params = new URLSearchParams();
-      params.append('keyword', searchKeyword);
-      
+      params.append("keyword", searchKeyword);
+
       if (selectedCategory) {
-        params.append('categoryId', selectedCategory);
-      }
-      
-      if (priceRange.min) {
-        params.append('minPrice', priceRange.min);
-      }
-      
-      if (priceRange.max) {
-        params.append('maxPrice', priceRange.max);
+        params.append("categoryId", selectedCategory);
       }
 
-      const response = await axios.get(`http://localhost:5000/api/products/search?${params.toString()}`);
+      if (priceRange.min) {
+        params.append("minPrice", priceRange.min);
+      }
+
+      if (priceRange.max) {
+        params.append("maxPrice", priceRange.max);
+      }
+
+      const response = await axios.get(
+        `http://localhost:5000/api/products/search?${params.toString()}`
+      );
       setSearchResults(response.data);
       setShowSearchResults(true);
     } catch (error) {
@@ -226,9 +235,12 @@ function Header({ scrollToSection }) {
 
   // Format giá tiền
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    })
       .format(price)
-      .replace('₫', 'đ');
+      .replace("₫", "đ");
   };
 
   return (
@@ -254,9 +266,9 @@ function Header({ scrollToSection }) {
         <div className="search-container" ref={searchResultsRef}>
           <form onSubmit={handleSearchSubmit} className="search-form">
             <div className="search-bar">
-              <input 
-                type="text" 
-                placeholder="Bạn đang tìm gì..." 
+              <input
+                type="text"
+                placeholder="Bạn đang tìm gì..."
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
                 onFocus={() => {
@@ -266,12 +278,24 @@ function Header({ scrollToSection }) {
                 }}
               />
               {searchKeyword && (
-                <button type="button" className="clear-search" onClick={resetSearch}>
+                <button
+                  type="button"
+                  className="clear-search"
+                  onClick={resetSearch}
+                >
                   <i className="fa-solid fa-times"></i>
                 </button>
               )}
-              <button type="button" className="advanced-search-toggle" onClick={toggleAdvancedSearch}>
-                <i className={`fa-solid ${showAdvancedSearch ? 'fa-chevron-up' : 'fa-sliders'}`}></i>
+              <button
+                type="button"
+                className="advanced-search-toggle"
+                onClick={toggleAdvancedSearch}
+              >
+                <i
+                  className={`fa-solid ${
+                    showAdvancedSearch ? "fa-chevron-up" : "fa-sliders"
+                  }`}
+                ></i>
               </button>
               <button type="submit">
                 {isSearching ? (
@@ -281,19 +305,23 @@ function Header({ scrollToSection }) {
                 )}
               </button>
             </div>
-            
+
             {/* Advanced Search */}
             {showAdvancedSearch && (
               <div className="advanced-search">
                 <div className="search-filter">
                   <div className="filter-section">
                     <label>Danh mục:</label>
-                    <select 
-                      value={selectedCategory || ''} 
-                      onChange={(e) => setSelectedCategory(e.target.value ? Number(e.target.value) : null)}
+                    <select
+                      value={selectedCategory || ""}
+                      onChange={(e) =>
+                        setSelectedCategory(
+                          e.target.value ? Number(e.target.value) : null
+                        )
+                      }
                     >
                       <option value="">Tất cả danh mục</option>
-                      {categories.map(cat => (
+                      {categories.map((cat) => (
                         <option key={cat.CategoryID} value={cat.CategoryID}>
                           {cat.CategoryName}
                         </option>
@@ -307,20 +335,28 @@ function Header({ scrollToSection }) {
                         type="number"
                         placeholder="Từ"
                         value={priceRange.min}
-                        onChange={(e) => setPriceRange({...priceRange, min: e.target.value})}
+                        onChange={(e) =>
+                          setPriceRange({ ...priceRange, min: e.target.value })
+                        }
                       />
                       <span>-</span>
                       <input
                         type="number"
                         placeholder="Đến"
                         value={priceRange.max}
-                        onChange={(e) => setPriceRange({...priceRange, max: e.target.value})}
+                        onChange={(e) =>
+                          setPriceRange({ ...priceRange, max: e.target.value })
+                        }
                       />
                     </div>
                   </div>
                 </div>
                 <div className="filter-actions">
-                  <button type="button" className="reset-filters" onClick={resetSearch}>
+                  <button
+                    type="button"
+                    className="reset-filters"
+                    onClick={resetSearch}
+                  >
                     Xóa bộ lọc
                   </button>
                   <button type="submit" className="apply-filters">
@@ -337,19 +373,26 @@ function Header({ scrollToSection }) {
               <h3>Kết quả tìm kiếm ({searchResults.length})</h3>
               <ul>
                 {searchResults.map((product) => (
-                  <li key={product.ProductID} onClick={() => goToProductDetail(product.ProductID)}>
+                  <li
+                    key={product.ProductID}
+                    onClick={() => goToProductDetail(product.ProductID)}
+                  >
                     <div className="product-image">
                       <img src={product.imageUrl} alt={product.ProductName} />
                     </div>
                     <div className="product-info">
                       <h4>{product.ProductName}</h4>
-                      <p className="product-price">{formatPrice(product.Price)}</p>
+                      <p className="product-price">
+                        {formatPrice(product.Price)}
+                      </p>
                     </div>
                   </li>
                 ))}
               </ul>
               <div className="view-all-results">
-                <Link to={`/search?keyword=${encodeURIComponent(searchKeyword)}`}>
+                <Link
+                  to={`/search?keyword=${encodeURIComponent(searchKeyword)}`}
+                >
                   Xem tất cả kết quả
                 </Link>
               </div>
@@ -357,11 +400,14 @@ function Header({ scrollToSection }) {
           )}
 
           {/* Không có kết quả */}
-          {showSearchResults && searchKeyword && searchResults.length === 0 && !isSearching && (
-            <div className="search-results no-results">
-              <p>Không tìm thấy sản phẩm phù hợp!</p>
-            </div>
-          )}
+          {showSearchResults &&
+            searchKeyword &&
+            searchResults.length === 0 &&
+            !isSearching && (
+              <div className="search-results no-results">
+                <p>Không tìm thấy sản phẩm phù hợp!</p>
+              </div>
+            )}
         </div>
 
         {/* Icon điều hướng */}
@@ -397,8 +443,16 @@ function Header({ scrollToSection }) {
             categories.map((category, index) => (
               <li key={category.CategoryID}>
                 <div className="menu-item">
-                  {category.CategoryID === 1 && <span className="badge">New</span>}
-                  <Link onClick={() => scrollToSection(getCategorySectionId(category.CategoryName))}>
+                  {category.CategoryID === 1 && (
+                    <span className="badge">New</span>
+                  )}
+                  <Link
+                    onClick={() =>
+                      scrollToSection(
+                        getCategorySectionId(category.CategoryName)
+                      )
+                    }
+                  >
                     {category.CategoryName}
                   </Link>
                   <span className="underline"></span>

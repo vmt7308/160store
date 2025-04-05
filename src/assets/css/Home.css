@@ -225,7 +225,7 @@
 }
 
 /* Danh mục sản phẩm */
-/* .product-categories {
+.product-categories {
     width: 90%;
     margin: 30px auto;
 }
@@ -315,10 +315,6 @@
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
 }
 
-.product-tag:nth-of-type(1):contains("Siêu Nhẹ") {
-    background-color: #3498db;
-}
-
 .quick-view-btn {
     position: absolute;
     bottom: 10px;
@@ -402,51 +398,4 @@
 
 .view-all-btn:hover {
     background-color: #333;
-} */
-
-
-.category-section {
-    padding: 30px 20px;
-}
-
-.category-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-.product-list {
-    display: flex;
-    gap: 16px;
-    overflow-x: auto;
-}
-
-.product-card {
-    min-width: 200px;
-    border: 1px solid #eee;
-    border-radius: 6px;
-    padding: 10px;
-    background-color: #fff;
-    text-align: center;
-}
-
-.product-card img {
-    width: 100%;
-    height: auto;
-    border-radius: 4px;
-}
-
-.nav-menu-scroll {
-    overflow-x: auto;
-    white-space: nowrap;
-    padding: 10px 0;
-}
-
-.nav-menu-scroll ul {
-    display: flex;
-    gap: 20px;
-}
-
-.nav-menu-scroll li {
-    flex-shrink: 0;
 }
