@@ -213,6 +213,10 @@ body {
     gap: auto;
 }
 
+.category-list li {
+    flex-shrink: 0;
+}
+
 .category-list::-webkit-scrollbar {
     /* Độ cao thanh cuộn */
     height: 5px;

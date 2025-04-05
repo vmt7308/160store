@@ -1,0 +1,362 @@
+
+
+/* Banner Section */
+.stores-banner {
+    background-image: url('../img/store-banner-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    height: 400px;
+    width: 90%;
+    margin: 10px auto;
+    overflow: hidden;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stores-banner h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+
+.map-graphic {
+    width: 50%;
+    height: 350px;
+    /* background-image: url('../img/vietnam-map.png'); */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: right center;
+    position: relative;
+}
+
+/* Store Filters */
+.store-filters {
+    display: flex;
+    padding: 1.5rem;
+    background-color: #f5f5f5;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.filter-dropdown {
+    width: 300px;
+}
+
+.filter-dropdown select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+}
+
+.filter-dropdown select:focus {
+    outline: none;
+    border-color: #f9b200;
+}
+
+/* Store Listings */
+.store-listings {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.store-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.store-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.store-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.store-image {
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+}
+
+.store-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.store-card:hover .store-image img {
+    transform: scale(1.05);
+}
+
+.new-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: #f9b200;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.store-info {
+    padding: 1.5rem;
+}
+
+.store-info h3 {
+    margin: 0 0 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.store-address {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    color: #555;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.store-address i {
+    margin-right: 0.5rem;
+    color: #f9b200;
+    margin-top: 0.2rem;
+}
+
+.store-details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.store-hours,
+.store-phone {
+    display: flex;
+    align-items: center;
+}
+
+.store-hours i,
+.store-phone i {
+    margin-right: 0.5rem;
+}
+
+.store-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.status-indicator.open {
+    color: #28a745;
+}
+
+.status-indicator.open::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #28a745;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+.status-indicator.closed {
+    color: #dc3545;
+}
+
+.view-map-btn {
+    background-color: #f5f5f5;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.view-map-btn:hover {
+    background-color: #eee;
+}
+
+.view-map-btn i {
+    margin-right: 0.5rem;
+    color: #f9b200;
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.no-stores {
+    text-align: center;
+    padding: 2rem;
+}
+
+.no-stores p {
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.no-stores button {
+    background-color: #f9b200;
+    border: none;
+    color: white;
+    padding: 0.7rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.no-stores button:hover {
+    background-color: #e0a000;
+}
+
+/* Store Benefits Section */
+.store-benefits {
+    background-color: #f5f5f5;
+    padding: 2rem;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+}
+
+.benefit-icon {
+    background-color: #f9b200;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-right: 1rem;
+}
+
+.benefit-text h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .stores-banner h1 {
+        font-size: 2.5rem;
+    }
+
+    .map-graphic {
+        width: 40%;
+    }
+}
+
+@media (max-width: 768px) {
+    .stores-banner {
+        height: 300px;
+        padding: 0 1.5rem;
+    }
+
+    .stores-banner h1 {
+        font-size: 2rem;
+    }
+
+    .map-graphic {
+        width: 35%;
+    }
+
+    .store-filters {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .filter-dropdown {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .store-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+
+    .benefit-item {
+        width: calc(50% - 1.5rem);
+    }
+}
+
+@media (max-width: 576px) {
+    .stores-banner {
+        height: 250px;
+    }
+
+    .location-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.5rem;
+    }
+
+    .stores-banner h1 {
+        font-size: 1.5rem;
+    }
+
+    .map-graphic {
+        display: none;
+    }
+
+    .store-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .benefit-item {
+        width: 100%;
+    }
+}
