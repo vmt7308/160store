@@ -8,6 +8,7 @@ import Checkout from "./pages/Checkout";
 import Product from "./pages/Product";
 import ProductDetail from "./pages/ProductDetail";
 import Stores from "./pages/Stores";
+import CategoryPage from './pages/CategoryPage';
 
 import Admin from "./pages/Admin";
 
@@ -24,6 +25,7 @@ function App() {
         <Route path="/products" element={<Product id="1" title="Sản phẩm mới" />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/stores" element={<Stores />} />
+        <Route path="/collections/:categoryId" element={<CategoryPage />} />
 
         <Route path="/admin" element={<Admin />} />
 

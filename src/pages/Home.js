@@ -228,6 +228,34 @@ function Home() {
     }));
   };
 
+  // Popup chi tiết sản phẩm product
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [showProductDetails, setShowProductDetails] = useState(false);
+
+  // Add this function to handle quick view button click
+  const handleQuickView = (product) => {
+    setSelectedProduct(product);
+    setShowProductDetails(true);
+  };
+
+  // Add this function to close the popup
+  const closeProductDetails = () => {
+    setShowProductDetails(false);
+  };
+
+  // Add this to the existing useEffect that handles the popup
+  useEffect(() => {
+    if (showProductDetails) {
+      document.body.classList.add("popup-open");
+    } else {
+      document.body.classList.remove("popup-open");
+    }
+
+    return () => {
+      document.body.classList.remove("popup-open");
+    };
+  }, [showProductDetails]);
+
   return (
     <div>
       <Header
@@ -310,9 +338,107 @@ function Home() {
                             className="product-image"
                             onError={handleImageError}
                           />
-                          <button className="quick-view-btn">
+                          <button
+                            className="quick-view-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleQuickView(product);
+                            }}
+                          >
                             <span>🔍</span>
                           </button>
+                          {/* Product Details Popup */}
+                          {showProductDetails && selectedProduct && (
+                            <div
+                              className="product-details-overlay"
+                              onClick={closeProductDetails}
+                            >
+                              <div
+                                className="product-details-popup"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <button
+                                  className="close-popup"
+                                  onClick={closeProductDetails}
+                                >
+                                  ×
+                                </button>
+                                <div className="product-details-content">
+                                  <div className="product-details-image">
+                                    <img
+                                      src={selectedProduct.ImageURL || product1}
+                                      alt={selectedProduct.ProductName}
+                                      onError={handleImageError}
+                                    />
+                                  </div>
+                                  <div className="product-details-info">
+                                    <h2>{selectedProduct.ProductName}</h2>
+                                    <p className="product-details-price">
+                                      {Number(
+                                        selectedProduct.Price
+                                      ).toLocaleString()}
+                                      ₫
+                                    </p>
+                                    <p className="product-details-sku">
+                                      SKU: ATID{selectedProduct.ProductID}-01
+                                    </p>
+
+                                    <div className="product-details-options">
+                                      <div className="color-option">
+                                        <p>Màu sắc: {selectedProduct.Color}</p>
+                                        <div className="color-selector">
+                                          <div
+                                            className={`color-circle selected`}
+                                            style={{ backgroundColor: "#ccc" }}
+                                          >
+                                            <span className="checkmark">✓</span>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      <div className="size-option">
+                                        <p>
+                                          Kích thước: {selectedProduct.Size}
+                                        </p>
+                                        <div className="size-selector">
+                                          {["S", "M", "L", "XL"].map((size) => (
+                                            <div
+                                              key={size}
+                                              className={`size-box ${
+                                                selectedProduct.Size === size
+                                                  ? "selected"
+                                                  : ""
+                                              }`}
+                                            >
+                                              {size}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div className="quantity-selector">
+                                      <button className="quantity-btn">
+                                        −
+                                      </button>
+                                      <input type="text" value="1" readOnly />
+                                      <button className="quantity-btn">
+                                        +
+                                      </button>
+                                    </div>
+
+                                    <button className="add-to-cart-btn">
+                                      Thêm vào giỏ
+                                    </button>
+
+                                    <div className="product-details-description">
+                                      <p>{selectedProduct.Descriptions}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                         <div className="product-info">
                           <h3 className="product-name">
