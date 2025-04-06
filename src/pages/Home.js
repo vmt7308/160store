@@ -232,10 +232,31 @@ function Home() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showProductDetails, setShowProductDetails] = useState(false);
 
+  // State cho popup chi tiết sản phẩm
+  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedSize, setSelectedSize] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const popupRef = useRef(null);
+
   // Add this function to handle quick view button click
   const handleQuickView = (product) => {
     setSelectedProduct(product);
+    setSelectedColor(product.Color || "Xanh lá");
+    setSelectedSize(product.Size || "S");
+    setQuantity(1);
     setShowProductDetails(true);
+  };
+
+  // Hàm tăng số lượng
+  const increaseQuantity = () => {
+    setQuantity((prev) => prev + 1);
+  };
+
+  // Hàm giảm số lượng
+  const decreaseQuantity = () => {
+    if (quantity > 1) {
+      setQuantity((prev) => prev - 1);
+    }
   };
 
   // Add this function to close the popup
@@ -247,14 +268,32 @@ function Home() {
   useEffect(() => {
     if (showProductDetails) {
       document.body.classList.add("popup-open");
+
+      // ESC key listener
+      const handleEscKey = (e) => {
+        if (e.key === "Escape") {
+          closeProductDetails();
+        }
+      };
+
+      document.addEventListener("keydown", handleEscKey);
+
+      return () => {
+        document.body.classList.remove("popup-open");
+        document.removeEventListener("keydown", handleEscKey);
+      };
     } else {
       document.body.classList.remove("popup-open");
     }
-
-    return () => {
-      document.body.classList.remove("popup-open");
-    };
   }, [showProductDetails]);
+
+  // Colors for product options
+  const productColors = [
+    { id: "color1", name: "Xanh lá", code: "#06D6A0" },
+    { id: "color2", name: "Đỏ gạch", code: "#BC4749" },
+    { id: "color3", name: "Xanh dương", code: "#1A759F" },
+    { id: "color4", name: "Vàng nghệ", code: "#FCBF49" },
+  ];
 
   return (
     <div>
@@ -347,98 +386,6 @@ function Home() {
                           >
                             <span>🔍</span>
                           </button>
-                          {/* Product Details Popup */}
-                          {showProductDetails && selectedProduct && (
-                            <div
-                              className="product-details-overlay"
-                              onClick={closeProductDetails}
-                            >
-                              <div
-                                className="product-details-popup"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <button
-                                  className="close-popup"
-                                  onClick={closeProductDetails}
-                                >
-                                  ×
-                                </button>
-                                <div className="product-details-content">
-                                  <div className="product-details-image">
-                                    <img
-                                      src={selectedProduct.ImageURL || product1}
-                                      alt={selectedProduct.ProductName}
-                                      onError={handleImageError}
-                                    />
-                                  </div>
-                                  <div className="product-details-info">
-                                    <h2>{selectedProduct.ProductName}</h2>
-                                    <p className="product-details-price">
-                                      {Number(
-                                        selectedProduct.Price
-                                      ).toLocaleString()}
-                                      ₫
-                                    </p>
-                                    <p className="product-details-sku">
-                                      SKU: ATID{selectedProduct.ProductID}-01
-                                    </p>
-
-                                    <div className="product-details-options">
-                                      <div className="color-option">
-                                        <p>Màu sắc: {selectedProduct.Color}</p>
-                                        <div className="color-selector">
-                                          <div
-                                            className={`color-circle selected`}
-                                            style={{ backgroundColor: "#ccc" }}
-                                          >
-                                            <span className="checkmark">✓</span>
-                                          </div>
-                                        </div>
-                                      </div>
-
-                                      <div className="size-option">
-                                        <p>
-                                          Kích thước: {selectedProduct.Size}
-                                        </p>
-                                        <div className="size-selector">
-                                          {["S", "M", "L", "XL"].map((size) => (
-                                            <div
-                                              key={size}
-                                              className={`size-box ${
-                                                selectedProduct.Size === size
-                                                  ? "selected"
-                                                  : ""
-                                              }`}
-                                            >
-                                              {size}
-                                            </div>
-                                          ))}
-                                        </div>
-                                      </div>
-                                    </div>
-
-                                    <div className="quantity-selector">
-                                      <button className="quantity-btn">
-                                        −
-                                      </button>
-                                      <input type="text" value="1" readOnly />
-                                      <button className="quantity-btn">
-                                        +
-                                      </button>
-                                    </div>
-
-                                    <button className="add-to-cart-btn">
-                                      Thêm vào giỏ
-                                    </button>
-
-                                    <div className="product-details-description">
-                                      <p>{selectedProduct.Descriptions}</p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
                         </div>
                         <div className="product-info">
                           <h3 className="product-name">
@@ -502,6 +449,105 @@ function Home() {
           })}
         </div>
       </main>
+
+      {/* Product Details Popup */}
+      {showProductDetails && selectedProduct && (
+        <div className="product-details-overlay" onClick={closeProductDetails}>
+          <div
+            className="product-details-popup"
+            ref={popupRef}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button className="close-popup" onClick={closeProductDetails}>
+              ×
+            </button>
+            <div className="product-details-content">
+              <div className="product-details-image">
+                <img
+                  src={selectedProduct.ImageURL || product1}
+                  alt={selectedProduct.ProductName}
+                  onError={handleImageError}
+                />
+              </div>
+              <div className="product-details-info">
+                <h2>{selectedProduct.ProductName}</h2>
+                <p className="product-details-price">
+                  {Number(selectedProduct.Price).toLocaleString()}₫
+                </p>
+                <p className="product-details-sku">
+                  SKU:{" "}
+                  {selectedProduct.SKU || `SEID${selectedProduct.ProductID}-01`}
+                </p>
+
+                <div className="product-details-options">
+                  <div className="color-option">
+                    <p>Màu sắc: {selectedColor}</p>
+                    <div className="color-selector">
+                      {productColors.map((color) => (
+                        <div
+                          key={color.id}
+                          className={`color-circle ${
+                            selectedColor === color.name ? "selected" : ""
+                          }`}
+                          style={{ backgroundColor: color.code }}
+                          onClick={() => setSelectedColor(color.name)}
+                        >
+                          {selectedColor === color.name && (
+                            <span className="checkmark">✓</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="size-option">
+                    <p>Kích thước: {selectedSize}</p>
+                    <div className="size-selector">
+                      {["S", "M", "L", "XL"].map((size) => (
+                        <div
+                          key={size}
+                          className={`size-box ${
+                            selectedSize === size ? "selected" : ""
+                          }`}
+                          onClick={() => setSelectedSize(size)}
+                        >
+                          {size}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="quantity-selector">
+                  <button
+                    className="quantity-btn decrease"
+                    onClick={decreaseQuantity}
+                  >
+                    −
+                  </button>
+                  <input type="text" value={quantity} readOnly />
+                  <button
+                    className="quantity-btn increase"
+                    onClick={increaseQuantity}
+                  >
+                    +
+                  </button>
+                </div>
+
+                <button className="add-to-cart-btn">Thêm vào giỏ</button>
+
+                <div className="product-details-description">
+                  <p>
+                    {selectedProduct.Descriptions ||
+                      "Sản phẩm thời trang cao cấp, thiết kế hiện đại với chất liệu vải cao cấp, form dáng thoải mái. Phù hợp cho nhiều dịp khác nhau."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Nút liên hệ */}
       <div className="contact-container" ref={contactRef}>
         <button
