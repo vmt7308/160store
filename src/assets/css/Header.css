@@ -329,6 +329,14 @@ body {
     animation: fadeIn 0.3s ease-in-out;
 }
 
+/* Hiển thị lỗi */
+.popup-login .error-message {
+    color: red;
+    font-size: 14px;
+    text-align: left;
+    margin-top: -5px;
+}
+
 /* Mũi tên popup */
 .popup-arrow-login {
     position: absolute;
