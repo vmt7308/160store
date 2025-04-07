@@ -6,10 +6,18 @@ import "../assets/css/Header.css";
 import "../assets/font/font-awesome-pro-v6-6.2.0//css/all.min.css";
 
 function Header({ scrollToSection }) {
+  // State để kiểm tra trạng thái đăng nhập
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  // State kiểm soát việc ẩn / hiển thị mật khẩu
+  const [showPassword, setShowPassword] = useState(false);
+
   // Header luôn luôn hiển thị
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // State cho tìm kiếm
+  // State cho chức năng tìm kiếm
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
@@ -28,7 +36,23 @@ function Header({ scrollToSection }) {
   // Ref cho dropdown tìm kiếm để xử lý click outside
   const searchResultsRef = useRef(null);
 
+  // Nhận prop scrollToSection từ Home.js
+  const [showLogin, setShowLogin] = useState(false);
+  const [showCart, setShowCart] = useState(false);
+
+  // Chức năng popup đăng nhập
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  // Tham chiếu để xử lý click outside cho user menu
+  const userMenuRef = useRef(null);
+
+  // Kiểm tra đăng nhập khi component mount
   useEffect(() => {
+    checkLoginStatus();
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
@@ -36,6 +60,45 @@ function Header({ scrollToSection }) {
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // Kiểm tra trạng thái đăng nhập
+  const checkLoginStatus = () => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+
+    if (token && user) {
+      setIsLoggedIn(true);
+      setCurrentUser(JSON.parse(user));
+    } else {
+      setIsLoggedIn(false);
+      setCurrentUser(null);
+    }
+  };
+
+  // Xử lý đăng xuất
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+    setCurrentUser(null);
+    setShowUserMenu(false);
+    // Thông báo đăng xuất thành công
+    alert("Đăng xuất thành công!");
+  };
+
+  // Xử lý click outside cho user menu
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -186,15 +249,10 @@ function Header({ scrollToSection }) {
   };
 
   // Chuyển về trang chi tiết sản phẩm khi click vào sản phẩm
-  const navigate = useNavigate();
   const goToProductDetail = (productId) => {
     navigate(`/product/${productId}`);
     setShowSearchResults(false);
   };
-
-  // Nhận prop scrollToSection từ Home.js
-  const [showLogin, setShowLogin] = useState(false);
-  const [showCart, setShowCart] = useState(false);
 
   // Đóng popup khi click bên ngoài
   const closePopup = () => {
@@ -202,11 +260,7 @@ function Header({ scrollToSection }) {
     setShowCart(false);
   };
 
-  // Chức năng popup đăng nhập
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-
+  // Đăng nhập
   const handleLogin = async () => {
     setError("");
     try {
@@ -220,6 +274,14 @@ function Header({ scrollToSection }) {
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
       closePopup();
+
+      // Cập nhật trạng thái đăng nhập
+      setIsLoggedIn(true);
+      setCurrentUser(response.data.user);
+
+      // Reset form
+      setEmail("");
+      setPassword("");
     } catch (err) {
       setError(err.response?.data?.message || "Đăng nhập thất bại. Thử lại!");
     }
@@ -410,19 +472,55 @@ function Header({ scrollToSection }) {
             )}
         </div>
 
-        {/* Icon điều hướng */}
+        {/* Icon điều hướng - UI thay đổi dựa trên trạng thái đăng nhập */}
         <div className="header-icons header-buttons">
           <Link to="/stores">
             <i className="fa-light fa-map-location-dot"></i>
             <p>Cửa hàng</p>
           </Link>
-          <button
-            className="header-btn"
-            onClick={() => setShowLogin(!showLogin)}
-          >
-            <i className="fa-light fa-user"></i>
-            Đăng nhập
-          </button>
+
+          {/* Kiểm tra trạng thái đăng nhập để hiển thị UI phù hợp */}
+          {isLoggedIn ? (
+            <div className="user-account" ref={userMenuRef}>
+              <button
+                className="header-btn user-btn"
+                onClick={() => setShowUserMenu(!showUserMenu)}
+              >
+                <i className="fa-light fa-user"></i>
+                Hi, {currentUser?.fullName?.split(" ").pop() || "User"}
+              </button>
+
+              {/* Menu dropdown khi đã đăng nhập */}
+              {showUserMenu && (
+                <div className="user-dropdown">
+                  <div className="user-dropdown-content">
+                    <Link to="/account">
+                      <i className="fa-light fa-user-circle"></i>
+                      Tài khoản của tôi
+                    </Link>
+                    <Link to="/orders">
+                      <i className="fa-light fa-shopping-bag"></i>
+                      Đơn hàng đã mua
+                    </Link>
+                    <hr className="dropdown-divider" />
+                    <button onClick={handleLogout} className="logout-btn">
+                      <i className="fa-light fa-sign-out"></i>
+                      Đăng xuất
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              className="header-btn"
+              onClick={() => setShowLogin(!showLogin)}
+            >
+              <i className="fa-light fa-user"></i>
+              Đăng nhập
+            </button>
+          )}
+
           <button
             onClick={() => setShowCart(!showCart)}
             className="cart-button header-btn"
@@ -434,13 +532,13 @@ function Header({ scrollToSection }) {
         </div>
       </div>
 
-      {/* Menu danh mục sản phẩm có thanh cuộn ngang nếu danh mục quá nhiều */}
+      {/* Menu danh mục sản phẩm */}
       <nav className="nav-menu">
         <ul className="category-list">
           {loading ? (
             <li>Đang tải danh mục...</li>
           ) : (
-            categories.map((category, index) => (
+            categories.map((category) => (
               <li key={category.CategoryID}>
                 <div className="menu-item">
                   {category.CategoryID === 1 && (
@@ -481,12 +579,32 @@ function Header({ scrollToSection }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <input
+            {/* <input
               type="password"
               placeholder="Nhập mật khẩu"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-            />
+            /> */}
+            <div className="password-field">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Nhập mật khẩu"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <i className="fa-solid fa-eye-slash"></i>
+                ) : (
+                  <i className="fa-solid fa-eye"></i>
+                )}
+              </button>
+            </div>
+
             {error && <p className="error-message">{error}</p>}
             <button className="login-btn" onClick={handleLogin}>
               ĐĂNG NHẬP

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios"; // Import axios để gọi API
+import axios from "axios";
 import "../assets/css/Login.css";
 
 function Login() {
@@ -8,6 +8,8 @@ function Login() {
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
   const navigate = useNavigate();
+  // Thêm state để kiểm soát hiển thị mật khẩu
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,7 +25,7 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setServerError(""); // Reset lỗi server trước khi gửi request
+    setServerError("");
     const newErrors = validateForm();
     if (Object.keys(newErrors).length === 0) {
       try {
@@ -35,7 +37,8 @@ function Login() {
 
         // Lưu token vào localStorage
         localStorage.setItem("token", response.data.token);
-        navigate("/"); // Quay về trang chính
+        localStorage.setItem("user", JSON.stringify(response.data.user)); // Lưu thông tin user
+        navigate("/");
       } catch (error) {
         setServerError(
           error.response?.data?.message || "Lỗi server, vui lòng thử lại!"
@@ -60,12 +63,25 @@ function Login() {
           />
           {errors.email && <p className="error">{errors.email}</p>}
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Mật khẩu"
-            onChange={handleChange}
-          />
+          <div className="password-field">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Mật khẩu"
+              onChange={handleChange}
+            />
+            <button
+              type="button"
+              className="toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <i className="fa-solid fa-eye-slash"></i>
+              ) : (
+                <i className="fa-solid fa-eye"></i>
+              )}
+            </button>
+          </div>
           {errors.password && <p className="error">{errors.password}</p>}
 
           <button type="submit">Đăng nhập</button>
