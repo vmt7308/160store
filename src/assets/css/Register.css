@@ -1,7 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css");
 
 body:has(.register-container) {
-    padding-top: 0 !important;
+    padding-top: 0;
 }
 
 .register-container {
@@ -40,7 +41,7 @@ body:has(.register-container) {
 
 /* Tiêu đề */
 .register-form h1 {
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 600;
     color: rgb(255, 172, 25);
     margin-bottom: 20px;
@@ -56,7 +57,6 @@ body:has(.register-container) {
     font-size: 16px;
     transition: all 0.3s ease-in-out;
     padding-right: 40px;
-    /* Để dành chỗ cho icon */
 }
 
 .register-form input:focus {
@@ -142,7 +142,7 @@ body:has(.register-container) {
     transition: all 0.4s ease-in-out;
 }
 
-/* Nút ẩn / hiển thị mật khẩu - HOÀN TOÀN CẬP NHẬT */
+/* Nút ẩn / hiển thị mật khẩu */
 .password-field {
     position: relative;
     width: 100%;
@@ -152,58 +152,51 @@ body:has(.register-container) {
     width: 100%;
 }
 
-/* Style mới cho toggle-password */
+/* Style mới cho toggle-password sử dụng Font Awesome */
 .toggle-password {
-    position: absolute !important;
-    right: 10px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    width: 24px !important;
-    height: 24px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #777 !important;
-    z-index: 10 !important;
-    opacity: 0.7 !important;
-    transition: opacity 0.2s !important;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #777;
+    z-index: 10;
+    opacity: 0.7;
+    transition: all 0.3s ease-in-out;
 }
 
 .toggle-password:hover {
-    opacity: 1 !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    transform: translateY(-50%) !important;
+    opacity: 1;
+    color: rgb(255, 172, 25);
 }
 
-.toggle-password:before,
-.toggle-password:after {
-    display: none !important;
+.toggle-password:focus {
+    outline: none;
 }
 
-/* Style cho icon SVG hoặc các phần tử con khác trong nút toggle */
-.toggle-password svg,
-.toggle-password img,
+/* Sử dụng Font Awesome icons */
 .toggle-password i {
-    width: 18px !important;
-    height: 18px !important;
-    display: block !important;
-    color: #777 !important;
-    fill: #777 !important;
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
 }
 
-/* Fix cho phần tử svg nếu có */
-svg[data-testid="VisibilityIcon"] {
-    width: 18px !important;
-    height: 18px !important;
-    color: #777 !important;
-    fill: #777 !important;
+/* Hiệu ứng khi bấm vào toggle-password */
+.toggle-password:active {
+    transform: translateY(-50%) scale(1.2);
 }
 
 /* Liên kết quay về trang chủ */
@@ -224,31 +217,11 @@ svg[data-testid="VisibilityIcon"] {
     text-decoration: underline;
 }
 
-/* Đảm bảo rằng tất cả các nút toggle-password đều có đúng vị trí */
-input[type="password"]+.toggle-password,
-input[type="text"]+.toggle-password,
-.password-field>.toggle-password {
-    position: absolute !important;
-    top: 50% !important;
-    right: 10px !important;
-    transform: translateY(-50%) !important;
-}
-
-/* Thêm CSS cho một số selector phổ biến khác để chắc chắn capture đúng nút */
-[class*="eye"],
-[class*="visibility"],
-[data-testid*="eye"],
-[data-testid*="visibility"],
-[aria-label*="password"] {
-    position: absolute !important;
-    top: 50% !important;
-    right: 10px !important;
-    transform: translateY(-50%) !important;
-    width: 24px !important;
-    height: 24px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
+/* Đảm bảo icon luôn nằm đúng vị trí */
+.password-field .toggle-password {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(100% - 20px);
+    top: 50%;
 }
