@@ -179,8 +179,8 @@ function Home() {
 
         setProductsByCategory(productsData);
         setCurrentPages(initialPages);
-        console.log("Categories:", catRes.data);
-        console.log("Products:", productsData);
+        //console.log("Categories:", catRes.data);
+        //console.log("Products:", productsData);
       } catch (error) {
         console.error("Lỗi tải dữ liệu: ", error);
       } finally {

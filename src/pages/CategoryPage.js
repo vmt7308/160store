@@ -15,6 +15,14 @@ function CategoryPage() {
   const [currentPage, setCurrentPage] = useState(0);
   const [categories, setCategories] = useState([]);
 
+  // Move all hooks to the top level before any conditional returns
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [showProductDetails, setShowProductDetails] = useState(false);
+  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedSize, setSelectedSize] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const popupRef = useRef(null);
+
   const productsPerPage = 10; // Số sản phẩm trên mỗi trang
 
   useEffect(() => {
@@ -51,6 +59,29 @@ function CategoryPage() {
 
     fetchCategoryData();
   }, [categoryId]);
+
+  // Move the useEffect for popup handling to top level
+  useEffect(() => {
+    if (showProductDetails) {
+      document.body.classList.add("popup-open");
+
+      // ESC key listener
+      const handleEscKey = (e) => {
+        if (e.key === "Escape") {
+          closeProductDetails();
+        }
+      };
+
+      document.addEventListener("keydown", handleEscKey);
+
+      return () => {
+        document.body.classList.remove("popup-open");
+        document.removeEventListener("keydown", handleEscKey);
+      };
+    } else {
+      document.body.classList.remove("popup-open");
+    }
+  }, [showProductDetails]);
 
   // Chuyển đổi tên danh mục thành ID cho URL
   const getCategorySectionId = (categoryName) => {
@@ -127,35 +158,6 @@ function CategoryPage() {
     setCurrentPage(pageNumber);
   };
 
-  // Tùy chọn sắp xếp
-  const sortOptions = [
-    { value: "default", label: "Mặc định" },
-    { value: "price-asc", label: "Giá tăng dần" },
-    { value: "price-desc", label: "Giá giảm dần" },
-    { value: "name-asc", label: "Tên A-Z" },
-    { value: "name-desc", label: "Tên Z-A" },
-    { value: "oldest", label: "Cũ nhất" },
-    { value: "newest", label: "Mới nhất" },
-  ];
-
-  if (loading) {
-    return <div className="loading">Đang tải...</div>;
-  }
-
-  if (!category) {
-    return <div className="not-found">Không tìm thấy danh mục</div>;
-  }
-
-  // Popup chi tiết sản phẩm product
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [showProductDetails, setShowProductDetails] = useState(false);
-
-  // State cho popup chi tiết sản phẩm
-  const [selectedColor, setSelectedColor] = useState("");
-  const [selectedSize, setSelectedSize] = useState("");
-  const [quantity, setQuantity] = useState(1);
-  const popupRef = useRef(null);
-
   // Add this function to handle quick view button click
   const handleQuickView = (product) => {
     setSelectedProduct(product);
@@ -182,28 +184,16 @@ function CategoryPage() {
     setShowProductDetails(false);
   };
 
-  // Add this to the existing useEffect that handles the popup
-  useEffect(() => {
-    if (showProductDetails) {
-      document.body.classList.add("popup-open");
-
-      // ESC key listener
-      const handleEscKey = (e) => {
-        if (e.key === "Escape") {
-          closeProductDetails();
-        }
-      };
-
-      document.addEventListener("keydown", handleEscKey);
-
-      return () => {
-        document.body.classList.remove("popup-open");
-        document.removeEventListener("keydown", handleEscKey);
-      };
-    } else {
-      document.body.classList.remove("popup-open");
-    }
-  }, [showProductDetails]);
+  // Tùy chọn sắp xếp
+  const sortOptions = [
+    { value: "default", label: "Mặc định" },
+    { value: "price-asc", label: "Giá tăng dần" },
+    { value: "price-desc", label: "Giá giảm dần" },
+    { value: "name-asc", label: "Tên A-Z" },
+    { value: "name-desc", label: "Tên Z-A" },
+    { value: "oldest", label: "Cũ nhất" },
+    { value: "newest", label: "Mới nhất" },
+  ];
 
   // Colors for product options
   const productColors = [
@@ -212,6 +202,14 @@ function CategoryPage() {
     { id: "color3", name: "Xanh dương", code: "#1A759F" },
     { id: "color4", name: "Vàng nghệ", code: "#FCBF49" },
   ];
+
+  if (loading) {
+    return <div className="loading">Đang tải...</div>;
+  }
+
+  if (!category) {
+    return <div className="not-found">Không tìm thấy danh mục</div>;
+  }
 
   return (
     <div>
