@@ -386,6 +386,31 @@ body {
     outline: none;
 }
 
+/* Nút ẩn / hiển thị mật khẩu */
+.password-field {
+    position: relative;
+    width: 100%;
+}
+
+.password-field input {
+    width: 100%;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #777;
+}
+
+.toggle-password:hover {
+    color: #333;
+}
+
 /* Nút đăng nhập */
 .login-btn {
     width: 100%;

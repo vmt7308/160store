@@ -140,6 +140,31 @@ body:has(.register-container) {
     transition: all 0.4s ease-in-out;
 }
 
+/* Nút ẩn / hiển thị mật khẩu */
+.password-field {
+    position: relative;
+    width: 100%;
+}
+
+.password-field input {
+    width: 100%;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #777;
+}
+
+.toggle-password:hover {
+    color: #333;
+}
+
 /* Liên kết quay về trang chủ */
 .back-home {
     margin-top: 10px;

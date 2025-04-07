@@ -10,8 +10,11 @@ function Register() {
     confirmPassword: "",
   });
   const [errors, setErrors] = useState({});
-  const [serverMessage, setServerMessage] = useState(""); // ✅ Thêm state để nhận phản hồi từ BE
+  const [serverMessage, setServerMessage] = useState("");
   const navigate = useNavigate();
+  // Thêm state để kiểm soát hiển thị mật khẩu
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -65,10 +68,7 @@ function Register() {
     <div className="register-container">
       <div className="register-form">
         <h1>Đăng ký</h1>
-        {serverMessage && (
-          <p className="server-message">{serverMessage}</p>
-        )}{" "}
-        {/* ✅ Hiển thị phản hồi từ BE */}
+        {serverMessage && <p className="server-message">{serverMessage}</p>}
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -86,20 +86,46 @@ function Register() {
           />
           {errors.email && <p className="error">{errors.email}</p>}
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Mật khẩu"
-            onChange={handleChange}
-          />
+          <div className="password-field">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Mật khẩu"
+              onChange={handleChange}
+            />
+            <button
+              type="button"
+              className="toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <i className="fa-solid fa-eye-slash"></i>
+              ) : (
+                <i className="fa-solid fa-eye"></i>
+              )}
+            </button>
+          </div>
           {errors.password && <p className="error">{errors.password}</p>}
 
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Nhập lại mật khẩu"
-            onChange={handleChange}
-          />
+          <div className="password-field">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              name="confirmPassword"
+              placeholder="Nhập lại mật khẩu"
+              onChange={handleChange}
+            />
+            <button
+              type="button"
+              className="toggle-password"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? (
+                <i className="fa-solid fa-eye-slash"></i>
+              ) : (
+                <i className="fa-solid fa-eye"></i>
+              )}
+            </button>
+          </div>
           {errors.confirmPassword && (
             <p className="error">{errors.confirmPassword}</p>
           )}
