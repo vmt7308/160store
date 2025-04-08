@@ -9,6 +9,8 @@ import Product from "./pages/Product";
 import ProductDetail from "./pages/ProductDetail";
 import Stores from "./pages/Stores";
 import CategoryPage from './pages/CategoryPage';
+import Account from './pages/Account';
+import Orders from './pages/Orders';
 
 import Admin from "./pages/Admin";
 
@@ -26,6 +28,8 @@ function App() {
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/stores" element={<Stores />} />
         <Route path="/collections/:categoryId" element={<CategoryPage />} />
+        <Route path="/account" element={<Account />} />
+        <Route path="/orders" element={<Orders />} />
 
         <Route path="/admin" element={<Admin />} />
 
