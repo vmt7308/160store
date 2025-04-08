@@ -258,6 +258,7 @@ function Header({ scrollToSection }) {
   const closePopup = () => {
     setShowLogin(false);
     setShowCart(false);
+    setShowUserMenu(false);
   };
 
   // Đăng nhập
@@ -489,27 +490,6 @@ function Header({ scrollToSection }) {
                 <i className="fa-light fa-user"></i>
                 Hi, {currentUser?.fullName?.split(" ").pop() || "User"}
               </button>
-
-              {/* Menu dropdown khi đã đăng nhập */}
-              {showUserMenu && (
-                <div className="user-dropdown">
-                  <div className="user-dropdown-content">
-                    <Link to="/account">
-                      <i className="fa-light fa-user-circle"></i>
-                      Tài khoản của tôi
-                    </Link>
-                    <Link to="/orders">
-                      <i className="fa-light fa-shopping-bag"></i>
-                      Đơn hàng đã mua
-                    </Link>
-                    <hr className="dropdown-divider" />
-                    <button onClick={handleLogout} className="logout-btn">
-                      <i className="fa-light fa-sign-out"></i>
-                      Đăng xuất
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           ) : (
             <button
@@ -562,7 +542,7 @@ function Header({ scrollToSection }) {
       </nav>
 
       {/* Lớp phủ mờ khi hiển thị popup */}
-      {(showLogin || showCart) && (
+      {(showLogin || showCart || showUserMenu) && (
         <div className="overlay" onClick={closePopup}></div>
       )}
 
@@ -579,12 +559,6 @@ function Header({ scrollToSection }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            {/* <input
-              type="password"
-              placeholder="Nhập mật khẩu"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            /> */}
             <div className="password-field">
               <input
                 type={showPassword ? "text" : "password"}
@@ -654,6 +628,44 @@ function Header({ scrollToSection }) {
               CHỈNH SỬA GIỎ HÀNG
             </button>
             <button className="cart-checkout">THANH TOÁN</button>
+            <button className="close-btn" onClick={closePopup}>
+              <i className="fa-light fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Popup User Menu */}
+      {showUserMenu && (
+        <div className="popup-user user-popup">
+          <div className="popup-arrow-user"></div>
+          <div className="popup-content">
+            <h2>TÀI KHOẢN</h2>
+            <div className="user-menu-items">
+              <Link
+                to="/account"
+                className="user-menu-item"
+                onClick={closePopup}
+              >
+                <i className="fa-light fa-user-circle"></i>
+                <span>Tài khoản của tôi</span>
+              </Link>
+              <Link
+                to="/orders"
+                className="user-menu-item"
+                onClick={closePopup}
+              >
+                <i className="fa-light fa-shopping-bag"></i>
+                <span>Đơn hàng đã mua</span>
+              </Link>
+              <button
+                className="user-menu-item logout-btn"
+                onClick={handleLogout}
+              >
+                <i className="fa-light fa-sign-out"></i>
+                <span>Đăng xuất</span>
+              </button>
+            </div>
             <button className="close-btn" onClick={closePopup}>
               <i className="fa-light fa-xmark"></i>
             </button>
