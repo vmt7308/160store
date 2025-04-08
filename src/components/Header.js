@@ -63,6 +63,29 @@ function Header({ scrollToSection }) {
     };
   }, []);
 
+  // Gộp useEffect xử lý click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Xử lý click outside cho user menu
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setShowUserMenu(false);
+      }
+
+      // Xử lý click outside để ẩn kết quả tìm kiếm
+      if (
+        searchResultsRef.current &&
+        !searchResultsRef.current.contains(event.target)
+      ) {
+        setShowSearchResults(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   // Kiểm tra trạng thái đăng nhập
   const checkLoginStatus = () => {
     const token = localStorage.getItem("token");
@@ -84,23 +107,13 @@ function Header({ scrollToSection }) {
     setIsLoggedIn(false);
     setCurrentUser(null);
     setShowUserMenu(false);
+
+    // Chuyển hướng đến trang chủ sau khi đăng xuất
+    navigate("/");
+
     // Thông báo đăng xuất thành công
     alert("Đăng xuất thành công!");
   };
-
-  // Xử lý click outside cho user menu
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
-        setShowUserMenu(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   // Fetch danh mục sản phẩm từ API
   useEffect(() => {
@@ -173,23 +186,6 @@ function Header({ scrollToSection }) {
       }
     };
   }, [searchKeyword, selectedCategory, priceRange.min, priceRange.max]);
-
-  // Xử lý click outside để ẩn kết quả tìm kiếm
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        searchResultsRef.current &&
-        !searchResultsRef.current.contains(event.target)
-      ) {
-        setShowSearchResults(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   // Handle khi reset tìm kiếm
   const resetSearch = () => {
@@ -482,7 +478,7 @@ function Header({ scrollToSection }) {
 
           {/* Kiểm tra trạng thái đăng nhập để hiển thị UI phù hợp */}
           {isLoggedIn ? (
-            <div className="user-account" ref={userMenuRef}>
+            <div className="user-account">
               <button
                 className="header-btn user-btn"
                 onClick={() => setShowUserMenu(!showUserMenu)}
@@ -635,32 +631,46 @@ function Header({ scrollToSection }) {
         </div>
       )}
 
-      {/* Popup User Menu */}
+      {/* Popup User Menu với ref và stopPropagation */}
       {showUserMenu && (
-        <div className="popup-user user-popup">
+        <div className="popup-user user-popup" ref={userMenuRef}>
           <div className="popup-arrow-user"></div>
           <div className="popup-content">
             <h2>TÀI KHOẢN</h2>
             <div className="user-menu-items">
-              <Link
-                to="/account"
+              <button
                 className="user-menu-item"
-                onClick={closePopup}
+                onClick={(e) => {
+                  e.stopPropagation(); // Ngăn sự kiện lan lên document
+                  // console.log("Navigating to /account"); // Debug
+                  navigate('/account');
+                  setShowUserMenu(false);
+                  closePopup();
+                }}
               >
                 <i className="fa-light fa-user-circle"></i>
                 <span>Tài khoản của tôi</span>
-              </Link>
-              <Link
-                to="/orders"
+              </button>
+              <button
                 className="user-menu-item"
-                onClick={closePopup}
+                onClick={(e) => {
+                  e.stopPropagation(); // Ngăn sự kiện lan lên document
+                  // console.log("Navigating to /orders"); // Debug
+                  navigate('/orders');
+                  setShowUserMenu(false);
+                  closePopup();
+                }}
               >
                 <i className="fa-light fa-shopping-bag"></i>
                 <span>Đơn hàng đã mua</span>
-              </Link>
+              </button>
               <button
                 className="user-menu-item logout-btn"
-                onClick={handleLogout}
+                onClick={(e) => {
+                  e.stopPropagation(); // Ngăn sự kiện lan lên document
+                  // console.log("Logging out"); // Debug
+                  handleLogout();
+                }}
               >
                 <i className="fa-light fa-sign-out"></i>
                 <span>Đăng xuất</span>

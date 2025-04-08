@@ -839,8 +839,20 @@ body {
 .user-menu-items {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 15px; /* Khoảng cách đều giữa các phần tử */
     margin-top: 10px;
+    position: relative; /* Để định vị đường phân cách */
+}
+
+/* Đường phân cách nằm chính giữa giữa nút "Đơn hàng đã mua" và "Đăng xuất" */
+.user-menu-items::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: calc(66.66% - 0.5px); /* Đặt đường phân cách ở 2/3 chiều cao (giữa nút 2 và 3) */
+    height: 1px;
+    background: #f0f0f0;
 }
 
 .user-menu-item {
@@ -849,10 +861,14 @@ body {
     gap: 15px;
     padding: 10px;
     border-radius: 5px;
-    text-decoration: none;
     color: var(--text-color);
     font-size: 1.6rem;
     transition: background-color 0.2s ease;
+    background: none; /* Đảm bảo button không có nền mặc định */
+    border: none; /* Loại bỏ viền mặc định của button */
+    cursor: pointer; /* Con trỏ chuột */
+    text-align: left; /* Căn trái */
+    width: 100%; /* Đảm bảo button chiếm toàn bộ chiều rộng */
 }
 
 .user-menu-item:hover {
@@ -872,14 +888,6 @@ body {
 
 /* Nút đăng xuất */
 .logout-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-align: left;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    font-size: 1.6rem;
     color: var(--text-color);
 }
 
@@ -892,7 +900,7 @@ body {
     background-color: #f5f5f5;
 }
 
-/* Phân cách các mục */
-.user-menu-item+.user-menu-item {
-    border-top: 1px solid #f0f0f0;
+/* Xóa border-top cũ vì đã dùng ::before */
+.user-menu-item:last-child {
+    border-top: none;
 }
