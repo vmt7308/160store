@@ -809,3 +809,90 @@ body {
 .search-results {
     animation: fadeIn 0.3s ease-out;
 }
+
+/* User Menu Popup */
+.popup-user {
+    position: fixed;
+    top: 118px;
+    right: 170px;
+    background: var(--white);
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    z-index: 10;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Mũi tên popup user */
+.popup-arrow-user {
+    position: absolute;
+    top: -10px;
+    right: 30px;
+    width: 20px;
+    height: 20px;
+    background: var(--white);
+    transform: rotate(45deg);
+    box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.user-menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.user-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 1.6rem;
+    transition: background-color 0.2s ease;
+}
+
+.user-menu-item:hover {
+    background-color: #f5f5f5;
+}
+
+.user-menu-item i {
+    font-size: 2.2rem;
+    width: 25px;
+    text-align: center;
+    color: var(--black);
+}
+
+.user-menu-item span {
+    font-weight: 500;
+}
+
+/* Nút đăng xuất */
+.logout-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    font-size: 1.6rem;
+    color: var(--text-color);
+}
+
+.logout-btn i,
+.logout-btn span {
+    color: #e53935;
+}
+
+.logout-btn:hover {
+    background-color: #f5f5f5;
+}
+
+/* Phân cách các mục */
+.user-menu-item+.user-menu-item {
+    border-top: 1px solid #f0f0f0;
+}
