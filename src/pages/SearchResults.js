@@ -1,67 +1,70 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import "../assets/css/CategoryPage.css";
+import "../assets/css/SearchResults.css";
 import product1 from "../assets/img/product1.jpg"; // Ảnh mặc định
 
-function CategoryPage() {
-  const { categoryId } = useParams();
-  const [category, setCategory] = useState(null);
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+function SearchResults() {
+  const [searchResults, setSearchResults] = useState([]);
   const [sortOption, setSortOption] = useState("default");
   const [currentPage, setCurrentPage] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
+  const location = useLocation();
+  const productsPerPage = 10; // Số sản phẩm trên mỗi trang
 
-  // Move all hooks to the top level before any conditional returns
+  // State cho popup chi tiết sản phẩm
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showProductDetails, setShowProductDetails] = useState(false);
   const [selectedColor, setSelectedColor] = useState("");
-  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedSize, setSelectedSize] = useState("S"); // Size mặc định là S
   const [quantity, setQuantity] = useState(1);
   const popupRef = useRef(null);
 
-  const productsPerPage = 10; // Số sản phẩm trên mỗi trang
+  // Colors for product options (giống CategoryPage.js)
+  const productColors = [
+    { id: "color1", name: "Xanh lá", code: "#06D6A0" },
+    { id: "color2", name: "Đỏ gạch", code: "#BC4749" },
+    { id: "color3", name: "Xanh dương", code: "#1A759F" },
+    { id: "color4", name: "Vàng nghệ", code: "#FCBF49" },
+  ];
 
+  // Extract the keyword from the URL
+  const query = new URLSearchParams(location.search);
+  const keyword = query.get("keyword") || "";
+
+  // Fetch categories and search results
   useEffect(() => {
-    const fetchCategoryData = async () => {
+    const fetchData = async () => {
       try {
-        // Tải tất cả danh mục để đưa vào header
+        // Tải danh mục để hiển thị trong header
         const catRes = await axios.get(
           "http://localhost:5000/api/list-categories"
         );
         setCategories(catRes.data);
 
-        // Tìm danh mục hiện tại theo ID từ URL
-        const foundCategory = catRes.data.find(
-          (cat) => getCategorySectionId(cat.CategoryName) === categoryId
-        );
-
-        if (foundCategory) {
-          setCategory(foundCategory);
-
-          // Tải sản phẩm của danh mục
-          const productsRes = await axios.get(
-            `http://localhost:5000/api/list-products?categoryId=${foundCategory.CategoryID}`
+        // Tải kết quả tìm kiếm
+        if (keyword) {
+          const params = new URLSearchParams();
+          params.append("keyword", keyword);
+          const response = await axios.get(
+            `http://localhost:5000/api/products/search?${params.toString()}`
           );
-          console.log("Products data:", productsRes.data); // Kiểm tra dữ liệu
-          setProducts(productsRes.data);
-        } else {
-          console.error("Không tìm thấy danh mục với ID:", categoryId);
+          setSearchResults(response.data);
         }
       } catch (error) {
-        console.error("Lỗi khi tải dữ liệu danh mục:", error);
+        console.error("Lỗi khi tải dữ liệu:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCategoryData();
-  }, [categoryId]);
+    fetchData();
+  }, [keyword]);
 
-  // Move the useEffect for popup handling to top level
+  // Handle popup open/close
   useEffect(() => {
     if (showProductDetails) {
       document.body.classList.add("popup-open");
@@ -84,19 +87,23 @@ function CategoryPage() {
     }
   }, [showProductDetails]);
 
-  // Chuyển đổi tên danh mục thành ID cho URL
-  const getCategorySectionId = (categoryName) => {
-    return categoryName
-      .toLowerCase()
-      .replace(/\s+/g, "-")
-      .replace(/[^\w\-]/g, "");
-  };
+  // Handle click outside popup
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        closeProductDetails();
+      }
+    };
 
-  // Sắp xếp sản phẩm dựa trên tùy chọn
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Sort products
   const getSortedProducts = () => {
-    if (!products) return [];
-
-    const productsCopy = [...products];
+    const productsCopy = [...searchResults];
 
     switch (sortOption) {
       case "price-asc":
@@ -128,65 +135,60 @@ function CategoryPage() {
     }
   };
 
-  // Xử lý lỗi hình ảnh
+  // Handle image error
   const handleImageError = (e) => {
-    console.warn(`Không tải được ảnh: ${e.target.src}`); // Log lỗi để debug
-    e.target.onerror = null; // Ngăn lỗi lặp lại
-    e.target.src = product1; // Thay thế bằng ảnh mặc định
+    e.target.onerror = null;
+    e.target.src = product1;
   };
 
-  // Tính toán tổng số trang
+  // Pagination
   const sortedProducts = getSortedProducts();
   const totalPages = Math.ceil(sortedProducts.length / productsPerPage);
-
-  // Lấy sản phẩm cho trang hiện tại
   const currentProducts = sortedProducts.slice(
     currentPage * productsPerPage,
     (currentPage + 1) * productsPerPage
   );
 
-  // Chuyển đến trang tiếp theo
   const nextPage = () => {
     setCurrentPage((prev) => (prev + 1) % totalPages);
   };
 
-  // Chuyển đến trang trước
   const prevPage = () => {
     setCurrentPage((prev) => (prev === 0 ? totalPages - 1 : prev - 1));
   };
 
-  // Chuyển đến trang cụ thể
   const goToPage = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  // Add this function to handle quick view button click
+  // Handle quick view
   const handleQuickView = (product) => {
     setSelectedProduct(product);
-    setSelectedColor(product.Color || "Xanh lá");
-    setSelectedSize(product.Size || "S");
+    setSelectedColor(productColors[0].name); // Màu mặc định đầu tiên
+    setSelectedSize("S"); // Size mặc định
     setQuantity(1);
     setShowProductDetails(true);
   };
 
-  // Hàm tăng số lượng
+  // Increase quantity
   const increaseQuantity = () => {
     setQuantity((prev) => prev + 1);
   };
 
-  // Hàm giảm số lượng
+  // Decrease quantity
   const decreaseQuantity = () => {
     if (quantity > 1) {
       setQuantity((prev) => prev - 1);
     }
   };
 
-  // Add this function to close the popup
+  // Close popup
   const closeProductDetails = () => {
     setShowProductDetails(false);
+    setSelectedProduct(null);
   };
 
-  // Tùy chọn sắp xếp
+  // Sort options
   const sortOptions = [
     { value: "default", label: "Mặc định" },
     { value: "price-asc", label: "Giá tăng dần" },
@@ -197,20 +199,13 @@ function CategoryPage() {
     { value: "newest", label: "Mới nhất" },
   ];
 
-  // Colors for product options
-  const productColors = [
-    { id: "color1", name: "Xanh lá", code: "#06D6A0" },
-    { id: "color2", name: "Đỏ gạch", code: "#BC4749" },
-    { id: "color3", name: "Xanh dương", code: "#1A759F" },
-    { id: "color4", name: "Vàng nghệ", code: "#FCBF49" },
-  ];
+  // Format price
+  const formatPrice = (price) => {
+    return Number(price).toLocaleString() + "₫";
+  };
 
   if (loading) {
     return <div className="loading">Đang tải...</div>;
-  }
-
-  if (!category) {
-    return <div className="not-found">Không tìm thấy danh mục</div>;
   }
 
   return (
@@ -219,7 +214,9 @@ function CategoryPage() {
 
       <div className="category-page-container">
         <div className="category-header">
-          <h1 className="category-page-title">{category.CategoryName}</h1>
+          <h1 className="category-page-title">
+            Kết quả tìm kiếm cho "{keyword}"
+          </h1>
 
           <div className="sort-container">
             <label htmlFor="sort-select">Sắp xếp theo:</label>
@@ -244,7 +241,7 @@ function CategoryPage() {
               <div key={product.ProductID} className="category-product-item">
                 <div className="category-product-image-container">
                   <img
-                    src={product.ImageURL ? `/${product.ImageURL}` : product1}
+                    src={product.ImageURL || product1}
                     alt={product.ProductName}
                     className="category-product-image"
                     onError={handleImageError}
@@ -264,19 +261,17 @@ function CategoryPage() {
                     {product.ProductName}
                   </h3>
                   <p className="category-product-price">
-                    {Number(product.Price).toLocaleString()}₫
+                    {formatPrice(product.Price)}
                   </p>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="no-products">
-            Không có sản phẩm trong danh mục này
-          </div>
+          <div className="no-products">Không tìm thấy sản phẩm phù hợp!</div>
         )}
 
-        {/* Phân trang */}
+        {/* Pagination */}
         {totalPages > 1 && (
           <div className="category-pagination">
             <button className="category-pagination-nav" onClick={prevPage}>
@@ -316,7 +311,7 @@ function CategoryPage() {
             <div className="product-details-content">
               <div className="product-details-image">
                 <img
-                  src={selectedProduct.ImageURL ? `/${selectedProduct.ImageURL}` : product1}
+                  src={selectedProduct.ImageURL || product1}
                   alt={selectedProduct.ProductName}
                   onError={handleImageError}
                 />
@@ -324,7 +319,7 @@ function CategoryPage() {
               <div className="product-details-info">
                 <h2>{selectedProduct.ProductName}</h2>
                 <p className="product-details-price">
-                  {Number(selectedProduct.Price).toLocaleString()}₫
+                  {formatPrice(selectedProduct.Price)}
                 </p>
                 <p className="product-details-sku">
                   SKU:{" "}
@@ -405,4 +400,4 @@ function CategoryPage() {
   );
 }
 
-export default CategoryPage;
+export default SearchResults;

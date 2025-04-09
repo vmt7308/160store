@@ -27,6 +27,47 @@ function Header({ scrollToSection }) {
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
 
+  // State cho Popup hiển thị chi tiết sản phẩm khi nháy vào kết quả tìm kiếm
+  const [showProductPopup, setShowProductPopup] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  // Ref for the product popup to handle click outside
+  const productPopupRef = useRef(null);
+
+  // State cho popup chi tiết sản phẩm
+  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedSize, setSelectedSize] = useState("S"); // Size mặc định là S
+  const [quantity, setQuantity] = useState(1);
+
+  // Colors for product options (giống Home.js)
+  const productColors = [
+    { id: "color1", name: "Xanh lá", code: "#06D6A0" },
+    { id: "color2", name: "Đỏ gạch", code: "#BC4749" },
+    { id: "color3", name: "Xanh dương", code: "#1A759F" },
+    { id: "color4", name: "Vàng nghệ", code: "#FCBF49" },
+  ];
+
+  // Hàm tăng số lượng
+  const increaseQuantity = () => {
+    setQuantity((prev) => prev + 1);
+  };
+
+  // Hàm giảm số lượng
+  const decreaseQuantity = () => {
+    if (quantity > 1) {
+      setQuantity((prev) => prev - 1);
+    }
+  };
+
+  // Cập nhật màu và size mặc định khi chọn sản phẩm
+  const showProductDetails = (product) => {
+    setSelectedProduct(product);
+    setSelectedColor(productColors[0].name); // Màu mặc định đầu tiên
+    setSelectedSize("S"); // Size mặc định
+    setQuantity(1);
+    setShowProductPopup(true);
+    setShowSearchResults(false);
+  };
+
   // State lưu danh mục sản phẩm
   const [loading, setLoading] = useState(true);
 
@@ -78,6 +119,15 @@ function Header({ scrollToSection }) {
       ) {
         setShowSearchResults(false);
       }
+
+      // Click outside to include the product popup cho chức năng tìm kiếm
+      if (
+        productPopupRef.current &&
+        !productPopupRef.current.contains(event.target)
+      ) {
+        setShowProductPopup(false);
+        setSelectedProduct(null);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -85,6 +135,28 @@ function Header({ scrollToSection }) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+    if (showProductPopup) {
+      document.body.classList.add("popup-open");
+
+      const handleEscKey = (e) => {
+        if (e.key === "Escape") {
+          setShowProductPopup(false);
+          setSelectedProduct(null);
+        }
+      };
+
+      document.addEventListener("keydown", handleEscKey);
+
+      return () => {
+        document.body.classList.remove("popup-open");
+        document.removeEventListener("keydown", handleEscKey);
+      };
+    } else {
+      document.body.classList.remove("popup-open");
+    }
+  }, [showProductPopup]);
 
   // Kiểm tra trạng thái đăng nhập
   const checkLoginStatus = () => {
@@ -434,10 +506,10 @@ function Header({ scrollToSection }) {
                 {searchResults.map((product) => (
                   <li
                     key={product.ProductID}
-                    onClick={() => goToProductDetail(product.ProductID)}
+                    onClick={() => showProductDetails(product)}
                   >
                     <div className="product-image">
-                      <img src={product.imageUrl} alt={product.ProductName} />
+                      <img src={product.ImageURL} alt={product.ProductName} />
                     </div>
                     <div className="product-info">
                       <h4>{product.ProductName}</h4>
@@ -538,7 +610,7 @@ function Header({ scrollToSection }) {
       </nav>
 
       {/* Lớp phủ mờ khi hiển thị popup */}
-      {(showLogin || showCart || showUserMenu) && (
+      {(showLogin || showCart || showUserMenu || showProductPopup) && (
         <div className="overlay" onClick={closePopup}></div>
       )}
 
@@ -643,7 +715,7 @@ function Header({ scrollToSection }) {
                 onClick={(e) => {
                   e.stopPropagation(); // Ngăn sự kiện lan lên document
                   // console.log("Navigating to /account"); // Debug
-                  navigate('/account');
+                  navigate("/account");
                   setShowUserMenu(false);
                   closePopup();
                 }}
@@ -656,7 +728,7 @@ function Header({ scrollToSection }) {
                 onClick={(e) => {
                   e.stopPropagation(); // Ngăn sự kiện lan lên document
                   // console.log("Navigating to /orders"); // Debug
-                  navigate('/orders');
+                  navigate("/orders");
                   setShowUserMenu(false);
                   closePopup();
                 }}
@@ -679,6 +751,109 @@ function Header({ scrollToSection }) {
             <button className="close-btn" onClick={closePopup}>
               <i className="fa-light fa-xmark"></i>
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Product Details Popup */}
+      {showProductPopup && selectedProduct && (
+        <div
+          className="product-details-overlay"
+          onClick={() => setShowProductPopup(false)}
+        >
+          <div
+            className="product-details-popup"
+            ref={productPopupRef}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="close-popup"
+              onClick={() => setShowProductPopup(false)}
+            >
+              ×
+            </button>
+            <div className="product-details-content">
+              <div className="product-details-image">
+                <img
+                  src={selectedProduct.ImageURL}
+                  alt={selectedProduct.ProductName}
+                />
+              </div>
+              <div className="product-details-info">
+                <h2>{selectedProduct.ProductName}</h2>
+                <p className="product-details-price">
+                  {formatPrice(selectedProduct.Price)}
+                </p>
+                <p className="product-details-sku">
+                  SKU: SEID
+                  {selectedProduct.ProductID.toString().padStart(2, "0")}-01
+                </p>
+
+                <div className="product-details-options">
+                  <div className="color-option">
+                    <p>Màu sắc: {selectedColor}</p>
+                    <div className="color-selector">
+                      {productColors.map((color) => (
+                        <div
+                          key={color.id}
+                          className={`color-circle ${
+                            selectedColor === color.name ? "selected" : ""
+                          }`}
+                          style={{ backgroundColor: color.code }}
+                          onClick={() => setSelectedColor(color.name)}
+                        >
+                          {selectedColor === color.name && (
+                            <span className="checkmark">✓</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="size-option">
+                    <p>Kích thước: {selectedSize}</p>
+                    <div className="size-selector">
+                      {["S", "M", "L", "XL"].map((size) => (
+                        <div
+                          key={size}
+                          className={`size-box ${
+                            selectedSize === size ? "selected" : ""
+                          }`}
+                          onClick={() => setSelectedSize(size)}
+                        >
+                          {size}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="quantity-selector">
+                  <button
+                    className="quantity-btn decrease"
+                    onClick={decreaseQuantity}
+                  >
+                    −
+                  </button>
+                  <input type="text" value={quantity} readOnly />
+                  <button
+                    className="quantity-btn increase"
+                    onClick={increaseQuantity}
+                  >
+                    +
+                  </button>
+                </div>
+
+                <button className="add-to-cart-btn">Thêm vào giỏ</button>
+
+                <div className="product-details-description">
+                  <p>
+                    {selectedProduct.Descriptions ||
+                      "Sản phẩm thời trang cao cấp, thiết kế hiện đại với chất liệu vải cao cấp, form dáng thoải mái. Phù hợp cho nhiều dịp khác nhau."}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
