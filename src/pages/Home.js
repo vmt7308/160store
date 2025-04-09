@@ -372,7 +372,7 @@ function Home() {
                           </div>
 
                           <img
-                            src={product.ImageURL || product1}
+                            src={product.ImageURL ? `/${product.ImageURL}` : product1}
                             alt={product.ProductName}
                             className="product-image"
                             onError={handleImageError}
@@ -463,11 +463,11 @@ function Home() {
             </button>
             <div className="product-details-content">
               <div className="product-details-image">
-                <img
-                  src={selectedProduct.ImageURL || product1}
-                  alt={selectedProduct.ProductName}
-                  onError={handleImageError}
-                />
+              <img
+                src={selectedProduct.ImageURL ? `/${selectedProduct.ImageURL}` : product1}
+                alt={selectedProduct.ProductName}
+                onError={handleImageError}
+              />
               </div>
               <div className="product-details-info">
                 <h2>{selectedProduct.ProductName}</h2>
