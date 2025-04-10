@@ -14,6 +14,7 @@ import banner2 from "../assets/img/banner2.jpg";
 import banner3 from "../assets/img/banner3.jpg";
 import banner4 from "../assets/img/banner4.jpg";
 import product1 from "../assets/img/product1.jpg";
+import '../assets/font/font-awesome-pro-v6-6.2.0/css/all.min.css';
 
 function Home() {
   const banners = [banner1, banner2, banner3, banner4];
@@ -612,11 +613,11 @@ function Home() {
         </button>
         {showContactOptions && (
           <div className="contact-options">
-            <a href="tel:0123456789" className="contact-option phone">
+            <a href="tel:0522586725" className="contact-option phone">
               📞 Gọi ngay
             </a>
             <a
-              href="https://facebook.com"
+              href="https://www.facebook.com/vmt7308"
               target="_blank"
               rel="noopener noreferrer"
               className="contact-option facebook"
@@ -624,7 +625,7 @@ function Home() {
               📘 Facebook
             </a>
             <a
-              href="https://zalo.me"
+              href="https://zalo.me/0522586725"
               target="_blank"
               rel="noopener noreferrer"
               className="contact-option zalo"
@@ -637,7 +638,7 @@ function Home() {
       {/* Nút quay lại đầu trang */}
       {showScrollToTop && (
         <button className="scroll-to-top" onClick={scrollToTop}>
-          ⬆
+          <i class="fa-solid fa-arrow-up"></i>
         </button>
       )}
       <Footer />

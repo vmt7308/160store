@@ -169,7 +169,7 @@ footer {
 
 .footer-column a:hover {
     color: var(--primary);
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 /* Định dạng chữ "New" */
@@ -256,4 +256,5 @@ footer {
     padding-top: 15px;
     margin-top: 20px;
     font-size: 1.6rem;
+    text-transform: uppercase;
 }
