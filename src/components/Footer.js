@@ -120,7 +120,7 @@ const Footer = () => {
       </div>
 
       {/* Bản quyền */}
-      <div className="footer-bottom">BẢN QUYỀN THUỘC VỀ @MINHTRUNG</div>
+      <div className="footer-bottom">BẢN QUYỀN THUỘC VỀ @MINHTRUNG - HCMUS</div>
     </footer>
   );
 };

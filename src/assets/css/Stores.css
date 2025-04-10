@@ -1,62 +1,103 @@
+/* Keyframes for Store Listings */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
 
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes blinkColor {
+    0% {
+        background-color: #f9b200;
+        color: white;
+    }
+
+    50% {
+        background-color: #ff0000;
+        color: white;
+    }
+
+    100% {
+        background-color: #f9b200;
+        color: white;
+    }
+}
+
+@keyframes scaleUp {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.05);
+    }
+}
 
 /* Banner Section */
 .stores-banner {
-    background-image: url('../img/store-banner-bg.jpg');
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    height: 400px;
-    width: 90%;
-    margin: 10px auto;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
     overflow: hidden;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.stores-banner h1 {
-    font-size: 3rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    line-height: 1.2;
-}
-
-.map-graphic {
-    width: 50%;
-    height: 350px;
-    /* background-image: url('../img/vietnam-map.png'); */
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: right center;
-    position: relative;
+.stores-banner img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
 }
 
 /* Store Filters */
 .store-filters {
     display: flex;
-    padding: 1.5rem;
-    background-color: #f5f5f5;
-    justify-content: center;
-    gap: 1rem;
+    flex-direction: column;
+    padding: 10px 0;
+    background-color: white;
+    gap: 10px;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.store-filters h2 {
+    font-size: 14px;
+    color: #333;
+    margin: 0;
+    font-weight: normal;
+}
+
+.breadcrumb-link {
+    color: #333;
+    text-decoration: none !important;
+}
+
+.breadcrumb-link:hover {
+    color: rgb(255, 172, 25);
+    text-decoration: underline;
 }
 
 .filter-dropdown {
-    width: 300px;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
 }
 
 .filter-dropdown select {
     width: 100%;
-    padding: 0.8rem 1rem;
+    padding: 8px 16px;
     border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1rem;
+    border-radius: 0;
+    font-size: 14px;
     appearance: none;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
-    background-position: right 1rem center;
-    background-size: 1em;
+    background-position: right 8px center;
+    background-size: 12px;
 }
 
 .filter-dropdown select:focus {
@@ -66,28 +107,28 @@
 
 /* Store Listings */
 .store-listings {
-    padding: 2rem;
+    padding: 10px 0;
     max-width: 1200px;
     margin: 0 auto;
+    animation: fadeIn 1s ease-out;
 }
 
 .store-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 2rem;
+    /* 3 stores per row */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
 }
 
 .store-card {
-    border: 1px solid #eee;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .store-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .store-image {
@@ -100,7 +141,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
+    transition: transform 0.3s ease;
 }
 
 .store-card:hover .store-image img {
@@ -109,48 +150,51 @@
 
 .new-badge {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 10px;
+    left: 10px;
     background-color: #f9b200;
     color: white;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 12px;
     font-weight: bold;
     text-transform: uppercase;
+    animation: blinkColor 2s infinite;
 }
 
 .store-info {
-    padding: 1.5rem;
+    padding: 10px;
 }
 
 .store-info h3 {
-    margin: 0 0 1rem;
-    font-size: 1.2rem;
+    margin: 0 0 5px;
+    font-size: 16px;
     font-weight: bold;
     color: #333;
+    text-align: center;
 }
 
 .store-address {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 1rem;
+    margin-bottom: 5px;
     color: #555;
-    font-size: 0.9rem;
+    font-size: 14px;
     line-height: 1.4;
 }
 
 .store-address i {
-    margin-right: 0.5rem;
-    color: #f9b200;
-    margin-top: 0.2rem;
+    margin-right: 8px;
+    color: #ca3e14;
+    margin-top: 2px;
+    font-size: 14px;
 }
 
 .store-details {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
+    margin-bottom: 5px;
+    font-size: 14px;
     color: #555;
 }
 
@@ -162,21 +206,21 @@
 
 .store-hours i,
 .store-phone i {
-    margin-right: 0.5rem;
+    margin-right: 8px;
+    font-size: 14px;
 }
 
 .store-status {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
+    padding-top: 0;
 }
 
 .status-indicator {
     display: flex;
     align-items: center;
-    font-size: 0.85rem;
+    font-size: 14px;
     font-weight: 500;
 }
 
@@ -191,132 +235,122 @@
     height: 8px;
     background-color: #28a745;
     border-radius: 50%;
-    margin-right: 0.5rem;
+    margin-right: 5px;
 }
 
 .status-indicator.closed {
     color: #dc3545;
 }
 
+.status-indicator.closed::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #dc3545;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
 .view-map-btn {
-    background-color: #f5f5f5;
+    background: none;
     border: none;
-    padding: 0.6rem 1rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
+    padding: 0;
+    font-size: 14px;
+    color: #007bff;
     display: flex;
     align-items: center;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: color 0.3s ease;
 }
 
 .view-map-btn:hover {
-    background-color: #eee;
+    color: #0056b3;
 }
 
 .view-map-btn i {
-    margin-right: 0.5rem;
-    color: #f9b200;
+    margin-left: 5px;
+    font-size: 14px;
 }
 
-.loading {
-    text-align: center;
-    padding: 2rem;
-    font-size: 1.2rem;
-    color: #666;
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 5px;
 }
 
+.pagination button {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    background-color: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.pagination button:hover {
+    background-color: #f5f5f5;
+    transform: scale(1.1);
+}
+
+.pagination button.active {
+    background-color: black;
+    color: white;
+    border-color: black;
+    transform: scale(1.1);
+}
+
+/* No Stores Message */
 .no-stores {
     text-align: center;
-    padding: 2rem;
+    padding: 20px;
 }
 
 .no-stores p {
-    margin-bottom: 1.5rem;
-    font-size: 1.2rem;
-    color: #666;
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 10px;
 }
 
 .no-stores button {
+    padding: 8px 16px;
     background-color: #f9b200;
-    border: none;
     color: white;
-    padding: 0.7rem 1.5rem;
-    border-radius: 4px;
-    font-weight: 500;
+    border: none;
+    border-radius: 0;
     cursor: pointer;
-    transition: background-color 0.2s;
+    font-size: 14px;
 }
 
 .no-stores button:hover {
-    background-color: #e0a000;
-}
-
-/* Store Benefits Section */
-.store-benefits {
-    background-color: #f5f5f5;
-    padding: 2rem;
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-top: 3rem;
-}
-
-.benefit-item {
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-}
-
-.benefit-icon {
-    background-color: #f9b200;
-    color: white;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    margin-right: 1rem;
-}
-
-.benefit-text h3 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #333;
+    background-color: #e5a100;
 }
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-    .stores-banner h1 {
-        font-size: 2.5rem;
+    .stores-banner img {
+        height: 350px;
     }
 
-    .map-graphic {
-        width: 40%;
+    .store-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 768px) {
-    .stores-banner {
+    .stores-banner img {
         height: 300px;
-        padding: 0 1.5rem;
-    }
-
-    .stores-banner h1 {
-        font-size: 2rem;
-    }
-
-    .map-graphic {
-        width: 35%;
     }
 
     .store-filters {
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
+    }
+
+    .store-filters h2 {
+        margin-bottom: 5px;
     }
 
     .filter-dropdown {
@@ -325,35 +359,17 @@
     }
 
     .store-grid {
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-columns: 1fr;
     }
 
     .benefit-item {
-        width: calc(50% - 1.5rem);
+        width: calc(50% - 10px);
     }
 }
 
 @media (max-width: 576px) {
-    .stores-banner {
+    .stores-banner img {
         height: 250px;
-    }
-
-    .location-icon {
-        width: 45px;
-        height: 45px;
-        font-size: 1.5rem;
-    }
-
-    .stores-banner h1 {
-        font-size: 1.5rem;
-    }
-
-    .map-graphic {
-        display: none;
-    }
-
-    .store-grid {
-        grid-template-columns: 1fr;
     }
 
     .benefit-item {

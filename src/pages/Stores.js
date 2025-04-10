@@ -3,96 +3,51 @@ import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import "../assets/css/Stores.css";
-import axios from "axios";
+import storesData from "../data/stores.json";
+import storeBannerBG from "../assets/img/store-banner-bg.jpg";
 
 function Stores() {
   const [stores, setStores] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [selectedProvince, setSelectedProvince] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [filteredStores, setFilteredStores] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const storesPerPage = 6;
 
-  // Fetch store data
+  // Hàm kiểm tra xem thời gian hiện tại có nằm trong giờ làm việc của cửa hàng hay không (8:30 - 22:00)
+  const checkStoreStatus = () => {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const currentTimeInMinutes = hours * 60 + minutes;
+    const openingTimeInMinutes = 8 * 60 + 30; // 8:30
+    const closingTimeInMinutes = 22 * 60; // 22:00
+
+    return (
+      currentTimeInMinutes >= openingTimeInMinutes &&
+      currentTimeInMinutes <= closingTimeInMinutes
+    );
+  };
+
+  // Tải dữ liệu lưu trữ và cập nhật trạng thái dựa trên thời gian hiện tại
   useEffect(() => {
-    const fetchStores = async () => {
-      try {
-        // In a real app, this would be an API call
-        const response = await axios.get("http://localhost:5000/api/stores");
-        setStores(response.data);
-        setFilteredStores(response.data);
+    const isOpen = checkStoreStatus();
+    const updatedStores = storesData.map((store) => ({
+      ...store,
+      status: isOpen ? "open" : "closed",
+    }));
+    setStores(updatedStores);
+    setFilteredStores(updatedStores);
 
-        // Extract unique provinces from store data
-        const uniqueProvinces = [
-          ...new Set(
-            response.data.map((store) => {
-              const addressParts = store.Address.split(", ");
-              return addressParts[addressParts.length - 1];
-            })
-          ),
-        ];
-        setProvinces(uniqueProvinces);
-      } catch (error) {
-        console.error("Error fetching store data:", error);
-        // Use sample data for demonstration
-        const sampleData = [
-          {
-            id: 1,
-            name: "160STORE ĐÀ NẴNG - LÊ DUẨN",
-            address: "332 Đ. Lê Duẩn, Tân Chính, Thanh Khê, Đà Nẵng, Vietnam",
-            phone: "0287 100 6789",
-            hours: "8:30 - 22:00",
-            province: "Đà Nẵng",
-            district: "Thanh Khê",
-            status: "open",
-            isNew: true,
-            image: "https://placehold.co/300x200/333/FFF?text=160STORE+DA+NANG",
-          },
-          {
-            id: 2,
-            name: "160STORE ĐẮK LẮK - BUÔN MA THUỘT",
-            address:
-              "14 Phan Chu Trinh, Thắng Lợi, Buôn Ma Thuột, Đắk Lắk, Vietnam",
-            phone: "0287 100 6789",
-            hours: "8:30 - 22:00",
-            province: "Đắk Lắk",
-            district: "Buôn Ma Thuột",
-            status: "open",
-            isNew: false,
-            image: "https://placehold.co/300x200/333/FFF?text=160STORE+DAK+LAK",
-          },
-          {
-            id: 3,
-            name: "160STORE LONG AN - TÂN AN",
-            address: "290 Đ. Hùng Vương, Phường 3, Tân An, Long An",
-            phone: "0287 100 6789",
-            hours: "8:30 - 22:00",
-            province: "Long An",
-            district: "Tân An",
-            status: "open",
-            isNew: false,
-            image: "https://placehold.co/300x200/333/FFF?text=160STORE+LONG+AN",
-          },
-        ];
-        setStores(sampleData);
-        setFilteredStores(sampleData);
-
-        // Extract unique provinces
-        const uniqueProvinces = [
-          ...new Set(sampleData.map((store) => store.province)),
-        ];
-        setProvinces(uniqueProvinces);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStores();
+    const uniqueProvinces = [
+      ...new Set(updatedStores.map((store) => store.province)),
+    ];
+    setProvinces(uniqueProvinces);
   }, []);
 
-  // Update districts when province changes
+  // Cập nhật quận khi tỉnh thay đổi
   useEffect(() => {
     if (selectedProvince) {
       const storesInProvince = stores.filter(
@@ -108,7 +63,7 @@ function Stores() {
     setSelectedDistrict("");
   }, [selectedProvince, stores]);
 
-  // Filter stores based on selections
+  // Lọc các cửa hàng dựa trên lựa chọn
   useEffect(() => {
     let filtered = [...stores];
 
@@ -125,59 +80,50 @@ function Stores() {
     }
 
     setFilteredStores(filtered);
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
   }, [selectedProvince, selectedDistrict, stores]);
+
+  // Logic phân trang
+  const indexOfLastStore = currentPage * storesPerPage;
+  const indexOfFirstStore = indexOfLastStore - storesPerPage;
+  const currentStores = filteredStores.slice(
+    indexOfFirstStore,
+    indexOfLastStore
+  );
+  const totalPages = Math.ceil(filteredStores.length / storesPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Hàm xử lý chuyển hướng Google Maps với tên địa điểm và tọa độ
+  const handleMapClick = (store) => {
+    const { placeName, coordinates } = store;
+    const { lat, lng } = coordinates;
+    const encodedPlaceName = encodeURIComponent(placeName);
+    const url = `https://www.google.com/maps/place/${encodedPlaceName}/@${lat},${lng},17z`;
+    window.open(url, "_blank");
+  };
 
   return (
     <div className="stores-page">
       <Header />
 
-      {/* Banner */}
-      <div className="stores-banner">
-        <div className="banner-content"></div>
-      </div>
-
-      {/* Store Benefits */}
-      <div className="store-benefits">
-        <div className="benefit-item">
-          <div className="benefit-icon">
-            <i className="fa-solid fa-box-check"></i>
-          </div>
-          <div className="benefit-text">
-            <h3>ĐỔI TRẢ TRONG 15 NGÀY</h3>
-          </div>
-        </div>
-
-        <div className="benefit-item">
-          <div className="benefit-icon">
-            <i className="fa-solid fa-shield-check"></i>
-          </div>
-          <div className="benefit-text">
-            <h3>BẢO HÀNH TRONG 30 NGÀY</h3>
-          </div>
-        </div>
-
-        <div className="benefit-item">
-          <div className="benefit-icon">
-            <i className="fa-solid fa-copyright"></i>
-          </div>
-          <div className="benefit-text">
-            <h3>PHÂN PHỐI ĐỘC QUYỀN</h3>
-          </div>
-        </div>
-
-        <div className="benefit-item">
-          <div className="benefit-icon">
-            <i className="fa-solid fa-headset"></i>
-          </div>
-          <div className="benefit-text">
-            <h3>HOTLINE - 028 7100 6789</h3>
-          </div>
-        </div>
-      </div>
-
-      {/* Store Filters */}
+      {/* Breadcrumb */}
       <div className="store-filters">
+        <h2>
+          <Link to="/" className="breadcrumb-link">
+            Trang chủ
+          </Link>{" "}
+          / Địa chỉ cửa hàng
+        </h2>
+
+        {/* Banner */}
+        <div className="stores-banner">
+          <img src={storeBannerBG} alt="Banner" />
+        </div>
+
+        {/* Filter Dropdowns */}
         <div className="filter-dropdown">
           <select
             value={selectedProvince}
@@ -208,44 +154,57 @@ function Stores() {
         </div>
       </div>
 
-      {/* Store Listings */}
       <div className="store-listings">
-        {loading ? (
-          <div className="loading">Đang tải danh sách cửa hàng...</div>
-        ) : filteredStores.length > 0 ? (
-          <div className="store-grid">
-            {filteredStores.map((store) => (
-              <div key={store.id} className="store-card">
-                <div className="store-image">
-                  <img src={store.image} alt={store.name} />
-                  {store.isNew && <span className="new-badge">New</span>}
-                </div>
-                <div className="store-info">
-                  <h3>{store.name}</h3>
-                  <p className="store-address">
-                    <i className="fa-solid fa-location-dot"></i> {store.address}
-                  </p>
-                  <div className="store-details">
-                    <div className="store-hours">
-                      <i className="fa-regular fa-clock"></i> {store.hours}
+        {filteredStores.length > 0 ? (
+          <>
+            <div className="store-grid">
+              {currentStores.map((store) => (
+                <div key={store.id} className="store-card">
+                  <div className="store-image">
+                    <img src={store.image} alt={store.name} />
+                    {store.isNew && <span className="new-badge">New</span>}
+                  </div>
+                  <div className="store-info">
+                    <h3>{store.name}</h3>
+                    <p className="store-address">
+                      <i className="fa-solid fa-location-dot"></i>{" "}
+                      {store.address}
+                    </p>
+                    <div className="store-details">
+                      <div className="store-hours">
+                        <i className="fa-regular fa-clock"></i> {store.hours}
+                      </div>
+                      <div className="store-phone">
+                        <i className="fa-solid fa-phone"></i> {store.phone}
+                      </div>
                     </div>
-                    <div className="store-phone">
-                      <i className="fa-solid fa-phone"></i> {store.phone}
+                    <div className="store-status">
+                      <span className={`status-indicator ${store.status}`}>
+                        {store.status === "open" ? "Đang mở" : "Đã đóng"}
+                      </span>
+                      <button
+                        className="view-map-btn"
+                        onClick={() => handleMapClick(store)}
+                      >
+                        <i className="fa-solid fa-arrow-right"></i> Xem bản đồ
+                      </button>
                     </div>
                   </div>
-                  <div className="store-status">
-                    <span className={`status-indicator ${store.status}`}>
-                      {store.status === "open" ? "Đang mở" : "Đã đóng"}
-                    </span>
-                    <button className="view-map-btn">
-                      <i className="fa-solid fa-map-location-dot"></i> Xem bản
-                      đồ
-                    </button>
-                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+            <div className="pagination">
+              {Array.from({ length: totalPages }, (_, index) => (
+                <button
+                  key={index + 1}
+                  onClick={() => handlePageChange(index + 1)}
+                  className={currentPage === index + 1 ? "active" : ""}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </div>
+          </>
         ) : (
           <div className="no-stores">
             <p>Không tìm thấy cửa hàng phù hợp với bộ lọc.</p>

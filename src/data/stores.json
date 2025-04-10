@@ -1,0 +1,376 @@
+[
+  {
+    "id": 1,
+    "name": "160STORE ĐÀ NẴNG - LÊ DUẨN",
+    "placeName": "160STORE Lê Duẩn - Đà Nẵng",
+    "address": "332 Đ. Lê Duẩn, Tân Chính, Thanh Khê, Đà Nẵng, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "Đà Nẵng",
+    "district": "Thanh Khê",
+    "status": "open",
+    "isNew": true,
+    "image": "/img/stores/store1.jpg",
+    "coordinates": {
+      "lat": 16.0667,
+      "lng": 108.2098
+    }
+  },
+  {
+    "id": 2,
+    "name": "160STORE ĐẮK LẮK - BUÔN MA THUỘT",
+    "placeName": "160STORE Buôn Ma Thuột - Đắk Lắk",
+    "address": "14 Phan Chu Trinh, Thắng Lợi, Buôn Ma Thuột, Đắk Lắk, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "Đắk Lắk",
+    "district": "Buôn Ma Thuột",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store2.jpg",
+    "coordinates": {
+      "lat": 12.6819,
+      "lng": 108.0382
+    }
+  },
+  {
+    "id": 3,
+    "name": "160STORE LONG AN - TÂN AN",
+    "placeName": "160STORE Tân An - Long An",
+    "address": "290 Đ. Hùng Vương, Phường 3, Tân An, Long An, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "Long An",
+    "district": "Tân An",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store3.jpg",
+    "coordinates": {
+      "lat": 10.5337,
+      "lng": 106.4056
+    }
+  },
+  {
+    "id": 4,
+    "name": "HỒ CHÍ MINH - TÔ HIẾN THÀNH",
+    "placeName": "160STORE Tô Hiến Thành - Hồ Chí Minh",
+    "address": "297/3 Tô Hiến Thành, Phường 13, Quận 10, TP.HCM, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "TP.HCM",
+    "district": "Quận 10",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store4.jpg",
+    "coordinates": {
+      "lat": 10.7712,
+      "lng": 106.6694
+    }
+  },
+  {
+    "id": 5,
+    "name": "HỒ CHÍ MINH - TRẦN HƯNG ĐẠO",
+    "placeName": "160STORE Trần Hưng Đạo - Hồ Chí Minh",
+    "address": "391/375 Trần Hưng Đạo, Phường Cầu Kho, Quận 1, TP.HCM, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "TP.HCM",
+    "district": "Quận 1",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store5.jpg",
+    "coordinates": {
+      "lat": 10.7632,
+      "lng": 106.6904
+    }
+  },
+  {
+    "id": 6,
+    "name": "CẦN THƠ - TRẦN PHÚ",
+    "placeName": "160STORE Trần Phú - Cần Thơ",
+    "address": "Số 35 Trần Phú, Phường Cái Khế, Quận Ninh Kiều, TP.Cần Thơ, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "TP.Cần Thơ",
+    "district": "Quận Ninh Kiều",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store6.jpg",
+    "coordinates": {
+      "lat": 10.0452,
+      "lng": 105.7698
+    }
+  },
+  {
+    "id": 7,
+    "name": "BIÊN HÒA - PHAN TRUNG",
+    "placeName": "160STORE Phan Trung - Biên Hòa",
+    "address": "Số 157 Phan Trung, Phường Tân Mai, TP.Biên Hòa, Đồng Nai, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "Đồng Nai",
+    "district": "TP.Biên Hòa",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store7.jpg",
+    "coordinates": {
+      "lat": 10.9465,
+      "lng": 106.8243
+    }
+  },
+  {
+    "id": 8,
+    "name": "ĐÀ NẴNG - LÝ TỰ TRỌNG",
+    "placeName": "160STORE Lý Tự Trọng - Đà Nẵng",
+    "address": "Số 144 Lý Tự Trọng, Quận Hải Châu, TP.Đà Nẵng, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "Đà Nẵng",
+    "district": "Hải Châu",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store8.jpg",
+    "coordinates": {
+      "lat": 16.0712,
+      "lng": 108.2231
+    }
+  },
+  {
+    "id": 9,
+    "name": "HỒ CHÍ MINH - PHAN XÍCH LONG",
+    "placeName": "160STORE Phan Xích Long - Hồ Chí Minh",
+    "address": "401 Phan Xích Long, Phường 3, Quận Phú Nhuận, TP.HCM, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "TP.HCM",
+    "district": "Quận Phú Nhuận",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store9.jpg",
+    "coordinates": {
+      "lat": 10.7991,
+      "lng": 106.6865
+    }
+  },
+  {
+    "id": 10,
+    "name": "HỒ CHÍ MINH - QUANG TRUNG",
+    "placeName": "160STORE Quang Trung - Hồ Chí Minh",
+    "address": "53 Quang Trung, Phường 10, Quận Gò Vấp, TP.HCM, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "TP.HCM",
+    "district": "Quận Gò Vấp",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store10.jpg",
+    "coordinates": {
+      "lat": 10.8412,
+      "lng": 106.6715
+    }
+  },
+  {
+    "id": 11,
+    "name": "HỒ CHÍ MINH - KHƯỚNG VIỆT",
+    "placeName": "160STORE Khướng Việt - Hồ Chí Minh",
+    "address": "111 Khướng Việt, Phường Phú Trung, Quận Tân Phú, TP.HCM, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "TP.HCM",
+    "district": "Quận Tân Phú",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store11.jpg",
+    "coordinates": {
+      "lat": 10.7635,
+      "lng": 106.6287
+    }
+  },
+  {
+    "id": 12,
+    "name": "HỒ CHÍ MINH - TÔ VINH DIỆN",
+    "placeName": "160STORE Tô Vĩnh Diện - Hồ Chí Minh",
+    "address": "54 Tô Vĩnh Diện, Phường Linh Chiểu, TP.Thủ Đức, TP.HCM, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "TP.HCM",
+    "district": "TP.Thủ Đức",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store12.jpg",
+    "coordinates": {
+      "lat": 10.8031,
+      "lng": 106.7812
+    }
+  },
+  {
+    "id": 13,
+    "name": "BÌNH DƯƠNG - YERSIN",
+    "placeName": "160STORE Yersin - Bình Dương",
+    "address": "231 Yersin, Phường Phú Cường, TP.Thủ Dầu Một, Tỉnh Bình Dương, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "Bình Dương",
+    "district": "TP.Thủ Dầu Một",
+    "status": "open",
+    "isNew": true,
+    "image": "/img/stores/store13.jpg",
+    "coordinates": {
+      "lat": 10.9805,
+      "lng": 106.6763
+    }
+  },
+  {
+    "id": 14,
+    "name": "HÀ NỘI - LÊ ĐẠI HÀNH",
+    "placeName": "160STORE Lê Đại Hành - Hà Nội",
+    "address": "Số 26 Phố Lê Đại Hành, Phường Lê Đại Hành, Quận Hai Bà Trưng, TP.Hà Nội, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "Hà Nội",
+    "district": "Quận Hai Bà Trưng",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store14.jpg",
+    "coordinates": {
+      "lat": 21.0124,
+      "lng": 105.8471
+    }
+  },
+  {
+    "id": 15,
+    "name": "HÀ NỘI - TÔN ĐỨC THẮNG",
+    "placeName": "160STORE Tôn Đức Thắng - Hà Nội",
+    "address": "Số 176 Phố Tôn Đức Thắng, Phường Hàng Bột, Quận Đống Đa, TP.Hà Nội, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "Hà Nội",
+    "district": "Quận Đống Đa",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store15.jpg",
+    "coordinates": {
+      "lat": 21.0219,
+      "lng": 105.8286
+    }
+  },
+  {
+    "id": 16,
+    "name": "HỒ CHÍ MINH - ĐỖ XUÂN HỢP",
+    "placeName": "160STORE Đỗ Xuân Hợp - Hồ Chí Minh",
+    "address": "159 Đỗ Xuân Hợp, Phường Phước Long B, TP.Thủ Đức, TP.HCM, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "TP.HCM",
+    "district": "TP.Thủ Đức",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store16.jpg",
+    "coordinates": {
+      "lat": 10.8031,
+      "lng": 106.7812
+    }
+  },
+  {
+    "id": 17,
+    "name": "HỒ CHÍ MINH - HÒA BÌNH",
+    "placeName": "160STORE Hòa Bình - Hồ Chí Minh",
+    "address": "205 Hòe Bình, Phường Hiệp Tân, Quận Tân Phú, TP.HCM, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "TP.HCM",
+    "district": "Quận Tân Phú",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store17.jpg",
+    "coordinates": {
+      "lat": 10.7635,
+      "lng": 106.6287
+    }
+  },
+  {
+    "id": 18,
+    "name": "HỒ CHÍ MINH - LIÊN TỈNH 5",
+    "placeName": "160STORE Liên Tỉnh 5 - Hồ Chí Minh",
+    "address": "407a Liên Tỉnh 5, Phường 5, Quận 8, TP.HCM, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "TP.HCM",
+    "district": "Quận 8",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store18.jpg",
+    "coordinates": {
+      "lat": 10.7371,
+      "lng": 106.6834
+    }
+  },
+  {
+    "id": 19,
+    "name": "TIỀN GIANG - ẤP BẮC",
+    "placeName": "160STORE Ấp Bắc - Tiền Giang",
+    "address": "347 Đường Ấp Bắc, P. 5, TP.Mỹ Tho, T. Tiền Giang, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "Tiền Giang",
+    "district": "TP.Mỹ Tho",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store19.jpg",
+    "coordinates": {
+      "lat": 10.3604,
+      "lng": 106.3602
+    }
+  },
+  {
+    "id": 20,
+    "name": "CẦN THƠ - MẬU THÂN",
+    "placeName": "160STORE Mậu Thân - Cần Thơ",
+    "address": "15D Mậu Thân, Phường Xuân Khánh, Quận Ninh Kiều, TP.Cần Thơ, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "Cần Thơ",
+    "district": "Quận Ninh Kiều",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store20.jpg",
+    "coordinates": {
+      "lat": 10.0325,
+      "lng": 105.7709
+    }
+  },
+  {
+    "id": 21,
+    "name": "VŨNG TÀU - BA CÙ",
+    "placeName": "160STORE Ba Cù - Vũng Tàu",
+    "address": "206 Ba Cù, Phường 3, TP.Vũng Tàu, Bà Rịa - Vũng Tàu, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "Bà Rịa - Vũng Tàu",
+    "district": "TP.Vũng Tàu",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store21.jpg",
+    "coordinates": {
+      "lat": 10.3465,
+      "lng": 107.0843
+    }
+  },
+  {
+    "id": 22,
+    "name": "HỒ CHÍ MINH - LÊ VĂN THỌ",
+    "placeName": "160STORE Lê Văn Thọ - Hồ Chí Minh",
+    "address": "94 Lê Văn Thọ, Phường 11, Quận Gò Vấp, TP.HCM, Vietnam",
+    "phone": "02871006789",
+    "hours": "8:30 - 22:00",
+    "province": "TP.HCM",
+    "district": "Quận Gò Vấp",
+    "status": "open",
+    "isNew": false,
+    "image": "/img/stores/store22.jpg",
+    "coordinates": {
+      "lat": 10.8412,
+      "lng": 106.6715
+    }
+  }
+]

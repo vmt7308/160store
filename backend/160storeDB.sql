@@ -10,6 +10,8 @@ CREATE TABLE Users (
     FullName NVARCHAR(100) NOT NULL,
     Email NVARCHAR(100) UNIQUE NOT NULL,
     PasswordHash NVARCHAR(255) NOT NULL,
+    PhoneNumber NVARCHAR(20),
+    Address NVARCHAR(255),
     CreatedAt DATETIME DEFAULT GETDATE()
 );
 
