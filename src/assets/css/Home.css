@@ -730,3 +730,316 @@
 body.popup-open {
     overflow: hidden;
 }
+
+/* Khung sản phẩm */
+.product-frame {
+    position: relative;
+    border: 2px solid;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+/* Container cho hiệu ứng */
+.effects-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Hiệu ứng lá rơi */
+.falling-leaves {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.falling-leaves::before,
+.falling-leaves::after {
+    content: '';
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: contain;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+}
+
+.falling-leaves::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' fill='%23FFD700'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z'/%3E%3C/svg%3E");
+    width: 24px;
+    height: 24px;
+    top: -20px;
+    left: 10%;
+    animation: fallingLeaf1 8s linear infinite;
+    opacity: 0.7;
+}
+
+.falling-leaves::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' fill='%23FFD700'%3E%3Cpath d='M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66l.95-2.3c.48.17.98.3 1.34.3C16 20 22 10 22 10c-1.1-1.33-2.73-1.8-4-2zm-6 2.5c-.19 0-.37-.03-.55-.06c-.1-.07-.2-.15-.3-.26c-.11-.11-.2-.24-.26-.4c-.06-.16-.09-.33-.09-.55c0-.36.11-.69.35-.93c.22-.24.54-.37.93-.37c.4 0 .71.13.94.36c.22.24.35.57.35.94c0 .19-.03.37-.06.54c-.07.1-.15.21-.26.3c-.1.1-.24.2-.4.27c-.16.06-.33.09-.55.09c-.16 0-.33-.02-.54-.08c-.1-.07-.2-.15-.3-.26v.04z'/%3E%3C/svg%3E");
+    width: 18px;
+    height: 18px;
+    top: -15px;
+    left: 60%;
+    animation: fallingLeaf2 10s linear infinite;
+    animation-delay: 2s;
+    opacity: 0.8;
+}
+
+@keyframes fallingLeaf1 {
+    0% {
+        top: -20px;
+        left: 10%;
+        transform: rotate(0deg);
+    }
+    25% {
+        left: 15%;
+        transform: rotate(90deg);
+    }
+    50% {
+        left: 5%;
+        transform: rotate(180deg);
+    }
+    75% {
+        left: 12%;
+        transform: rotate(270deg);
+    }
+    100% {
+        top: 100%;
+        left: 8%;
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes fallingLeaf2 {
+    0% {
+        top: -15px;
+        left: 60%; 
+        transform: rotate(0deg);
+    }
+    25% {
+        left: 65%;
+        transform: rotate(-90deg);
+    }
+    50% {
+        left: 55%;
+        transform: rotate(-180deg);
+    }
+    75% {
+        left: 62%;
+        transform: rotate(-270deg);
+    }
+    100% {
+        top: 100%;
+        left: 58%;
+        transform: rotate(-360deg);
+    }
+}
+
+/* Hiệu ứng sao băng */
+.shooting-stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.shooting-stars::before,
+.shooting-stars::after {
+    content: '';
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: contain;
+    opacity: 0;
+}
+
+.shooting-stars::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' fill='%23FFFFFF'%3E%3Cpath d='M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z'/%3E%3C/svg%3E");
+    width: 30px;
+    height: 30px;
+    top: 15%;
+    left: -30px;
+    animation: shootingStar1 6s linear infinite;
+    animation-delay: 1s;
+}
+
+.shooting-stars::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' fill='%23FFFFFF'%3E%3Cpath d='M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z'/%3E%3C/svg%3E");
+    width: 20px;
+    height: 20px;
+    top: 45%;
+    left: -20px;
+    animation: shootingStar2 8s linear infinite;
+    animation-delay: 4s;
+}
+
+@keyframes shootingStar1 {
+    0% {
+        opacity: 0;
+        left: -30px;
+        filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+    }
+    10% {
+        opacity: 1;
+    }
+    30% {
+        opacity: 1;
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 1));
+    }
+    70% {
+        opacity: 0;
+        left: 110%;
+        filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+    }
+    100% {
+        opacity: 0;
+        left: 110%;
+    }
+}
+
+@keyframes shootingStar2 {
+    0% {
+        opacity: 0;
+        left: -20px;
+        filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+    }
+    10% {
+        opacity: 1;
+    }
+    30% {
+        opacity: 1;
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 1));
+    }
+    70% {
+        opacity: 0;
+        left: 110%;
+        filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+    }
+    100% {
+        opacity: 0;
+        left: 110%;
+    }
+}
+
+/* Hiệu ứng bong bóng */
+.bubbles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.bubbles::before,
+.bubbles::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.4);
+    bottom: -20px;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+}
+
+.bubbles::before {
+    width: 15px;
+    height: 15px;
+    left: 20%;
+    animation: bubble1 12s linear infinite;
+}
+
+.bubbles::after {
+    width: 10px;
+    height: 10px;
+    left: 80%;
+    animation: bubble2 9s linear infinite;
+    animation-delay: 3s;
+}
+
+@keyframes bubble1 {
+    0% {
+        bottom: -20px;
+        opacity: 0;
+    }
+    20% {
+        opacity: 0.8;
+        transform: translateX(-10px);
+    }
+    40% {
+        opacity: 0.8;
+        transform: translateX(10px);
+    }
+    60% {
+        opacity: 0.8;
+        transform: translateX(-5px);
+    }
+    80% {
+        opacity: 0.5;
+        transform: translateX(5px);
+    }
+    100% {
+        bottom: 120%;
+        opacity: 0;
+    }
+}
+
+@keyframes bubble2 {
+    0% {
+        bottom: -20px;
+        opacity: 0;
+    }
+    20% {
+        opacity: 0.8;
+        transform: translateX(10px);
+    }
+    40% {
+        opacity: 0.8;
+        transform: translateX(-10px);
+    }
+    60% {
+        opacity: 0.8;
+        transform: translateX(5px);
+    }
+    80% {
+        opacity: 0.5;
+        transform: translateX(-5px);
+    }
+    100% {
+        bottom: 120%;
+        opacity: 0;
+    }
+}
+
+/* Chỉnh lại z-index để các phần tử trong product-frame được hiển thị đúng */
+.product-grid {
+    position: relative;
+    z-index: 2;
+}
+
+.product-pagination {
+    position: relative;
+    z-index: 2;
+}
+
+.view-all-container {
+    position: relative;
+    z-index: 2;
+}

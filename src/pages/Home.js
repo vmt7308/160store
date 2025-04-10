@@ -25,6 +25,24 @@ function Home() {
   const timeoutRef = useRef(null);
   const contactRef = useRef(null);
 
+  // Danh sách các hiệu ứng
+  const effectTypes = ["falling-leaves", "shooting-stars", "bubbles"];
+  // Tạo map hiệu ứng cho các category
+  const generateCategoryEffects = (categories) => {
+    const categoryEffects = {};
+
+    categories.forEach((category) => {
+      // Chọn ngẫu nhiên một hiệu ứng
+      const randomEffect =
+        effectTypes[Math.floor(Math.random() * effectTypes.length)];
+      categoryEffects[category.CategoryID] = randomEffect;
+    });
+
+    return categoryEffects;
+  };
+  // State lưu trữ hiệu ứng cho mỗi danh mục
+  const [categoryEffects, setCategoryEffects] = useState({});
+
   // State quản lý trang hiện tại cho từng danh mục
   const [currentPages, setCurrentPages] = useState({});
   // Số sản phẩm trên một trang
@@ -165,6 +183,10 @@ function Home() {
         // Tạo bảng màu cho các danh mục
         const colors = generateCategoryColors(catRes.data);
         setCategoryColors(colors);
+
+        // Tạo hiệu ứng ngẫu nhiên cho các danh mục
+        const effects = generateCategoryEffects(catRes.data);
+        setCategoryEffects(effects);
 
         const productsData = {};
         const initialPages = {};
@@ -350,6 +372,10 @@ function Home() {
             const categoryColor =
               categoryColors[category.CategoryID] || "#ffa500"; // Màu mặc định nếu không tìm thấy
 
+            // Lấy hiệu ứng cho danh mục hiện tại
+            const categoryEffect =
+              categoryEffects[category.CategoryID] || "falling-leaves";
+
             return (
               <section
                 key={category.CategoryID}
@@ -357,92 +383,116 @@ function Home() {
                 ref={(el) => (sectionRefs.current[sectionId] = el)}
                 className="product-categories"
               >
-                <h2 className="category-title">{category.CategoryName}</h2>
+                {/* Thêm khung bao quanh với màu trùng với product-tag */}
+                <div
+                  className="product-frame"
+                  style={{ borderColor: categoryColor }}
+                >
+                  {/* Hiệu ứng ngẫu nhiên */}
+                  <div className="effects-container">
+                    <div className={`effect ${categoryEffect}`}></div>
+                  </div>
 
-                <div className="product-grid">
-                  {displayedProducts.length > 0 ? (
-                    displayedProducts.map((product) => (
-                      <div key={product.ProductID} className="product-item">
-                        <div className="product-image-container">
-                          <div
-                            className="product-tag"
-                            style={{ backgroundColor: categoryColor }}
-                          >
-                            {category.CategoryName}
-                          </div>
-
-                          <img
-                            src={product.ImageURL ? `/${product.ImageURL}` : product1}
-                            alt={product.ProductName}
-                            className="product-image"
-                            onError={handleImageError}
-                          />
-                          <button
-                            className="quick-view-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleQuickView(product);
-                            }}
-                          >
-                            <span>🔍</span>
-                          </button>
-                        </div>
-                        <div className="product-info">
-                          <h3 className="product-name">
-                            {product.ProductName}
-                          </h3>
-                          <p className="product-price">
-                            {Number(product.Price).toLocaleString()}₫
-                          </p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="no-products">Không có sản phẩm</div>
-                  )}
-                </div>
-
-                {/* Phân trang - Chỉ hiển thị nếu có nhiều hơn 5 sản phẩm */}
-                {allProducts.length > productsPerPage && (
-                  <>
-                    <div className="product-pagination">
-                      {/* Nút Previous */}
-                      <span
-                        className="pagination-nav prev-page"
-                        onClick={() => prevPage(category.CategoryID)}
-                      >
-                        &#10094;
-                      </span>
-
-                      {/* Hiển thị các dot cho từng trang */}
-                      {Array.from({ length: totalPages }).map((_, index) => (
-                        <span
-                          key={index}
-                          className={`dot ${
-                            index === currentPage ? "active" : ""
-                          }`}
-                          onClick={() => goToPage(category.CategoryID, index)}
-                        ></span>
-                      ))}
-
-                      {/* Nút Next */}
-                      <span
-                        className="pagination-nav next-page"
-                        onClick={() => nextPage(category.CategoryID)}
-                      >
-                        &#10095;
-                      </span>
-                    </div>
-                  </>
-                )}
-
-                <div className="view-all-container">
-                  <a
-                    href={`/collections/${sectionId}`}
-                    className="view-all-btn"
+                  <h2
+                    className="category-title"
+                    style={{
+                      borderBottom: `2px solid ${categoryColor}`, // độ dày và màu
+                      display: "inline-block", // để border bottom chỉ nằm dưới chữ
+                      paddingBottom: "4px", // khoảng cách giữa chữ và gạch chân
+                    }}
                   >
-                    Xem tất cả »
-                  </a>
+                    {category.CategoryName}
+                  </h2>
+
+                  <div className="product-grid">
+                    {displayedProducts.length > 0 ? (
+                      displayedProducts.map((product) => (
+                        <div key={product.ProductID} className="product-item">
+                          <div className="product-image-container">
+                            <div
+                              className="product-tag"
+                              style={{ backgroundColor: categoryColor }}
+                            >
+                              {category.CategoryName}
+                            </div>
+
+                            <img
+                              src={
+                                product.ImageURL
+                                  ? `/${product.ImageURL}`
+                                  : product1
+                              }
+                              alt={product.ProductName}
+                              className="product-image"
+                              onError={handleImageError}
+                            />
+                            <button
+                              className="quick-view-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleQuickView(product);
+                              }}
+                            >
+                              <span>🔍</span>
+                            </button>
+                          </div>
+                          <div className="product-info">
+                            <h3 className="product-name">
+                              {product.ProductName}
+                            </h3>
+                            <p className="product-price">
+                              {Number(product.Price).toLocaleString()}₫
+                            </p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="no-products">Không có sản phẩm</div>
+                    )}
+                  </div>
+
+                  {/* Phân trang - Chỉ hiển thị nếu có nhiều hơn 5 sản phẩm */}
+                  {allProducts.length > productsPerPage && (
+                    <>
+                      <div className="product-pagination">
+                        {/* Nút Previous */}
+                        <span
+                          className="pagination-nav prev-page"
+                          onClick={() => prevPage(category.CategoryID)}
+                        >
+                          &#10094;
+                        </span>
+
+                        {/* Hiển thị các dot cho từng trang */}
+                        {Array.from({ length: totalPages }).map((_, index) => (
+                          <span
+                            key={index}
+                            className={`dot ${
+                              index === currentPage ? "active" : ""
+                            }`}
+                            onClick={() => goToPage(category.CategoryID, index)}
+                          ></span>
+                        ))}
+
+                        {/* Nút Next */}
+                        <span
+                          className="pagination-nav next-page"
+                          onClick={() => nextPage(category.CategoryID)}
+                        >
+                          &#10095;
+                        </span>
+                      </div>
+                    </>
+                  )}
+
+                  <div className="view-all-container">
+                    <a
+                      href={`/collections/${sectionId}`}
+                      className="view-all-btn"
+                    >
+                      Xem tất cả »
+                    </a>
+                  </div>
                 </div>
               </section>
             );
@@ -463,11 +513,15 @@ function Home() {
             </button>
             <div className="product-details-content">
               <div className="product-details-image">
-              <img
-                src={selectedProduct.ImageURL ? `/${selectedProduct.ImageURL}` : product1}
-                alt={selectedProduct.ProductName}
-                onError={handleImageError}
-              />
+                <img
+                  src={
+                    selectedProduct.ImageURL
+                      ? `/${selectedProduct.ImageURL}`
+                      : product1
+                  }
+                  alt={selectedProduct.ProductName}
+                  onError={handleImageError}
+                />
               </div>
               <div className="product-details-info">
                 <h2>{selectedProduct.ProductName}</h2>
