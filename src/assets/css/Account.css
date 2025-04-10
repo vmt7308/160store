@@ -1,0 +1,226 @@
+.account-container {
+    display: flex;
+    min-height: 100vh;
+    font-family: SFProDisplay, sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background: #f5f5f5;
+    padding: 20px;
+    transition: width 0.3s ease-in-out;
+    position: relative;
+}
+
+.sidebar.closed {
+    width: 60px;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.sidebar-header h2 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.sidebar.closed .sidebar-header h2 {
+    display: none;
+}
+
+.toggle-sidebar-btn {
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.toggle-sidebar-btn:hover {
+    transform: scale(1.2);
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar li {
+    padding: 15px;
+    font-size: 1.6rem;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.sidebar.closed li {
+    text-align: center;
+    font-size: 0;
+}
+
+.sidebar li:hover {
+    background: #e0e0e0;
+    color: #ffac19;
+}
+
+.sidebar li.active {
+    background: #ffac19;
+    color: #fff;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 40px;
+    background: #fff;
+    transition: margin-left 0.3s ease-in-out;
+}
+
+.main-content.sidebar-open {
+    margin-left: 0;
+}
+
+.main-content.sidebar-closed {
+    margin-left: -190px;
+}
+
+.account-info,
+.orders-info,
+.export-info {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.account-info h2,
+.orders-info h2,
+.export-info h2 {
+    font-size: 2.4rem;
+    margin-bottom: 10px;
+}
+
+.account-info p,
+.orders-info p,
+.export-info p {
+    font-size: 1.4rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Thông tin tài khoản */
+.info-section {
+    margin-bottom: 20px;
+}
+
+.info-section label {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.info-section input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1.4rem;
+    transition: border-color 0.3s ease;
+}
+
+.info-section input:hover,
+.info-section input:focus {
+    border-color: #ffac19;
+    outline: none;
+}
+
+/* Nút hành động */
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.cancel-btn,
+.save-btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.cancel-btn {
+    background: #f1f1f1;
+    border: 1px solid #ccc;
+}
+
+.save-btn {
+    background: #ff3333;
+    color: #fff;
+    border: none;
+}
+
+.cancel-btn:hover,
+.save-btn:hover {
+    transform: translateY(-2px);
+}
+
+.cancel-btn:hover {
+    background: #e0e0e0;
+}
+
+.save-btn:hover {
+    background: #e02b2b;
+}
+
+/* Bảng đơn hàng */
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.orders-table th,
+.orders-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    font-size: 1.4rem;
+}
+
+.orders-table th {
+    background: #f5f5f5;
+    font-weight: bold;
+}
+
+.orders-table tr {
+    transition: background 0.3s ease;
+}
+
+.orders-table tr:hover {
+    background: #f9f9f9;
+}
+
+/* Hiệu ứng animation */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-slide-in {
+    animation: slideIn 0.5s ease-out forwards;
+}
