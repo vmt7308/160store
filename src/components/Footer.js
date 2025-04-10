@@ -34,11 +34,12 @@ const Footer = () => {
             <p>160STORE - Chuỗi Phân Phối Thời Trang Nam Chuẩn Hiệu</p>
             <p className="phone">
               <i className="fa-light fa-mobile-screen-button"></i>
-              02871006789
+              <a href="tel:0522586725">0522586725</a>
+              
             </p>
             <p className="contact">
               <i className="fa-light fa-envelope"></i>
-              cs@160store.com
+              <a href="mailto:vmt7308@gmail.com">vmt7308@gmail.com</a>
             </p>
             <p className="time">
               <i className="fa-light fa-clock-nine"></i>
@@ -104,7 +105,7 @@ const Footer = () => {
               <br /> 332 Đ. Lê Duẩn, Tân Chính, Thanh Khê, <br />
               Đà Nẵng -<span className="new">New</span>
             </p>
-            <a href="/">XEM TẤT CẢ CỬA HÀNG</a>
+            <a href="/stores">XEM TẤT CẢ CỬA HÀNG</a>
           </div>
 
           {/* Cột Phương Thức Thanh Toán */}
@@ -118,9 +119,8 @@ const Footer = () => {
           </div>
         </div>
       </div>
-
       {/* Bản quyền */}
-      <div className="footer-bottom">BẢN QUYỀN THUỘC VỀ @MINHTRUNG - HCMUS</div>
+      <div className="footer-bottom">Copyright @MINHTRUNG - HCMUS. All Rights Reserved.</div>
     </footer>
   );
 };
