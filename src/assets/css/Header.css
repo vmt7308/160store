@@ -478,10 +478,6 @@ body {
     color: #777;
 }
 
-.cart-discount {
-    font-size: 1.4rem;
-}
-
 .cart-total {
     border-top: 1px solid #ccc;
     padding-top: 10px;
