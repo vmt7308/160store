@@ -677,17 +677,8 @@ function Header({ scrollToSection }) {
           <div className="popup-content">
             <h2>GIỎ HÀNG</h2>
             <i className="fa-light fa-cart-shopping"></i>
-            <p className="cart-empty">Hiện chưa có sản phẩm</p>
-            <p className="cart-discount">
-              Bạn được giảm đến 10% tối đa 10K, mua thêm 699,000₫ nữa!
-            </p>
+            <p className="cart-empty">Hiện chưa có sản phẩm!</p>
             <div className="cart-total">
-              <p>
-                Tạm tính: <b>0₫</b>
-              </p>
-              <p>
-                Giảm giá: <b>0₫</b>
-              </p>
               <p className="total-amount">
                 Tổng tiền: <b>0₫</b>
               </p>
