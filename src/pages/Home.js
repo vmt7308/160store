@@ -6,6 +6,7 @@ import React, {
   useMemo,
 } from "react";
 import axios from "axios";
+import gsap from "gsap";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import "../assets/css/Home.css";
@@ -14,7 +15,7 @@ import banner2 from "../assets/img/banner2.jpg";
 import banner3 from "../assets/img/banner3.jpg";
 import banner4 from "../assets/img/banner4.jpg";
 import product1 from "../assets/img/product1.jpg";
-import '../assets/font/font-awesome-pro-v6-6.2.0/css/all.min.css';
+import "../assets/font/font-awesome-pro-v6-6.2.0/css/all.min.css";
 
 function Home() {
   const banners = [banner1, banner2, banner3, banner4];
@@ -318,6 +319,82 @@ function Home() {
     { id: "color4", name: "Vàng nghệ", code: "#FCBF49" },
   ];
 
+  // Thêm sản phẩm vào giỏ hàng
+  const addToCart = (product, color, size, quantity) => {
+    // Create a temporary image element for animation
+    const productImage = document.createElement("img");
+    productImage.src = product.ImageURL ? `/${product.ImageURL}` : product1;
+    productImage.style.position = "fixed"; // Use fixed positioning for better control
+    productImage.style.width = "50px";
+    productImage.style.height = "50px";
+    productImage.style.zIndex = "1000";
+    productImage.style.pointerEvents = "none"; // Prevent interaction with the image
+    document.body.appendChild(productImage);
+
+    // Get the position of the "Add to Cart" button and cart icon
+    const addButton = document.querySelector(".add-to-cart-btn");
+    const cartIcon = document.querySelector(".cart-button .fa-cart-shopping");
+
+    if (!addButton || !cartIcon) {
+      console.error("Add button or cart icon not found!");
+      document.body.removeChild(productImage);
+      return;
+    }
+
+    const addButtonRect = addButton.getBoundingClientRect();
+    const cartIconRect = cartIcon.getBoundingClientRect();
+
+    // Set initial position using fixed positioning
+    productImage.style.left = `${
+      addButtonRect.left + addButtonRect.width / 2 - 25
+    }px`;
+    productImage.style.top = `${
+      addButtonRect.top + addButtonRect.height / 2 - 25
+    }px`;
+
+    // GSAP animation
+    gsap.to(productImage, {
+      x: cartIconRect.left - addButtonRect.left + cartIconRect.width / 2 - 25,
+      y: cartIconRect.top - addButtonRect.top + cartIconRect.height / 2 - 25,
+      scale: 0.3,
+      opacity: 0,
+      duration: 0.8,
+      ease: "power2.inOut",
+      onComplete: () => {
+        document.body.removeChild(productImage);
+        closeProductDetails(); // Close popup after animation
+      },
+    });
+
+    // Update cart in localStorage
+    const cartItem = {
+      id: `${product.ProductID}-${color}-${size}`,
+      productId: product.ProductID,
+      image: product.ImageURL ? `/${product.ImageURL}` : product1,
+      name: product.ProductName,
+      color,
+      size,
+      quantity,
+      price: product.Price,
+    };
+
+    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existingItemIndex = existingCart.findIndex(
+      (item) => item.id === cartItem.id
+    );
+
+    if (existingItemIndex >= 0) {
+      existingCart[existingItemIndex].quantity += quantity;
+    } else {
+      existingCart.push(cartItem);
+    }
+
+    localStorage.setItem("cart", JSON.stringify(existingCart));
+
+    // Dispatch custom event to notify Header of cart update
+    window.dispatchEvent(new Event("cartUpdated"));
+  };
+
   return (
     <div>
       <Header
@@ -589,7 +666,19 @@ function Home() {
                   </button>
                 </div>
 
-                <button className="add-to-cart-btn">Thêm vào giỏ</button>
+                <button
+                  className="add-to-cart-btn"
+                  onClick={() =>
+                    addToCart(
+                      selectedProduct,
+                      selectedColor,
+                      selectedSize,
+                      quantity
+                    )
+                  }
+                >
+                  Thêm vào giỏ
+                </button>
 
                 <div className="product-details-description">
                   <p>
