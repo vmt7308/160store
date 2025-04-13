@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import gsap from "gsap";
 import logo from "../assets/img/logo.png";
 import "../assets/css/Header.css";
 import "../assets/font/font-awesome-pro-v6-6.2.0//css/all.min.css";
+import product1 from "../assets/img/product1.jpg"
 
 function Header({ scrollToSection }) {
   // State để kiểm tra trạng thái đăng nhập
@@ -374,6 +376,115 @@ function Header({ scrollToSection }) {
       .replace("₫", "đ");
   };
 
+  
+  const closeProductDetails = () => {
+    setShowProductPopup(false);
+  };
+
+  // Cart state
+  const [cart, setCart] = useState([]);
+
+  // Load cart from localStorage on mount
+  useEffect(() => {
+    const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCart(savedCart);
+  }, []);
+
+  // Listen for cart updates
+  useEffect(() => {
+    const handleCartUpdate = () => {
+      const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
+      setCart(savedCart);
+    };
+    window.addEventListener("cartUpdated", handleCartUpdate);
+    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
+  }, []);
+
+  // Calculate total amount
+  const totalAmount = cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+
+  // Calculate total items
+  const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+
+  // Thêm sản phẩm vào giỏ hàng
+  const addToCart = (product, color, size, quantity) => {
+    // Create a temporary image element for animation
+    const productImage = document.createElement("img");
+    productImage.src = product.ImageURL ? `/${product.ImageURL}` : product1;
+    productImage.style.position = "fixed"; // Use fixed positioning for better control
+    productImage.style.width = "50px";
+    productImage.style.height = "50px";
+    productImage.style.zIndex = "1000";
+    productImage.style.pointerEvents = "none"; // Prevent interaction with the image
+    document.body.appendChild(productImage);
+
+    // Get the position of the "Add to Cart" button and cart icon
+    const addButton = document.querySelector(".add-to-cart-btn");
+    const cartIcon = document.querySelector(".cart-button .fa-cart-shopping");
+
+    if (!addButton || !cartIcon) {
+      console.error("Add button or cart icon not found!");
+      document.body.removeChild(productImage);
+      return;
+    }
+
+    const addButtonRect = addButton.getBoundingClientRect();
+    const cartIconRect = cartIcon.getBoundingClientRect();
+
+    // Set initial position using fixed positioning
+    productImage.style.left = `${
+      addButtonRect.left + addButtonRect.width / 2 - 25
+    }px`;
+    productImage.style.top = `${
+      addButtonRect.top + addButtonRect.height / 2 - 25
+    }px`;
+
+    // GSAP animation
+    gsap.to(productImage, {
+      x: cartIconRect.left - addButtonRect.left + cartIconRect.width / 2 - 25,
+      y: cartIconRect.top - addButtonRect.top + cartIconRect.height / 2 - 25,
+      scale: 0.3,
+      opacity: 0,
+      duration: 0.8,
+      ease: "power2.inOut",
+      onComplete: () => {
+        document.body.removeChild(productImage);
+        closeProductDetails(); // Close popup after animation
+      },
+    });
+
+    // Update cart in localStorage
+    const cartItem = {
+      id: `${product.ProductID}-${color}-${size}`,
+      productId: product.ProductID,
+      image: product.ImageURL ? `/${product.ImageURL}` : product1,
+      name: product.ProductName,
+      color,
+      size,
+      quantity,
+      price: product.Price,
+    };
+
+    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existingItemIndex = existingCart.findIndex(
+      (item) => item.id === cartItem.id
+    );
+
+    if (existingItemIndex >= 0) {
+      existingCart[existingItemIndex].quantity += quantity;
+    } else {
+      existingCart.push(cartItem);
+    }
+
+    localStorage.setItem("cart", JSON.stringify(existingCart));
+
+    // Dispatch custom event to notify Header of cart update
+    window.dispatchEvent(new Event("cartUpdated"));
+  };
+
   return (
     <header className={`header-container ${isScrolled ? "scrolled" : ""}`}>
       {/* VOUCHER chạy từ phải sang trái */}
@@ -574,7 +685,7 @@ function Header({ scrollToSection }) {
             className="cart-button header-btn"
           >
             <i className="fa-light fa-cart-shopping"></i>
-            <span className="cart-badge">0</span>
+            <span className="cart-badge">{totalItems}</span>
             Giỏ hàng
           </button>
         </div>
@@ -676,11 +787,39 @@ function Header({ scrollToSection }) {
           <div className="popup-arrow-cart"></div>
           <div className="popup-content">
             <h2>GIỎ HÀNG</h2>
-            <i className="fa-light fa-cart-shopping"></i>
-            <p className="cart-empty">Hiện chưa có sản phẩm!</p>
+            {cart.length === 0 ? (
+              <>
+                <i className="fa-light fa-cart-shopping"></i>
+                <p className="cart-empty">Hiện chưa có sản phẩm!</p>
+              </>
+            ) : (
+              <div className="cart-items">
+                {cart.map((item, index) => (
+                  <div key={index} className="cart-item">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="cart-item-image"
+                      style={{
+                        width: "70px",
+                        height: "70px",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <div className="cart-item-info">
+                      <h4>{item.name}</h4>
+                      <p>Màu: {item.color}</p>
+                      <p>Kích thước: {item.size}</p>
+                      <p>Số lượng: {item.quantity}</p>
+                      <p>Giá: {formatPrice(item.price)}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="cart-total">
               <p className="total-amount">
-                Tổng tiền: <b>0₫</b>
+                Tổng tiền: <b>{formatPrice(totalAmount)}</b>
               </p>
             </div>
             <button className="cart-edit" onClick={() => navigate("/cart")}>
@@ -835,7 +974,19 @@ function Header({ scrollToSection }) {
                   </button>
                 </div>
 
-                <button className="add-to-cart-btn">Thêm vào giỏ</button>
+                <button
+                  className="add-to-cart-btn"
+                  onClick={() =>
+                    addToCart(
+                      selectedProduct,
+                      selectedColor,
+                      selectedSize,
+                      quantity
+                    )
+                  }
+                >
+                  Thêm vào giỏ
+                </button>
 
                 <div className="product-details-description">
                   <p>
