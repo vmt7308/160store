@@ -479,7 +479,7 @@ body {
 }
 
 .cart-items {
-    max-height: 200px;
+    max-height: 260px;
     overflow-y: auto;
     margin-bottom: 5px;
 }
@@ -535,8 +535,7 @@ body {
 }
 
 /* Nút giỏ hàng */
-.cart-edit,
-.cart-checkout {
+.cart-edit {
     width: 100%;
     padding: 10px;
     border-radius: 5px;
@@ -549,13 +548,12 @@ body {
     border: 1px solid var(--black);
 }
 
-.cart-checkout {
+.cart-edit {
     background: var(--black);
     color: var(--white);
 }
 
-.cart-edit:hover,
-.cart-checkout:hover {
+.cart-edit:hover {
     color: var(--primary);
 }
 

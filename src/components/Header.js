@@ -819,13 +819,13 @@ function Header({ scrollToSection }) {
             )}
             <div className="cart-total">
               <p className="total-amount">
-                Tổng tiền: <b>{formatPrice(totalAmount)}</b>
+                Tạm tính: <b>{formatPrice(totalAmount)}</b>
               </p>
             </div>
             <button className="cart-edit" onClick={() => navigate("/cart")}>
               CHỈNH SỬA GIỎ HÀNG
             </button>
-            <button className="cart-checkout">THANH TOÁN</button>
+            
             <button className="close-btn" onClick={closePopup}>
               <i className="fa-light fa-xmark"></i>
             </button>
