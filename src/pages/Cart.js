@@ -27,6 +27,9 @@ const Cart = () => {
   // State for selected voucher
   const [selectedVoucher, setSelectedVoucher] = useState(null);
 
+  // State for order notes
+  const [orderNotes, setOrderNotes] = useState("");
+
   // Voucher options
   const vouchers = [
     {
@@ -49,29 +52,41 @@ const Cart = () => {
     },
   ];
 
-  // Update localStorage when cart changes
+  // Update localStorage and validate voucher when cart changes
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
     window.dispatchEvent(new Event("cartUpdated"));
+
+    // Validate voucher based on new subtotal
+    const subtotal = cartItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+    if (!cartItems.length) {
+      setSelectedVoucher(null);
+    } else if (selectedVoucher && subtotal < selectedVoucher.minOrder) {
+      // Find the highest applicable voucher
+      const validVoucher = vouchers
+        .slice()
+        .reverse()
+        .find((voucher) => subtotal >= voucher.minOrder);
+      setSelectedVoucher(validVoucher || null);
+    }
   }, [cartItems]);
 
   // Calculate subtotal (Đơn giá)
-  // "Đơn giá" là lấy giá 1 sản phẩm * số lượng
   const subtotal = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
 
   // Calculate discount based on selected voucher
-  // Nếu có chọn mã giảm giá thì sẽ được giảm theo voucher đã chọn
   const discount = selectedVoucher ? selectedVoucher.discount : 0;
 
-  // Calculate shipping free
-  // Nếu "Đơn giá" lớn hơn hoặc bằng 399000, sẽ hiển thị "Free ship đơn từ 399k", ngược lại sẽ tính phí 30000
+  // Calculate shipping fee
   const shippingFee = subtotal >= 399000 ? 0 : 30000;
 
   // Calculate total (Thành tiền)
-  // Thành tiền = (Giá của 1 sản phẩm * số lượng) - voucher giảm giá (nếu thỏa điều kiện) - 30k phí vận chuyển nếu thỏa điều kiện
   const total = subtotal - discount + shippingFee;
 
   // Update quantity
@@ -99,9 +114,14 @@ const Cart = () => {
     );
   };
 
-  // Remove item
+  // Remove item with confirmation
   const removeItem = (id) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+    const confirmDelete = window.confirm(
+      "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?"
+    );
+    if (confirmDelete) {
+      setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+    }
   };
 
   // Handle voucher selection
@@ -167,7 +187,7 @@ const Cart = () => {
                       </div>
                       <div className="size-option">
                         <p>Kích thước:</p>
-                        <div className="size-selector">
+                        <div className="cart-size-selector">
                           {availableSizes.map((size) => (
                             <div
                               key={size}
@@ -201,7 +221,8 @@ const Cart = () => {
                       </div>
                     </div>
                     <p className="item-subtotal">
-                      Đơn giá: {formatPrice(item.price)} {" x "} {item.quantity} {" = "} {formatPrice(item.price * item.quantity)}
+                      Đơn giá: {formatPrice(item.price)} {" x "} {item.quantity}{" "}
+                      {" = "} {formatPrice(item.price * item.quantity)}
                     </p>
                   </div>
                   <button
@@ -220,11 +241,25 @@ const Cart = () => {
           {/* Order Info */}
           <div className="order-info">
             <h2>Thông tin đơn hàng</h2>
+            <div className="notes-section">
+              <label>Ghi chú đơn hàng:</label>
+              <textarea
+                placeholder="Nhập ghi chú (nếu có)"
+                value={orderNotes}
+                onChange={(e) => {
+                  if (e.target.value.length <= 255) {
+                    setOrderNotes(e.target.value);
+                  }
+                }}
+                maxLength={255}
+              />
+            </div>
             <div className="voucher-section">
               <label>Chọn mã giảm giá:</label>
               <select
                 value={selectedVoucher?.code || ""}
                 onChange={handleVoucherChange}
+                disabled={!cartItems.length}
               >
                 <option value="">Không sử dụng mã</option>
                 {vouchers.map((voucher) => (
@@ -239,23 +274,31 @@ const Cart = () => {
               </select>
             </div>
             <p>
-              Tạm tính: <span>{formatPrice(subtotal)}</span>
+              Tạm tính:{" "}
+              <span>{cartItems.length ? formatPrice(subtotal) : "0đ"}</span>
             </p>
             <p>
-              Giảm giá: <span>{formatPrice(discount)}</span>
+              Giảm giá:{" "}
+              <span>{cartItems.length ? formatPrice(discount) : "0đ"}</span>
             </p>
             <p>
               Phí ship:{" "}
               <span>
-                {subtotal >= 399000
-                  ? "Free ship đơn từ 399k"
-                  : formatPrice(shippingFee)}
+                {cartItems.length
+                  ? subtotal >= 399000
+                    ? "Free ship đơn từ 399k"
+                    : formatPrice(shippingFee)
+                  : "0đ"}
               </span>
             </p>
             <p className="total">
-              Thành tiền: <b>{formatPrice(total)}</b>
+              Thành tiền: <b>{cartItems.length ? formatPrice(total) : "0đ"}</b>
             </p>
-            <button className="checkout-btn" onClick={handleCheckout}>
+            <button
+              className="checkout-btn"
+              onClick={handleCheckout}
+              disabled={!cartItems.length}
+            >
               THANH TOÁN NGAY
             </button>
             <a href="/" className="continue-shopping">
