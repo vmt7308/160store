@@ -141,9 +141,27 @@ const Cart = () => {
       .replace("₫", "đ");
   };
 
-  // Navigate to checkout
+  // Handle checkout with login check
   const handleCheckout = () => {
-    navigate("/checkout");
+    if (!cartItems.length) return; // Đảm bảo có ít nhất 1 sản phẩm
+    
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+
+    try {
+      if (token && user && JSON.parse(user)) {
+        // Người dùng đã đăng nhập, chuyển đến checkout để tiếp tục thanh toán
+        navigate("/checkout");
+      } else {
+        // Người dùng chưa đăng nhập, hiển thị thông báo và chuyển đến login trước khi thanh toán
+        alert("Vui lòng đăng nhập để tiếp tục thanh toán!");
+        navigate("/login?redirect=/checkout");
+      }
+    } catch (error) {
+      // Lỗi đăng nhập không hợp lệ !!!
+      alert("Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại!");
+      navigate("/login?redirect=/checkout");
+    }
   };
 
   return (
@@ -252,7 +270,7 @@ const Cart = () => {
                   }
                 }}
                 maxLength={255}
-              />
+              ></textarea>
             </div>
             <div className="voucher-section">
               <label>Chọn mã giảm giá:</label>

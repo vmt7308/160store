@@ -1,51 +1,65 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "../assets/css/Login.css";
 
 function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
-  const [serverError, setServerError] = useState("");
+  const [serverError, setServerError] = useState(null);
+
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const redirect = searchParams.get("redirect") || "/";
+
   // Thêm state để kiểm soát hiển thị mật khẩu
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const validateForm = () => {
-    let newErrors = {};
-    if (!formData.email.includes("@")) newErrors.email = "Email không hợp lệ";
-    if (formData.password.length < 6)
-      newErrors.password = "Mật khẩu ít nhất 6 ký tự";
-    return newErrors;
+    const errors = {};
+    if (!formData.email.includes("@")) {
+      errors.email = "Email không hợp lệ!";
+    }
+    if (formData.password.length < 6) {
+      errors.password = "Mật khẩu phải có ít nhất 6 ký tự!";
+    }
+    return errors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setServerError("");
-    const newErrors = validateForm();
-    if (Object.keys(newErrors).length === 0) {
-      try {
-        const response = await axios.post(
-          "http://localhost:5000/api/auth/login",
-          formData
-        );
-        alert("Đăng nhập thành công!");
-
-        // Lưu token vào localStorage
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.user)); // Lưu thông tin user
-        navigate("/");
-      } catch (error) {
-        setServerError(
-          error.response?.data?.message || "Lỗi server, vui lòng thử lại!"
-        );
+    setServerError(null);
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        formData
+      );
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      alert("Đăng nhập thành công!");
+      navigate(redirect);
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        setServerError(error.response.data.message);
+      } else {
+        setServerError("Lỗi server, vui lòng thử lại!");
       }
-    } else {
-      setErrors(newErrors);
     }
   };
 
@@ -56,19 +70,25 @@ function Login() {
         {serverError && <p className="error">{serverError}</p>}
         <form onSubmit={handleSubmit}>
           <input
+            id="email"
             type="email"
             name="email"
             placeholder="Email"
             onChange={handleChange}
+            value={formData.email}
+            required
           />
           {errors.email && <p className="error">{errors.email}</p>}
 
           <div className="password-field">
             <input
+              id="password"
               type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Mật khẩu"
               onChange={handleChange}
+              value={formData.password}
+              required
             />
             <button
               type="button"
@@ -90,7 +110,7 @@ function Login() {
           Quên mật khẩu? <Link to="/reset-password">Khôi phục mật khẩu</Link>
         </p>
         <p>
-          Chưa có tài khoản? <Link to="/register">Tạo tài khoản</Link>
+          Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
         </p>
 
         <p className="back-home">
