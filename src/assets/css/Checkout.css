@@ -3,7 +3,7 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    font-family: Arial, sans-serif;
+    /* font-family: Arial, sans-serif; */
 }
 
 .breadcrumb {
@@ -12,8 +12,12 @@
 }
 
 .breadcrumb a {
-    text-decoration: none;
+    text-decoration: none !important;
     color: #333;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
 }
 
 .breadcrumb span {
@@ -22,56 +26,121 @@
 
 .checkout-content {
     display: flex;
+    gap: 20px;
     flex-wrap: wrap;
-    justify-content: space-between;
 }
 
-/* Thông tin giao hàng */
-.shipping-info,
-.payment-info,
-.order-summary {
+/* Cột 1: Danh sách sản phẩm */
+.checkout-container .cart-items {
+    flex: 1;
+    min-width: 300px;
     background: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
 }
 
+.cart-items h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.cart-item img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-right: 15px;
+}
+
+.item-info h3 {
+    font-size: 16px;
+    margin: 0 0 5px;
+}
+
+.item-info p {
+    font-size: 14px;
+    color: #555;
+    margin: 0;
+}
+
+.item-subtotal {
+    font-weight: bold;
+    color: #000;
+}
+
+/* Cột 2: Thông tin giao hàng */
 .shipping-info {
     flex: 1;
     min-width: 300px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .shipping-info h2 {
     font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.user-info label {
+    display: block;
+    font-size: 14px;
+    margin: 10px 0 5px;
+    font-weight: bold;
+}
+
+.user-info input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.error-message {
+    color: #d32f2f;
+    font-size: 14px;
     margin-bottom: 10px;
 }
 
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.user-info img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-}
-
-.shipping-info input {
+.update-btn {
     width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ddd;
+    padding: 12px;
+    background: #007bff;
+    color: white;
+    font-size: 16px;
+    border: none;
     border-radius: 5px;
-    background: #f9f9f9;
+    cursor: pointer;
+    margin-top: 15px;
 }
 
-/* Phương thức thanh toán */
-.payment-info {
+.update-btn:hover {
+    background: #0056b3;
+}
+
+/* Cột 3: Phương thức thanh toán & Thông tin đơn hàng */
+.payment-order-info {
     flex: 1;
     min-width: 300px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.payment-order-info h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
 }
 
 .payment-option {
@@ -81,7 +150,7 @@
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    margin-top: 10px;
+    margin-bottom: 10px;
     cursor: pointer;
 }
 
@@ -94,43 +163,20 @@ input[type="radio"] {
     transform: scale(1.2);
 }
 
-/* Đơn hàng */
-.order-summary {
-    flex: 1;
-    min-width: 300px;
-}
-
-.order-summary h2 {
-    font-size: 20px;
-    margin-bottom: 10px;
-}
-
-.order-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #ddd;
-}
-
-.order-item img {
-    margin-right: 5px;
-    width: 60px;
-    height: 60px;
-    border-radius: 5px;
-}
-
-.order-summary p {
-    margin-top: 5px;
+.payment-order-info p {
     display: flex;
     justify-content: space-between;
     font-size: 16px;
+    margin: 10px 0;
+}
+
+.payment-order-info p span {
+    font-weight: bold;
 }
 
 .total {
     font-size: 18px;
     font-weight: bold;
-    margin-top: 10px;
 }
 
 .complete-order-btn {
@@ -159,4 +205,11 @@ input[type="radio"] {
 
 .back-to-cart:hover {
     text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .checkout-content {
+        flex-direction: column;
+    }
 }
