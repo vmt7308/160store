@@ -157,3 +157,9 @@ INSERT INTO Products (CategoryID, ProductName, ImageURL, Price, Descriptions) VA
 (4, N'Set Đồ Nam ICONDENIM Maze ID Pattern', 'uploads/product71.jpg', 720000, N'Quần shorts lưng thun co giãn, không quá ôm. Hoạ tiết Maze liên kết bởi 2 kí tự ID được in định vị trên toàn áo, cực ấn tượng. Form Regular năng động, mặc cực thích'),
 (4, N'Set Đồ Nam ICONDENIM Oversize Printed', 'uploads/product72.jpg', 550000, N'Set đồ năng động ICONDENIM với form dáng oversize rộng rãi, giúp bạn tự do vận động cả ngày dài. Thiết kế Oversize mang lại phong cách thời trang tươi mới và thoải mái, phù hợp với nhu cầu của người mua'),
 (4, N'Set Đồ Nam ICONDENIM Maximalism', 'uploads/product73.jpg', 950000, N'Form ở bên ngoài nhưng vẫn giữ được sự mềm mại bên trong, giúp tối đa hóa cảm giác thoải mái của người mặc. Thiết kế được lấy cảm hứng từ những bộ đồ bóng rổ năng động, được cách điệu lại với họa tiết monogram');
+
+ALTER TABLE Orders
+ADD 
+    PaymentMethod NVARCHAR(50),
+    OrderNotes NVARCHAR(255),
+    VoucherCode NVARCHAR(50);

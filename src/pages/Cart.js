@@ -25,10 +25,14 @@ const Cart = () => {
   });
 
   // State for selected voucher
-  const [selectedVoucher, setSelectedVoucher] = useState(null);
+  const [selectedVoucher, setSelectedVoucher] = useState(() => {
+    return JSON.parse(localStorage.getItem("selectedVoucher")) || null;
+  });
 
   // State for order notes
-  const [orderNotes, setOrderNotes] = useState("");
+  const [orderNotes, setOrderNotes] = useState(() => {
+    return localStorage.getItem("orderNotes") || "";
+  });
 
   // Voucher options
   const vouchers = [
@@ -52,6 +56,16 @@ const Cart = () => {
     },
   ];
 
+  // Lưu orderNotes vào localStorage khi thay đổi
+  useEffect(() => {
+    localStorage.setItem("orderNotes", orderNotes);
+  }, [orderNotes]);
+
+  // Lưu selectedVoucher vào localStorage khi thay đổi
+  useEffect(() => {
+    localStorage.setItem("selectedVoucher", JSON.stringify(selectedVoucher));
+  }, [selectedVoucher]);
+
   // Update localStorage and validate voucher when cart changes
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
@@ -72,7 +86,7 @@ const Cart = () => {
         .find((voucher) => subtotal >= voucher.minOrder);
       setSelectedVoucher(validVoucher || null);
     }
-  }, [cartItems]);
+  }, [cartItems, selectedVoucher]);
 
   // Calculate subtotal (Đơn giá)
   const subtotal = cartItems.reduce(
@@ -144,7 +158,7 @@ const Cart = () => {
   // Handle checkout with login check
   const handleCheckout = () => {
     if (!cartItems.length) return; // Đảm bảo có ít nhất 1 sản phẩm
-    
+
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
 

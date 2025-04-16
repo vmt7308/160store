@@ -33,3 +33,18 @@ exports.findUserByEmail = async (email) => {
     throw error;
   }
 };
+
+// Tìm user theo ID
+exports.findUserById = async (userId) => {
+  try {
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("UserID", sql.Int, userId)
+      .query("SELECT * FROM Users WHERE UserID = @UserID");
+    return result.recordset[0];
+  } catch (error) {
+    console.error("❌ Lỗi khi tìm user theo ID:", error);
+    throw error;
+  }
+};
