@@ -10,7 +10,6 @@ import ProductDetail from "./pages/ProductDetail";
 import Stores from "./pages/Stores";
 import CategoryPage from './pages/CategoryPage';
 import Account from './pages/Account';
-import Orders from './pages/Orders';
 import SearchResults from "./pages/SearchResults";
 
 import Admin from "./pages/Admin";
@@ -30,7 +29,6 @@ function App() {
         <Route path="/stores" element={<Stores />} />
         <Route path="/collections/:categoryId" element={<CategoryPage />} />
         <Route path="/account" element={<Account />} />
-        <Route path="/orders" element={<Orders />} />
         <Route path="/search" element={<SearchResults />} />
 
         <Route path="/admin" element={<Admin />} />

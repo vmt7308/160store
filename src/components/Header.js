@@ -5,7 +5,7 @@ import gsap from "gsap";
 import logo from "../assets/img/logo.png";
 import "../assets/css/Header.css";
 import "../assets/font/font-awesome-pro-v6-6.2.0//css/all.min.css";
-import product1 from "../assets/img/product1.jpg"
+import product1 from "../assets/img/product1.jpg";
 
 function Header({ scrollToSection }) {
   // State để kiểm tra trạng thái đăng nhập
@@ -335,6 +335,7 @@ function Header({ scrollToSection }) {
   const handleLogin = async () => {
     setError("");
     try {
+      // Gửi yêu cầu đăng nhập
       const response = await axios.post(
         "http://localhost:5000/api/auth/login",
         {
@@ -342,17 +343,39 @@ function Header({ scrollToSection }) {
           password,
         }
       );
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-      closePopup();
 
-      // Cập nhật trạng thái đăng nhập
+      const { token, user } = response.data;
+      localStorage.setItem("token", token);
+
+      // Lấy thông tin chi tiết user từ API
+      const userDetailsResponse = await axios.get(
+        `http://localhost:5000/api/users/${user.id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Kết hợp thông tin từ login và thông tin chi tiết
+      const updatedUser = {
+        ...user,
+        ...userDetailsResponse.data,
+        UserID: user.id, // Đảm bảo UserID được lưu
+      };
+
+      // Lưu user vào localStorage
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
+      // Đóng popup và cập nhật trạng thái
+      closePopup();
       setIsLoggedIn(true);
-      setCurrentUser(response.data.user);
+      setCurrentUser(updatedUser);
 
       // Reset form
       setEmail("");
       setPassword("");
+
+      // Thông báo đăng nhập thành công
+      alert("Đăng nhập thành công!");
     } catch (err) {
       setError(err.response?.data?.message || "Đăng nhập thất bại. Thử lại!");
     }
@@ -376,7 +399,6 @@ function Header({ scrollToSection }) {
       .replace("₫", "đ");
   };
 
-  
   const closeProductDetails = () => {
     setShowProductPopup(false);
   };
@@ -825,7 +847,7 @@ function Header({ scrollToSection }) {
             <button className="cart-edit" onClick={() => navigate("/cart")}>
               CHỈNH SỬA GIỎ HÀNG
             </button>
-            
+
             <button className="close-btn" onClick={closePopup}>
               <i className="fa-light fa-xmark"></i>
             </button>
@@ -845,7 +867,7 @@ function Header({ scrollToSection }) {
                 onClick={(e) => {
                   e.stopPropagation(); // Ngăn sự kiện lan lên document
                   // console.log("Navigating to /account"); // Debug
-                  navigate("/account");
+                  navigate("/account?tab=account");
                   setShowUserMenu(false);
                   closePopup();
                 }}
@@ -858,7 +880,7 @@ function Header({ scrollToSection }) {
                 onClick={(e) => {
                   e.stopPropagation(); // Ngăn sự kiện lan lên document
                   // console.log("Navigating to /orders"); // Debug
-                  navigate("/orders");
+                  navigate("/account?tab=orders");
                   setShowUserMenu(false);
                   closePopup();
                 }}

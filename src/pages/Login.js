@@ -42,12 +42,32 @@ function Login() {
       return;
     }
     try {
+      // Gửi yêu cầu đăng nhập
       const response = await axios.post(
         "http://localhost:5000/api/auth/login",
         formData
       );
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      const { token, user } = response.data;
+      localStorage.setItem("token", token);
+
+      // Lấy thông tin chi tiết user từ API
+      const userDetailsResponse = await axios.get(
+        `http://localhost:5000/api/users/${user.id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Kết hợp thông tin từ login và thông tin chi tiết
+      const updatedUser = {
+        ...user,
+        ...userDetailsResponse.data,
+        UserID: user.id, // Đảm bảo UserID được lưu
+      };
+
+      // Lưu user vào localStorage
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
       alert("Đăng nhập thành công!");
       navigate(redirect);
     } catch (error) {
