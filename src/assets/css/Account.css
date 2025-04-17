@@ -1,80 +1,71 @@
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+
 .account-container {
-    display: flex;
     min-height: 100vh;
-    background-color: #f5f5f5;
+    background-color: #f4f4f5;
 }
 
-.sidebar {
-    width: 250px;
+.account-layout {
+    display: flex;
+    min-height: calc(100vh - 120px);
+}
+
+.tabs {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 200px;
     background-color: #fff;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    transition: width 0.3s ease;
-    overflow: hidden;
+    padding-top: 20px;
 }
 
-.sidebar.closed {
-    width: 100px;
+.tabs .line {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 6px;
+    height: 0;
+    background-color: #c23564;
+    transition: all 0.2s ease;
 }
 
-.sidebar-header {
+.tab-item {
+    padding: 16px 20px;
+    font-size: 18px;
+    color: #000;
+    background-color: #fff;
+    border-left: 5px solid transparent;
+    opacity: 0.6;
+    cursor: pointer;
+    transition: all 0.5s ease;
     display: flex;
     align-items: center;
-    padding: 15px;
-    background-color: #007bff;
-    color: #fff;
-    cursor: pointer;
 }
 
-.sidebar-header i {
-    font-size: 24px;
+.tab-icon {
+    font-size: 20px;
+    width: 32px;
+    position: relative;
+    top: 2px;
     margin-right: 10px;
 }
 
-.sidebar-header h2 {
-    margin: 0;
-    font-size: 18px;
+.tab-item:hover {
+    opacity: 1;
+    background-color: rgba(194, 53, 100, 0.05);
+    border-color: rgba(194, 53, 100, 0.1);
 }
 
-.sidebar ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.sidebar ul li {
-    display: flex;
-    align-items: center;
-    padding: 15px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.sidebar ul li i {
-    font-size: 18px;
-    margin-right: 10px;
-}
-
-.sidebar ul li:hover,
-.sidebar ul li.active {
-    background-color: #e9ecef;
-}
-
-.sidebar.closed ul li span {
-    display: none;
+.tab-item.active {
+    opacity: 1;
 }
 
 .main-content {
     flex: 1;
     padding: 20px;
-    transition: margin-left 0.3s ease;
-}
-
-.main-content.sidebar-open {
-    margin-left: 250px;
-}
-
-.main-content.sidebar-closed {
-    margin-left: 60px;
+    display: flex;
+    flex-direction: column;
 }
 
 .account-info,
@@ -83,16 +74,52 @@
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    flex: 1;
+}
+
+/* Underline for THÔNG TIN TÀI KHOẢN and ĐƠN HÀNG ĐÃ MUA */
+.account-info h2,
+.orders-info h2 {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+.account-info h2::after,
+.orders-info h2::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #c23564;
 }
 
 .account-columns {
-    display: flex;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 30px;
+    row-gap: 20px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+/* Vertical separator between Thông tin cá nhân and Đổi mật khẩu */
+.account-columns::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 100%;
+    background-color: #ddd;
 }
 
 .user-info-column,
 .password-column {
-    flex: 1;
+    padding: 10px;
 }
 
 .info-section {
@@ -103,6 +130,7 @@
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
+    color: #333;
 }
 
 .info-section input {
@@ -110,27 +138,42 @@
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.info-section input:focus {
+    border-color: #71be34;
+    box-shadow: 0 0 5px rgba(113, 190, 52, 0.3);
+    outline: none;
 }
 
 .update-btn,
 .change-password-btn {
-    background-color: #007bff;
+    font-size: 16px;
+    background-color: #71be34;
     color: #fff;
-    padding: 10px 20px;
+    padding: 12px;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 15px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    /* Ensure both buttons have the same width */
+    box-sizing: border-box;
+    /* Ensure padding doesn't affect width */
 }
 
 .update-btn:hover,
 .change-password-btn:hover {
-    background-color: #0056b3;
+    background-color: #5aa026;
+    transform: scale(1.05);
 }
 
 .error-message {
-    color: red;
+    color: #ff623d;
     margin-top: 10px;
+    font-size: 14px;
 }
 
 .orders-table,
@@ -152,19 +195,30 @@
 .orders-table th,
 .order-details-table th {
     background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.orders-table td {
+    transition: background-color 0.3s ease;
+}
+
+.orders-table tr:hover td {
+    background-color: #f1f1f1;
 }
 
 .orders-table button {
-    background-color: #007bff;
+    background-color: #71be34;
     color: #fff;
     border: none;
     padding: 5px 10px;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .orders-table button:hover {
-    background-color: #0056b3;
+    background-color: #5aa026;
+    transform: scale(1.05);
 }
 
 .order-details-overlay {
@@ -178,6 +232,7 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    animation: fadeIn 0.3s ease;
 }
 
 .order-details-popup {
@@ -187,6 +242,7 @@
     max-width: 600px;
     width: 90%;
     position: relative;
+    animation: slideUp 0.3s ease;
 }
 
 .close-popup {
@@ -197,11 +253,18 @@
     border: none;
     font-size: 20px;
     cursor: pointer;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.close-popup:hover {
+    color: #ff623d;
+    transform: rotate(90deg);
 }
 
 .order-total {
     margin-top: 15px;
     font-weight: bold;
+    color: #333;
 }
 
 .animate-slide-in {
@@ -218,4 +281,98 @@
         opacity: 1;
         transform: translateX(0);
     }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Password toggle styles */
+.password-field {
+    position: relative;
+    width: 100%;
+}
+
+.password-field input {
+    width: 100%;
+    padding-right: 40px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #777;
+    z-index: 10;
+    opacity: 0.7;
+    transition: all 0.3s ease-in-out;
+}
+
+.toggle-password:hover {
+    opacity: 1;
+    color: #ffb702;
+}
+
+.toggle-password:focus {
+    outline: none;
+}
+
+.toggle-password i {
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.toggle-password:active {
+    transform: translateY(-50%) scale(1.2);
+}
+
+/* Separator above Đăng xuất */
+.tab-item:nth-child(3) {
+    position: relative;
+}
+
+.tab-item:nth-child(3)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    /* Adjust this value to center the separator (considering the 16px padding of tab-item) */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 2px;
+    background-color: #ccc;
 }
