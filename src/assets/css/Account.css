@@ -363,6 +363,7 @@
 /* Separator above Đăng xuất */
 .tab-item:nth-child(3) {
     position: relative;
+    color: red;
 }
 
 .tab-item:nth-child(3)::before {
