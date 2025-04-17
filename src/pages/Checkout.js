@@ -269,14 +269,47 @@ const Checkout = () => {
                 placeholder="Nhập họ và tên"
               />
               <label>Email</label>
-              <input
-                type="email"
-                value={updatedUser.Email}
-                onChange={(e) =>
-                  setUpdatedUser({ ...updatedUser, Email: e.target.value })
-                }
-                placeholder="Nhập email"
-              />
+              <div
+                style={{
+                  position: "relative",
+                  display: "inline-block",
+                  width: "100%",
+                }}
+              >
+                <input
+                  type="email"
+                  value={updatedUser.Email}
+                  onChange={(e) =>
+                    setUpdatedUser({ ...updatedUser, Email: e.target.value })
+                  }
+                  placeholder="Nhập email"
+                  readOnly
+                  tabIndex={-1}
+                  onFocus={(e) => e.target.blur()}
+                  style={{
+                    backgroundColor: "#f0f0f0",
+                    color: "#666",
+                    cursor: "not-allowed",
+                    outline: "none",
+                    paddingRight: "30px", // chừa chỗ cho icon
+                    width: "100%",
+                  }}
+                  title="Email là tài khoản (username) của bạn nên không thể thay đổi!"
+                />
+                <span
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    pointerEvents: "none", // không ảnh hưởng đến input
+                    color: "#999",
+                  }}
+                  title="Email là tài khoản (username) của bạn nên không thể thay đổi!"
+                >
+                  <i class="fa-solid fa-lock"></i>
+                </span>
+              </div>
               <label>Số điện thoại</label>
               <input
                 type="text"

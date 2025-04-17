@@ -93,3 +93,43 @@ exports.requestResetPassword = async (req, res) => {
     res.status(500).json({ message: "❌ Lỗi server!" });
   }
 };
+
+// Change Password
+exports.changePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const userId = req.user.userId; // From authMiddleware
+
+  try {
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("UserID", sql.Int, userId)
+      .query("SELECT PasswordHash FROM Users WHERE UserID = @UserID");
+
+    const user = result.recordset[0];
+    if (!user) {
+      return res.status(404).json({ message: "Người dùng không tồn tại!" });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.PasswordHash);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Mật khẩu hiện tại không đúng!" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await pool
+      .request()
+      .input("UserID", sql.Int, userId)
+      .input("PasswordHash", sql.NVarChar, hashedPassword)
+      .query(
+        "UPDATE Users SET PasswordHash = @PasswordHash WHERE UserID = @UserID"
+      );
+
+    res.json({ message: "Đổi mật khẩu thành công!" });
+  } catch (error) {
+    console.error("❌ Lỗi khi đổi mật khẩu:", error);
+    res.status(500).json({ message: "❌ Lỗi server!" });
+  }
+};
