@@ -11,7 +11,18 @@ module.exports = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+
+    // Kiểm tra loại token và gán vào req.user hoặc req.admin
+    if (decoded.userId) {
+      req.user = decoded; // Gán cho user nếu token chứa userId
+    } else if (decoded.adminId) {
+      req.admin = decoded; // Gán cho admin nếu token chứa adminId
+    } else {
+      return res
+        .status(401)
+        .json({ message: "Token không chứa thông tin hợp lệ!" });
+    }
+
     next();
   } catch (error) {
     res.status(401).json({ message: "Token không hợp lệ!" });

@@ -11,6 +11,8 @@ const listProductRoute = require("./routes/listProductRoute");
 const userRoutes = require("./routes/userRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 
+const adminRoutes = require("./routes/adminRoutes");
+
 const app = express();
 
 // Middleware: Cho phép FE truy cập
@@ -32,6 +34,8 @@ app.use("/api/list-categories", listCategoryRoute);
 app.use("/api/list-products", listProductRoute);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
+
+app.use("/api/admin", adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

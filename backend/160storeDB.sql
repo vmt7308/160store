@@ -163,3 +163,14 @@ ADD
     PaymentMethod NVARCHAR(50),
     OrderNotes NVARCHAR(255),
     VoucherCode NVARCHAR(50);
+
+/* - Hãy check file backend/hash-password.js 
+	để biết cách tạo mật khẩu đã được mã hóa hash bằng bcrypt 
+	trước khi thêm tài khoản Admin
+   - Mật khẩu trước khi hash là: admin123 */
+INSERT INTO Admins (FullName, Email, PasswordHash)
+VALUES ('Admin User', 'admin@160store.com', '$2b$10$N//bYagzKoLs/XH3TUI9Seg69Qjs6WrKEow5V1CyP6hggvdIZfLfK');
+
+/* Xóa 1 Admin */
+-- DELETE FROM [160storeDB].[dbo].[Admins]
+-- WHERE [AdminID] = 1; -- Thay 1 bằng ID của admin cần xóa
