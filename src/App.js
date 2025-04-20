@@ -8,8 +8,8 @@ import Checkout from "./pages/Checkout";
 import Product from "./pages/Product";
 import ProductDetail from "./pages/ProductDetail";
 import Stores from "./pages/Stores";
-import CategoryPage from './pages/CategoryPage';
-import Account from './pages/Account';
+import CategoryPage from "./pages/CategoryPage";
+import Account from "./pages/Account";
 import SearchResults from "./pages/SearchResults";
 
 import Admin from "./pages/Admin";
@@ -24,7 +24,10 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/products" element={<Product id="1" title="Sản phẩm mới" />} />
+        <Route
+          path="/products"
+          element={<Product id="1" title="Sản phẩm mới" />}
+        />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/stores" element={<Stores />} />
         <Route path="/collections/:categoryId" element={<CategoryPage />} />
@@ -32,7 +35,7 @@ function App() {
         <Route path="/search" element={<SearchResults />} />
 
         <Route path="/admin" element={<Admin />} />
-
+        <Route path="/admin/:tab" element={<Admin />} />
       </Routes>
     </>
   );
