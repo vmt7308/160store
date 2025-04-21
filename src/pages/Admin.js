@@ -36,6 +36,74 @@ function Admin() {
     status: "",
   });
 
+  // Toast function
+  const toast = ({
+    title = "",
+    message = "",
+    type = "info",
+    duration = 3000,
+  }) => {
+    const main = document.getElementById("toast");
+    if (main) {
+      const toast = document.createElement("div");
+
+      const autoRemoveId = setTimeout(function () {
+        main.removeChild(toast);
+      }, duration + 1000);
+
+      toast.onclick = function (e) {
+        if (e.target.closest(".toast__close")) {
+          main.removeChild(toast);
+          clearTimeout(autoRemoveId);
+        }
+      };
+
+      const icons = {
+        success: "fas fa-check-circle",
+        info: "fas fa-info-circle",
+        warning: "fas fa-exclamation-circle",
+        error: "fas fa-exclamation-circle",
+      };
+      const icon = icons[type];
+      const delay = (duration / 1000).toFixed(2);
+
+      toast.classList.add("toast", `toast--${type}`);
+      toast.style.animation = `slideInLeft ease .3s, fadeOut linear 1s ${delay}s forwards`;
+
+      toast.innerHTML = `
+        <div class="toast__icon">
+            <i class="${icon}"></i>
+        </div>
+        <div class="toast__body">
+            <h3 class="toast__title">${title}</h3>
+            <p class="toast__msg">${message}</p>
+        </div>
+        <div class="toast__close">
+            <i class="fas fa-times"></i>
+        </div>
+      `;
+      main.appendChild(toast);
+    }
+  };
+
+  const showSuccessToast = (message) => {
+    toast({
+      title: "Thành công!",
+      message,
+      type: "success",
+      duration: 5000,
+    });
+  };
+
+  const showErrorToast = (message) => {
+    toast({
+      title: "Thất bại!",
+      message,
+      type: "error",
+      duration: 5000,
+    });
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("adminToken");
     if (token) {
@@ -68,10 +136,12 @@ function Admin() {
       setOrders(ordersRes.data);
       setStats(statsRes.data);
       setAdminInfo(adminRes.data);
+      // showSuccessToast("Lấy dữ liệu thành công.");
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu:", error);
       localStorage.removeItem("adminToken");
       setIsAuthenticated(false);
+      showErrorToast("Có lỗi xảy ra khi lấy dữ liệu, vui lòng thử lại.");
     }
   };
 
@@ -79,6 +149,7 @@ function Admin() {
     e.preventDefault();
     if (!email || !password) {
       setError("Vui lòng nhập đầy đủ email và mật khẩu!");
+      showErrorToast("Vui lòng nhập đầy đủ email và mật khẩu.");
       return;
     }
 
@@ -92,8 +163,12 @@ function Admin() {
       setError("");
       navigate("/admin/dashboard");
       fetchData(res.data.token);
+      showSuccessToast("Đăng nhập thành công.");
     } catch (error) {
       setError(error.response?.data?.message || "Lỗi server!");
+      showErrorToast(
+        error.response?.data?.message || "Lỗi server, vui lòng thử lại."
+      );
     }
   };
 
@@ -101,6 +176,7 @@ function Admin() {
     localStorage.removeItem("adminToken");
     setIsAuthenticated(false);
     navigate("/admin");
+    showSuccessToast("Đăng xuất thành công.");
   };
 
   const handleTabChange = (tab) => {
@@ -126,8 +202,10 @@ function Admin() {
       );
       fetchData(localStorage.getItem("adminToken"));
       setFormData({ ...formData, categoryName: "" });
+      showSuccessToast("Tạo danh mục thành công.");
     } catch (error) {
       console.error("Lỗi khi tạo danh mục:", error);
+      showErrorToast("Có lỗi xảy ra khi tạo danh mục, vui lòng thử lại.");
     }
   };
 
@@ -143,8 +221,10 @@ function Admin() {
         }
       );
       fetchData(localStorage.getItem("adminToken"));
+      showSuccessToast("Cập nhật danh mục thành công.");
     } catch (error) {
       console.error("Lỗi khi cập nhật danh mục:", error);
+      showErrorToast("Có lỗi xảy ra khi cập nhật danh mục, vui lòng thử lại.");
     }
   };
 
@@ -159,8 +239,10 @@ function Admin() {
         }
       );
       fetchData(localStorage.getItem("adminToken"));
+      showSuccessToast("Xóa danh mục thành công.");
     } catch (error) {
       console.error("Lỗi khi xóa danh mục:", error);
+      showErrorToast("Có lỗi xảy ra khi xóa danh mục, vui lòng thử lại.");
     }
   };
 
@@ -191,8 +273,10 @@ function Admin() {
         price: "",
         descriptions: "",
       });
+      showSuccessToast("Tạo sản phẩm thành công.");
     } catch (error) {
       console.error("Lỗi khi tạo sản phẩm:", error);
+      showErrorToast("Có lỗi xảy ra khi tạo sản phẩm, vui lòng thử lại.");
     }
   };
 
@@ -214,8 +298,10 @@ function Admin() {
         }
       );
       fetchData(localStorage.getItem("adminToken"));
+      showSuccessToast("Cập nhật sản phẩm thành công.");
     } catch (error) {
       console.error("Lỗi khi cập nhật sản phẩm:", error);
+      showErrorToast("Có lỗi xảy ra khi cập nhật sản phẩm, vui lòng thử lại.");
     }
   };
 
@@ -230,8 +316,10 @@ function Admin() {
         }
       );
       fetchData(localStorage.getItem("adminToken"));
+      showSuccessToast("Xóa sản phẩm thành công.");
     } catch (error) {
       console.error("Lỗi khi xóa sản phẩm:", error);
+      showErrorToast("Có lỗi xảy ra khi xóa sản phẩm, vui lòng thử lại.");
     }
   };
 
@@ -252,8 +340,12 @@ function Admin() {
         }
       );
       fetchData(localStorage.getItem("adminToken"));
+      showSuccessToast("Cập nhật thông tin khách hàng thành công.");
     } catch (error) {
       console.error("Lỗi khi cập nhật user:", error);
+      showErrorToast(
+        "Có lỗi xảy ra khi cập nhật khách hàng, vui lòng thử lại."
+      );
     }
   };
 
@@ -265,8 +357,10 @@ function Admin() {
         },
       });
       fetchData(localStorage.getItem("adminToken"));
+      showSuccessToast("Xóa khách hàng thành công.");
     } catch (error) {
       console.error("Lỗi khi xóa user:", error);
+      showErrorToast("Có lỗi xảy ra khi xóa khách hàng, vui lòng thử lại.");
     }
   };
 
@@ -282,8 +376,12 @@ function Admin() {
         }
       );
       fetchData(localStorage.getItem("adminToken"));
+      showSuccessToast("Cập nhật trạng thái đơn hàng thành công.");
     } catch (error) {
       console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
+      showErrorToast(
+        "Có lỗi xảy ra khi cập nhật trạng thái đơn hàng, vui lòng thử lại."
+      );
     }
   };
 
@@ -300,14 +398,19 @@ function Admin() {
         }
       );
       fetchData(localStorage.getItem("adminToken"));
+      showSuccessToast("Cập nhật thông tin admin thành công.");
     } catch (error) {
       console.error("Lỗi khi cập nhật thông tin admin:", error);
+      showErrorToast(
+        "Có lỗi xảy ra khi cập nhật thông tin admin, vui lòng thử lại."
+      );
     }
   };
 
   if (!isAuthenticated) {
     return (
       <div className="admin-login-container">
+        <div id="toast"></div>
         <h2>Đăng nhập Admin</h2>
         <form onSubmit={handleLogin}>
           <div className="form-group">
@@ -357,13 +460,13 @@ function Admin() {
             className={activeTab === "dashboard" ? "active" : ""}
             onClick={() => handleTabChange("dashboard")}
           >
-            Dashboard
+            Tổng quan
           </li>
           <li
             className={activeTab === "users" ? "active" : ""}
             onClick={() => handleTabChange("users")}
           >
-            Quản lý khách hàng
+            Khách hàng
           </li>
           <li
             className={activeTab === "categories" ? "active" : ""}
@@ -381,7 +484,7 @@ function Admin() {
             className={activeTab === "orders" ? "active" : ""}
             onClick={() => handleTabChange("orders")}
           >
-            Xác nhận đơn hàng
+            Đơn hàng
           </li>
           <li
             className={activeTab === "stats" ? "active" : ""}
@@ -393,12 +496,13 @@ function Admin() {
             className={activeTab === "profile" ? "active" : ""}
             onClick={() => handleTabChange("profile")}
           >
-            Thông tin Admin
+            Admin
           </li>
           <li onClick={handleLogout}>Đăng xuất</li>
         </ul>
       </aside>
       <main className="dashboard">
+        <div id="toast"></div>
         {activeTab === "dashboard" && (
           <div>
             <h1>Tổng quan</h1>
@@ -668,7 +772,7 @@ function Admin() {
             <table className="admin-table">
               <thead>
                 <tr>
-                  <th>ID Đơn hàng</th>
+                  <th>ID</th>
                   <th>Khách hàng</th>
                   <th>Ngày đặt</th>
                   <th>Tổng tiền</th>
