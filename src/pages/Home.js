@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import gsap from "gsap";
 import Header from "../components/Header";
@@ -18,6 +19,7 @@ import product1 from "../assets/img/product1.jpg";
 import "../assets/font/font-awesome-pro-v6-6.2.0/css/all.min.css";
 
 function Home() {
+  const navigate = useNavigate();
   const banners = [banner1, banner2, banner3, banner4];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -395,6 +397,11 @@ function Home() {
     window.dispatchEvent(new Event("cartUpdated"));
   };
 
+  // Handler for product item click
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
   return (
     <div>
       <Header
@@ -485,7 +492,12 @@ function Home() {
                   <div className="product-grid">
                     {displayedProducts.length > 0 ? (
                       displayedProducts.map((product) => (
-                        <div key={product.ProductID} className="product-item">
+                        <div
+                          key={product.ProductID}
+                          className="product-item"
+                          onClick={() => handleProductClick(product.ProductID)}
+                          style={{ cursor: "pointer" }}
+                        >
                           <div className="product-image-container">
                             <div
                               className="product-tag"
@@ -507,7 +519,7 @@ function Home() {
                             <button
                               className="quick-view-btn"
                               onClick={(e) => {
-                                e.stopPropagation();
+                                e.stopPropagation(); // Prevent triggering product-item click
                                 handleQuickView(product);
                               }}
                             >
