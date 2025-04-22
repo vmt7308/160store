@@ -5,6 +5,7 @@ const {
   getProductsByCategory,
   searchProducts,
 } = require("../models/productModel");
+const { poolPromise, sql } = require("../db");
 
 // API: Lấy tất cả sản phẩm
 router.get("/", async (req, res) => {
@@ -19,6 +20,37 @@ router.get("/", async (req, res) => {
     res.json(products);
   } catch (err) {
     console.error("❌ Lỗi lấy sản phẩm:", err);
+    res.status(500).json({ error: "❌ Lỗi server!" });
+  }
+});
+
+// API: Lấy sản phẩm theo ID
+router.get("/:id", async (req, res) => {
+  try {
+    const productId = parseInt(req.params.id);
+    if (isNaN(productId) || productId <= 0) {
+      return res.status(400).json({ error: "❌ ID sản phẩm không hợp lệ!" });
+    }
+
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("ProductID", sql.Int, productId)
+      .query("SELECT * FROM Products WHERE ProductID = @ProductID");
+
+    const product = result.recordset[0];
+    if (!product) {
+      return res.status(404).json({ error: "❌ Sản phẩm không tồn tại!" });
+    }
+
+    res.json({
+      ...product,
+      imageUrl: product.ImageURL
+        ? `http://localhost:5000/${product.ImageURL}`
+        : null,
+    });
+  } catch (err) {
+    console.error("❌ Lỗi lấy sản phẩm theo ID:", err);
     res.status(500).json({ error: "❌ Lỗi server!" });
   }
 });
