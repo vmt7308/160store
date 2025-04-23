@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // Thêm useNavigate
 import axios from "axios";
 import gsap from "gsap";
 import Header from "../components/Header";
@@ -9,6 +9,7 @@ import product1 from "../assets/img/product1.jpg"; // Ảnh mặc định
 
 function CategoryPage() {
   const { categoryId } = useParams();
+  const navigate = useNavigate();
   const [category, setCategory] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -170,6 +171,11 @@ function CategoryPage() {
     setShowProductDetails(true);
   };
 
+  // Hàm xử lý khi nhấp vào sản phẩm để chuyển đến trang chi tiết ProductDetail.js
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
   // Hàm tăng số lượng
   const increaseQuantity = () => {
     setQuantity((prev) => prev + 1);
@@ -205,14 +211,6 @@ function CategoryPage() {
     { id: "color3", name: "Xanh dương", code: "#1A759F" },
     { id: "color4", name: "Vàng nghệ", code: "#FCBF49" },
   ];
-
-  if (loading) {
-    return <div className="loading">Đang tải...</div>;
-  }
-
-  if (!category) {
-    return <div className="not-found">Không tìm thấy danh mục</div>;
-  }
 
   // Thêm sản phẩm vào giỏ hàng
   const addToCart = (product, color, size, quantity) => {
@@ -290,6 +288,14 @@ function CategoryPage() {
     window.dispatchEvent(new Event("cartUpdated"));
   };
 
+  if (loading) {
+    return <div className="loading">Đang tải...</div>;
+  }
+
+  if (!category) {
+    return <div className="not-found">Không tìm thấy danh mục</div>;
+  }
+
   return (
     <div>
       <Header categories={categories} />
@@ -318,7 +324,12 @@ function CategoryPage() {
         {currentProducts.length > 0 ? (
           <div className="category-products-grid">
             {currentProducts.map((product) => (
-              <div key={product.ProductID} className="category-product-item">
+              <div
+                key={product.ProductID}
+                className="category-product-item"
+                onClick={() => handleProductClick(product.ProductID)}
+                style={{ cursor: "pointer" }}
+              >
                 <div className="category-product-image-container">
                   <img
                     src={product.ImageURL ? `/${product.ImageURL}` : product1}
