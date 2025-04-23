@@ -38,30 +38,62 @@
    ```
 
 2. Cài đặt dependencies cho frontend:
+
+   ```bash
    cd src
    npm install
 
+   ```
+
 3. Cài đặt dependencies cho backend:
+
+   ```bash
    cd ../backend
    npm install
+
+   ```
 
 4. Cấu hình cơ sở dữ liệu:
    - Tạo cơ sở dữ liệu và import file 160storeDB.sql từ thư mục backend/160storeDB.sql
    - Cập nhật thông tin kết nối cơ sở dữ liệu trong file .env ở thư mục backend/.env
 5. Chạy backend:
+
+   ```bash
    cd backend
    node server.js
 
+   ```
+
 6. Chạy frontend:
+
+   ```bash
    cd ../src
    npm start
 
+   ```
+
 7. Truy cập ứng dụng tại:
-   - Khách hàng (User): http://localhost:3000
-   - Quản trị viên (Admin):
-     Tài khoản Admin mặt định: admin@160store.com - admin123
-     http://localhost:3000/admin
-   - Backend: http://localhost:5000
+
+   - Khách hàng (User):
+
+   ```bash
+   http://localhost:3000
+
+   ```
+
+   - Quản trị viên (Admin): Tài khoản Admin mặt định: admin@160store.com - admin123
+
+   ```bash
+   http://localhost:3000/admin
+
+   ```
+
+   - Backend:
+
+   ```bash
+   http://localhost:5000
+
+   ```
 
 ## Cấu trúc thư mục
 
@@ -148,11 +180,26 @@
 
 1. Fork dự án.
 2. Tạo nhánh mới:
+
+   ```bash
    git checkout -b feature/your-feature
+
+   ```
+
 3. Commit thay đổi:
+
+   ```bash
    git commit -m "Add your feature"
+
+   ```
+
 4. Push nhánh
+
+   ```bash
    git push origin feature/your-feature
+
+   ```
+
 5. Tạo Pull Request.
 
 ## Liên hệ
