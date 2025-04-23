@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom"; // Thêm useNavigate
 import axios from "axios";
 import gsap from "gsap";
 import Header from "../components/Header";
@@ -14,6 +14,7 @@ function SearchResults() {
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const location = useLocation();
+  const navigate = useNavigate();
   const productsPerPage = 10; // Số sản phẩm trên mỗi trang
 
   // State cho popup chi tiết sản phẩm
@@ -150,6 +151,11 @@ function SearchResults() {
     (currentPage + 1) * productsPerPage
   );
 
+  // Hàm xử lý khi nhấp vào sản phẩm để chuyển đến trang chi tiết ProductDetail.js
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
   const nextPage = () => {
     setCurrentPage((prev) => (prev + 1) % totalPages);
   };
@@ -204,10 +210,6 @@ function SearchResults() {
   const formatPrice = (price) => {
     return Number(price).toLocaleString() + "₫";
   };
-
-  if (loading) {
-    return <div className="loading">Đang tải...</div>;
-  }
 
   // Thêm sản phẩm vào giỏ hàng
   const addToCart = (product, color, size, quantity) => {
@@ -285,6 +287,10 @@ function SearchResults() {
     window.dispatchEvent(new Event("cartUpdated"));
   };
 
+  if (loading) {
+    return <div className="loading">Đang tải...</div>;
+  }
+
   return (
     <div>
       <Header categories={categories} />
@@ -315,7 +321,12 @@ function SearchResults() {
         {currentProducts.length > 0 ? (
           <div className="category-products-grid">
             {currentProducts.map((product) => (
-              <div key={product.ProductID} className="category-product-item">
+              <div
+                key={product.ProductID}
+                className="category-product-item"
+                onClick={() => handleProductClick(product.ProductID)}
+                style={{ cursor: "pointer" }}
+              >
                 <div className="category-product-image-container">
                   <img
                     src={product.ImageURL || product1}
