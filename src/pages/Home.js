@@ -10,6 +10,7 @@ import axios from "axios";
 import gsap from "gsap";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Chatbot from "../components/Chatbot";
 import "../assets/css/Home.css";
 import banner1 from "../assets/img/banner1.jpg";
 import banner2 from "../assets/img/banner2.jpg";
@@ -742,6 +743,7 @@ function Home() {
           <i class="fa-solid fa-arrow-up"></i>
         </button>
       )}
+      <Chatbot />
       <Footer />
     </div>
   );
