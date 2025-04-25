@@ -26,6 +26,7 @@
 - Node.js >= 14.x
 - npm >= 6.x
 - MySQL hoặc SQL Server
+- Python: 3.8 đến 3.11
 
 ### Hướng dẫn cài đặt
 
@@ -40,7 +41,7 @@
 2. Cài đặt dependencies cho frontend:
 
    ```bash
-   cd src
+   cd 160store
    npm install
 
    ```
@@ -48,26 +49,54 @@
 3. Cài đặt dependencies cho backend:
 
    ```bash
-   cd ../backend
+   cd 160store/backend
    npm install
 
    ```
 
-4. Cấu hình cơ sở dữ liệu:
+4. Cấu hình cơ sở dữ liệu và python cho chatbot ai:
    - Tạo cơ sở dữ liệu và import file 160storeDB.sql từ thư mục backend/160storeDB.sql
    - Cập nhật thông tin kết nối cơ sở dữ liệu trong file .env ở thư mục backend/.env
-5. Chạy backend:
+   - Cài đặt python: Giới hạn sử dụng python version từ 3.8 đến 3.11 để tránh phát sinh lỗi chatbot ai (spaCy)
+   - Cài đặt các thư viện Python cần thiết:
 
+   ```bash
+   https://www.python.org/downloads/
+   pip install spacy pyodbc
+   python -m spacy download en_core_web_sm
+   ```
+
+5. Chạy backend:
+   Không sử dụng chatbot ai
    ```bash
    cd backend
    node server.js
 
    ```
+   Sử dụng chatbot ai
+   ```bash
+   Mở Command Prompt hoặc PowerShell: Cd đến thư mục dự án lưu file của bạn
+   Ví dụ: cd C:\Users\VMT\Desktop\160store\backend
+
+   Tiếp theo tạo biến môi trường:
+   python -m venv venv
+
+   Kích hoạt môi trường ảo:
+   .\venv\Scripts\activate
+   => Sau đó (venv) xuất hiện trước dấu nhắc lệnh
+
+   Cài đặt các thư viện sau:
+   pip install spacy pyodbc
+   python.exe -m pip install --upgrade pip
+   python -m spacy download en_core_web_sm
+   Lưu ý phải Kích hoạt môi trường ảo: .\venv\Scripts\activate rồi mới chạy cd backend rồi node server.js để Chatbot AI hoạt động
+   
+   ```
 
 6. Chạy frontend:
 
    ```bash
-   cd ../src
+   cd 160store
    npm start
 
    ```
@@ -140,6 +169,7 @@
 - Giỏ hàng: Quản lý sản phẩm trong giỏ hàng.
 - Thanh toán: Hỗ trợ thanh toán COD và MoMo.
 - Tài khoản: Quản lý thông tin cá nhân và lịch sử đơn hàng.
+- Chatbot AI
 
 2. Backend
 
@@ -147,6 +177,7 @@
 - Quản lý danh mục: CRUD Thêm, sửa, xóa danh mục.
 - Quản lý đơn hàng: Xác nhận, cập nhật trạng thái đơn hàng.
 - Quản lý người dùng: CRUD Thêm, sửa, xóa tài khoản người dùng.
+- Chatbot AI
 
 ## API Backend
 
@@ -174,8 +205,9 @@
 
 1. Frontend: HTML, CSS, JAVASCRIPT, ReactJS, React Router, Axios
 2. Backend: Node.js, Express.js, MSSQL Server (hoặc MySQL)
-3. Khác: CSS3 và GSAP (Hiệu ứng động cho thêm sản phẩm vào giỏ hàng)
-
+3. Khác: 
+   - CSS3, GSAP (Hiệu ứng động cho thêm sản phẩm vào giỏ hàng)
+   - Python for Chatbot AI with spaCy xử lý ngôn ngữ tự nhiên NLP
 ## Đóng góp
 
 1. Fork dự án.

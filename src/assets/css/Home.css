@@ -89,7 +89,7 @@
 /* Nút quay lại đầu trang */
 .scroll-to-top {
     position: fixed;
-    bottom: 13px;
+    bottom: 16px;
     right: 13px;
     background-color: rgb(255, 172, 25);
     color: white;
@@ -125,8 +125,8 @@
 /* Nút liên hệ */
 .contact-container {
     position: fixed;
-    bottom: 120px;
-    right: 20px;
+    bottom: 150px;
+    right: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -137,7 +137,7 @@
     background-color: #e74c3c;
     color: white;
     border: none;
-    padding: 15px;
+    padding: 10px;
     font-size: 24px;
     border-radius: 50%;
     cursor: pointer;
