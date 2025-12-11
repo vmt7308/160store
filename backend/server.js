@@ -17,7 +17,14 @@ const adminRoutes = require("./routes/adminRoutes");
 const app = express();
 
 // Middleware: Cho phép FE truy cập
-app.use(cors({ origin: "http://localhost:3000" }));
+// FIX CORS – CHO PHÉP localhost:3000 GỌI localhost:5000
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true, // Cho phép gửi cookie/token
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
 app.use(express.json());
 
 // Cho phép truy cập ảnh từ thư mục uploads

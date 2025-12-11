@@ -51,8 +51,8 @@ function Register() {
 
         const data = await response.json();
         if (response.ok) {
-          setServerMessage("✅ Đăng ký thành công!");
-          setTimeout(() => navigate("/login"), 2000);
+          setServerMessage("✅ Đăng ký thành công! Kiểm tra email để xác thực.");
+          setTimeout(() => navigate("/login"), 3000);
         } else {
           setServerMessage(`❌ ${data.message}`);
         }

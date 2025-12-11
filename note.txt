@@ -1,0 +1,5 @@
+- Responsive
+- Deploy
+- Figma
+- Dashboard phân tích dữ liệu (d3.js): trực quan hóa dữ liệu
+- Web crawler / web scraping: thu thập dữ liệu từ web để phân tích của người dùng xem sản phẩm nào nhiều nhất, mua nhiều
