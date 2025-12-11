@@ -1,7 +1,7 @@
 require("dotenv").config();
 const { poolPromise, sql } = require("../db");
 
-// Tạo tài khoản
+// Tạo tài khoản (thêm IsVerified = 0)
 exports.createUser = async (fullName, email, hashedPassword) => {
   try {
     const pool = await poolPromise;
@@ -10,8 +10,9 @@ exports.createUser = async (fullName, email, hashedPassword) => {
       .input("FullName", sql.NVarChar, fullName)
       .input("Email", sql.NVarChar, email)
       .input("PasswordHash", sql.NVarChar, hashedPassword)
+      .input("IsVerified", sql.Bit, 0)
       .query(
-        "INSERT INTO Users (FullName, Email, PasswordHash) VALUES (@FullName, @Email, @PasswordHash)"
+        "INSERT INTO Users (FullName, Email, PasswordHash, IsVerified) VALUES (@FullName, @Email, @PasswordHash, @IsVerified)"
       );
   } catch (error) {
     console.error("❌ Lỗi khi tạo user:", error);
