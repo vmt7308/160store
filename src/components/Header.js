@@ -28,6 +28,7 @@ function Header({ scrollToSection }) {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+  const advancedSearchRef = useRef(null);
 
   // State cho Popup hiển thị chi tiết sản phẩm khi nháy vào kết quả tìm kiếm
   const [showProductPopup, setShowProductPopup] = useState(false);
@@ -129,6 +130,15 @@ function Header({ scrollToSection }) {
       ) {
         setShowProductPopup(false);
         setSelectedProduct(null);
+      }
+
+      // Xử lý click outside để ẩn bộ lộc tìm kiếm
+      if (advancedSearchRef.current && !advancedSearchRef.current.contains(event.target)) {
+        // Kiểm tra nếu không phải nút toggle thì mới đóng
+        const toggleBtn = document.querySelector(".advanced-search-toggle");
+        if (toggleBtn && !toggleBtn.contains(event.target)) {
+          setShowAdvancedSearch(false);
+        }
       }
     };
 
@@ -572,60 +582,64 @@ function Header({ scrollToSection }) {
 
             {/* Advanced Search */}
             {showAdvancedSearch && (
-              <div className="advanced-search">
-                <div className="search-filter">
-                  <div className="filter-section">
-                    <label>Danh mục:</label>
-                    <select
-                      value={selectedCategory || ""}
-                      onChange={(e) =>
-                        setSelectedCategory(
-                          e.target.value ? Number(e.target.value) : null
-                        )
-                      }
-                    >
-                      <option value="">Tất cả danh mục</option>
-                      {categories.map((cat) => (
-                        <option key={cat.CategoryID} value={cat.CategoryID}>
-                          {cat.CategoryName}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="filter-section price-range">
-                    <label>Khoảng giá:</label>
-                    <div className="price-inputs">
-                      <input
-                        type="number"
-                        placeholder="Từ"
-                        value={priceRange.min}
+              <div className="advanced-search-panel" ref={advancedSearchRef}>
+                <div className="advanced-search">
+                  <div className="search-filter">
+                    <div className="filter-section">
+                      <label>Danh mục:</label>
+                      <select
+                        value={selectedCategory || ""}
                         onChange={(e) =>
-                          setPriceRange({ ...priceRange, min: e.target.value })
+                          setSelectedCategory(
+                            e.target.value ? Number(e.target.value) : null
+                          )
                         }
-                      />
-                      <span>-</span>
-                      <input
-                        type="number"
-                        placeholder="Đến"
-                        value={priceRange.max}
-                        onChange={(e) =>
-                          setPriceRange({ ...priceRange, max: e.target.value })
-                        }
-                      />
+                      >
+                        <option value="">Tất cả danh mục</option>
+                        {categories.map((cat) => (
+                          <option key={cat.CategoryID} value={cat.CategoryID}>
+                            {cat.CategoryName}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="filter-section price-range">
+                      <label>Khoảng giá:</label>
+                      <div className="price-inputs">
+                        <input
+                          type="number"
+                          placeholder="Từ"
+                          min="0"
+                          value={priceRange.min}
+                          onChange={(e) =>
+                            setPriceRange({ ...priceRange, min: e.target.value })
+                          }
+                        />
+                        <span>-</span>
+                        <input
+                          type="number"
+                          placeholder="Đến"
+                          min="0"
+                          value={priceRange.max}
+                          onChange={(e) =>
+                            setPriceRange({ ...priceRange, max: e.target.value })
+                          }
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="filter-actions">
-                  <button
-                    type="button"
-                    className="reset-filters"
-                    onClick={resetSearch}
-                  >
-                    Xóa bộ lọc
-                  </button>
-                  <button type="submit" className="apply-filters">
-                    Áp dụng
-                  </button>
+                  <div className="filter-actions">
+                    <button
+                      type="button"
+                      className="reset-filters"
+                      onClick={resetSearch}
+                    >
+                      Xóa bộ lọc
+                    </button>
+                    <button type="submit" className="apply-filters" onClick={() => { setShowAdvancedSearch(false); }} >
+                      Áp dụng
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
