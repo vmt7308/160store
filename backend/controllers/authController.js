@@ -202,38 +202,57 @@ exports.login = async (req, res) => {
   }
 };
 
-// Reset Password
+// Khôi phục mật khẩu – gửi link reset qua email
 exports.requestResetPassword = async (req, res) => {
+  const { email } = req.body;
+
   try {
-    const { email } = req.body;
     const user = await findUserByEmail(email);
+    if (!user) return res.status(400).json({ message: "❌ Email không tồn tại!" });
 
-    if (!user) return res.status(400).json({ message: "Email không tồn tại!" });
+    const resetToken = jwt.sign({ userId: user.UserID }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    // Tạo mật khẩu mới mặc định
-    const newPassword = "123456";
+    const resetLink = `http://localhost:3000/reset-password?token=${resetToken}`;
 
-    // Mã hóa mật khẩu mới
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Khôi phục mật khẩu 160store",
+      html: `
+        <p>Xin chào,</p>
+        <p>Click vào link dưới để khôi phục mật khẩu:</p>
+        <a href="${resetLink}">Khôi phục mật khẩu</a>
+        <p>Link hết hạn sau 1 giờ. Nếu không phải bạn, bỏ qua.</p>
+      `,
+    });
+
+    res.json({ message: "✅ Link khôi phục đã gửi đến email của bạn!" });
+  } catch (error) {
+    console.error("❌ Lỗi gửi reset password:", error);
+    res.status(500).json({ message: "❌ Lỗi server!" });
+  }
+};
+
+// Đổi mật khẩu mới từ token reset
+exports.resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const { userId } = decoded;
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-    // Cập nhật mật khẩu mới vào database
     const pool = await poolPromise;
-    await pool
-      .request()
-      .input("Email", sql.NVarChar, email)
+    await pool.request()
+      .input("UserID", sql.Int, userId)
       .input("PasswordHash", sql.NVarChar, hashedPassword)
-      .query(
-        "UPDATE Users SET PasswordHash = @PasswordHash WHERE Email = @Email"
-      );
+      .query("UPDATE Users SET PasswordHash = @PasswordHash WHERE UserID = @UserID");
 
-    return res.json({
-      message:
-        "Mật khẩu đã được đặt lại. Vui lòng sử dụng mật khẩu mới là: 123456 để đăng nhập. Để bảo mật thông tin vui lòng đổi mật khẩu mới sau khi đăng nhập!",
-    });
+    res.json({ message: "✅ Mật khẩu đã được khôi phục thành công!" });
   } catch (error) {
-    console.error("❌ Lỗi đặt lại mật khẩu:", error);
-    res.status(500).json({ message: "❌ Lỗi server!" });
+    res.status(400).json({ message: "❌ Link hết hạn hoặc không hợp lệ!" });
   }
 };
 
