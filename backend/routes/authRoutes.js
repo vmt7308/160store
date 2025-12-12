@@ -6,6 +6,7 @@ const {
   requestResetPassword,
   changePassword,
   verifyEmail,
+  resetPassword,
 } = require("../controllers/authController");
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -15,5 +16,6 @@ router.post("/reset-password", requestResetPassword);
 router.post("/change-password", authMiddleware, changePassword);
 
 router.get("/verify", verifyEmail);
+router.post("/reset", resetPassword);
 
 module.exports = router;
