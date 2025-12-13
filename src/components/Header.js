@@ -391,12 +391,12 @@ function Header({ scrollToSection }) {
     }
   };
 
-  // Tự động chuyển đổi tên danh mục thành ID hợp lệ
+  // Tự động chuyển đổi tên danh mục thành ID hợp lệ (thống nhất với Home.js)
   const getCategorySectionId = (categoryName) => {
     return categoryName
       .toLowerCase()
-      .replace(/ /g, "-") // Thay dấu cách bằng "-"
-      .replace(/[^\w-]+/g, ""); // Xóa ký tự đặc biệt
+      .replace(/\s+/g, "-") // Thay tất cả khoảng trắng liên tiếp bằng gạch ngang
+      .replace(/[^\w\-]/g, ""); // Xóa ký tự đặc biệt
   };
 
   // Format giá tiền
@@ -467,12 +467,10 @@ function Header({ scrollToSection }) {
     const cartIconRect = cartIcon.getBoundingClientRect();
 
     // Set initial position using fixed positioning
-    productImage.style.left = `${
-      addButtonRect.left + addButtonRect.width / 2 - 25
-    }px`;
-    productImage.style.top = `${
-      addButtonRect.top + addButtonRect.height / 2 - 25
-    }px`;
+    productImage.style.left = `${addButtonRect.left + addButtonRect.width / 2 - 25
+      }px`;
+    productImage.style.top = `${addButtonRect.top + addButtonRect.height / 2 - 25
+      }px`;
 
     // GSAP animation
     gsap.to(productImage, {
@@ -566,9 +564,8 @@ function Header({ scrollToSection }) {
                 onClick={toggleAdvancedSearch}
               >
                 <i
-                  className={`fa-solid ${
-                    showAdvancedSearch ? "fa-chevron-up" : "fa-sliders"
-                  }`}
+                  className={`fa-solid ${showAdvancedSearch ? "fa-chevron-up" : "fa-sliders"
+                    }`}
                 ></i>
               </button>
               <button type="submit">
@@ -740,11 +737,15 @@ function Header({ scrollToSection }) {
                     <span className="badge">New</span>
                   )}
                   <Link
-                    onClick={() =>
-                      scrollToSection(
-                        getCategorySectionId(category.CategoryName)
-                      )
-                    }
+                    to={`/#${getCategorySectionId(category.CategoryName)}`} // Chuyển về Home và Thêm hash để Home.js bắt và scroll
+                    onClick={(e) => {
+                      // Nếu đang ở trang chủ rồi thì mới scroll, còn không thì để navigate tự xử lý
+                      if (window.location.pathname === "/") {
+                        e.preventDefault(); // Ngăn navigate nếu đã ở trang chủ
+                        scrollToSection(getCategorySectionId(category.CategoryName));
+                      }
+                      // Nếu đang ở trang khác → navigate đến "/#id", Home.js sẽ tự scroll
+                    }}
                   >
                     {category.CategoryName}
                   </Link>
@@ -962,9 +963,8 @@ function Header({ scrollToSection }) {
                       {productColors.map((color) => (
                         <div
                           key={color.id}
-                          className={`color-circle ${
-                            selectedColor === color.name ? "selected" : ""
-                          }`}
+                          className={`color-circle ${selectedColor === color.name ? "selected" : ""
+                            }`}
                           style={{ backgroundColor: color.code }}
                           onClick={() => setSelectedColor(color.name)}
                         >
@@ -982,9 +982,8 @@ function Header({ scrollToSection }) {
                       {["S", "M", "L", "XL"].map((size) => (
                         <div
                           key={size}
-                          className={`size-box ${
-                            selectedSize === size ? "selected" : ""
-                          }`}
+                          className={`size-box ${selectedSize === size ? "selected" : ""
+                            }`}
                           onClick={() => setSelectedSize(size)}
                         >
                           {size}
