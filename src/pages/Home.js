@@ -172,10 +172,50 @@ function Home() {
 
   const scrollToSection = (id) => {
     const el = sectionRefs.current[id];
+
     if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Lấy chiều cao header thực tế
+      const header = document.querySelector(".header");
+      const headerHeight = header ? header.offsetHeight : 140; // fallback nếu chưa render
+
+      // Tính vị trí chính xác của section
+      const sectionTop = el.getBoundingClientRect().top + window.pageYOffset;
+
+      // Scroll mượt đến vị trí: đầu section nằm ngay dưới header + khoảng cách
+      window.scrollTo({
+        top: sectionTop - headerHeight - 12, // -12px để có khoảng trắng
+        behavior: "smooth",
+      });
     }
   };
+
+  useEffect(() => {
+    // Sau khi categories đã load xong, kiểm tra URL xem có cần scroll không
+    if (categories.length > 0 && !loading) {
+      const hash = window.location.hash;
+
+      if (hash) {
+        const sectionId = hash.substring(1); // bỏ dấu #
+        const el = sectionRefs.current[sectionId];
+
+        if (el) {
+          // Lấy chiều cao header chính xác tại thời điểm scroll
+          const header = document.querySelector(".header");
+          const headerHeight = header ? header.offsetHeight : 140; // fallback 140px nếu không tìm thấy
+          // Tính vị trí chính xác của section
+          const sectionTop = el.getBoundingClientRect().top + window.pageYOffset;
+          
+          setTimeout(() => {
+            // Scroll đến vị trí: đầu section - chiều cao header - 12px (khoảng cách)
+            window.scrollTo({
+              top: sectionTop - headerHeight - 12,
+              behavior: "smooth",
+            });
+          }, 100);
+        }
+      }
+    }
+  }, [categories, loading]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -348,12 +388,10 @@ function Home() {
     const cartIconRect = cartIcon.getBoundingClientRect();
 
     // Set initial position using fixed positioning
-    productImage.style.left = `${
-      addButtonRect.left + addButtonRect.width / 2 - 25
-    }px`;
-    productImage.style.top = `${
-      addButtonRect.top + addButtonRect.height / 2 - 25
-    }px`;
+    productImage.style.left = `${addButtonRect.left + addButtonRect.width / 2 - 25
+      }px`;
+    productImage.style.top = `${addButtonRect.top + addButtonRect.height / 2 - 25
+      }px`;
 
     // GSAP animation
     gsap.to(productImage, {
@@ -558,9 +596,8 @@ function Home() {
                         {Array.from({ length: totalPages }).map((_, index) => (
                           <span
                             key={index}
-                            className={`dot ${
-                              index === currentPage ? "active" : ""
-                            }`}
+                            className={`dot ${index === currentPage ? "active" : ""
+                              }`}
                             onClick={() => goToPage(category.CategoryID, index)}
                           ></span>
                         ))}
@@ -631,9 +668,8 @@ function Home() {
                       {productColors.map((color) => (
                         <div
                           key={color.id}
-                          className={`color-circle ${
-                            selectedColor === color.name ? "selected" : ""
-                          }`}
+                          className={`color-circle ${selectedColor === color.name ? "selected" : ""
+                            }`}
                           style={{ backgroundColor: color.code }}
                           onClick={() => setSelectedColor(color.name)}
                         >
@@ -651,9 +687,8 @@ function Home() {
                       {["S", "M", "L", "XL"].map((size) => (
                         <div
                           key={size}
-                          className={`size-box ${
-                            selectedSize === size ? "selected" : ""
-                          }`}
+                          className={`size-box ${selectedSize === size ? "selected" : ""
+                            }`}
                           onClick={() => setSelectedSize(size)}
                         >
                           {size}
