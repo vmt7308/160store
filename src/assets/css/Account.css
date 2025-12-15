@@ -221,6 +221,37 @@
     transform: scale(1.05);
 }
 
+/* Nút hủy đơn – bên cạnh "Xem chi tiết" */
+.cancel-order-btn {
+  background-color: #e74c3c !important;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background 0.3s;
+}
+
+.cancel-order-btn:hover {
+  background-color: #c0392b;
+}
+
+/* Note dưới tiêu đề "ĐƠN HÀNG ĐÃ MUA" */
+.cancel-note {
+  font-size: 14px;
+  color: #e74c3c;
+  margin: 10px 0 20px 0;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.note-bold {
+  font-weight: bold; /* *Note in đậm màu đỏ */
+  font-style: italic; /* In nghiêng thông báo */
+}
+
 .order-details-overlay {
     position: fixed;
     top: 0;

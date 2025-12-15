@@ -88,3 +88,37 @@ exports.getOrdersByUser = async (req, res) => {
     res.status(500).json({ message: "❌ Lỗi server!" });
   }
 };
+
+// Hủy đơn hàng
+exports.cancelOrder = async (req, res) => {
+  const { orderId } = req.params;
+  const userId = req.user.userId; // Từ authMiddleware
+
+  try {
+    const pool = await poolPromise;
+    const result = await pool.request()
+      .input("OrderID", sql.Int, orderId)
+      .query("SELECT Status, UserID FROM Orders WHERE OrderID = @OrderID");
+
+    if (result.recordset.length === 0) {
+      return res.status(404).json({ message: "Đơn hàng không tồn tại!" });
+    }
+
+    const order = result.recordset[0];
+    if (order.UserID !== userId) {
+      return res.status(403).json({ message: "Bạn không có quyền hủy đơn này!" });
+    }
+    if (order.Status !== "Pending") {
+      return res.status(400).json({ message: "Đơn hàng không thể hủy!" });
+    }
+
+    await pool.request()
+      .input("OrderID", sql.Int, orderId)
+      .query("UPDATE Orders SET Status = 'Cancelled' WHERE OrderID = @OrderID");
+
+    res.json({ message: "Hủy đơn hàng thành công!" });
+  } catch (error) {
+    console.error("❌ Lỗi hủy đơn:", error);
+    res.status(500).json({ message: "❌ Lỗi server!" });
+  }
+};
