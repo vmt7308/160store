@@ -222,6 +222,31 @@ function Account() {
     setSelectedOrder(order);
   };
 
+  // Đơn hàng: Khách hàng có thể hủy đơn hàng trước khi shop xác nhận
+  const handleCancelOrder = async (orderId) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    if (!window.confirm("Bạn chắc chắn muốn hủy đơn hàng này?")) return;
+
+    try {
+      await axios.post(
+        `http://localhost:5000/api/orders/cancel/${orderId}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      // Cập nhật realtime
+      setOrders(orders.map((order) =>
+        order.OrderID === orderId ? { ...order, Status: "Cancelled" } : order
+      ));
+      alert("Đơn hàng đã được hủy thành công!");
+    } catch (err) {
+      alert(err.response?.data?.message || "Hủy đơn hàng thất bại. Thử lại sau.");
+    }
+  };
+
   return (
     <div className="account-container">
       <Header />
@@ -427,9 +452,14 @@ function Account() {
           {activeTab === "orders" && (
             <div className="orders-info animate-slide-in">
               <h2>ĐƠN HÀNG ĐÃ MUA</h2>
+              {orders.length > 0 && (
+                <p className="cancel-note">
+                  <span className="note-bold">*Note:</span> Bạn chỉ có thể hủy đơn hàng khi hệ thống chưa xác nhận. Nếu muốn hủy đơn hàng, vui lòng liên hệ với shop để được hỗ trợ. Cảm ơn!
+                </p>
+              )}
               {error && <p className="error-message">{error}</p>}
               {orders.length === 0 ? (
-                <p>Chưa có đơn hàng nào.</p>
+                <p>Bạn chưa có đơn hàng nào. Shopping ngay thôi!</p>
               ) : (
                 <table className="orders-table">
                   <thead>
@@ -456,6 +486,15 @@ function Account() {
                           <button onClick={() => showOrderDetails(order)}>
                             Xem chi tiết
                           </button>
+
+                          {order.Status === "Pending" && (
+                            <button
+                              className="cancel-order-btn"
+                              onClick={() => handleCancelOrder(order.OrderID)}
+                            >
+                              Hủy đơn
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}
