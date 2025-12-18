@@ -28,6 +28,27 @@ function ProductDetail() {
     { id: "color4", name: "Vàng nghệ", code: "#FCBF49" },
   ];
 
+  const [reviews, setReviews] = useState([]);
+  const [visibleReviews, setVisibleReviews] = useState(5);
+
+  useEffect(() => {
+    if (id) {
+      const fetchReviews = async () => {
+        try {
+          const response = await axios.get(`http://localhost:5000/api/reviews/product/${id}`);
+          setReviews(response.data);
+        } catch (error) {
+          console.error("Lỗi lấy đánh giá:", error);
+        }
+      };
+      fetchReviews();
+    }
+  }, [id]);
+
+  const loadMoreReviews = () => {
+    setVisibleReviews(prev => prev + 5);
+  };
+
   // Fetch product and related products
   useEffect(() => {
     const fetchProduct = async () => {
@@ -97,12 +118,10 @@ function ProductDetail() {
     const addButtonRect = addButton.getBoundingClientRect();
     const cartIconRect = cartIcon.getBoundingClientRect();
 
-    productImage.style.left = `${
-      addButtonRect.left + addButtonRect.width / 2 - 25
-    }px`;
-    productImage.style.top = `${
-      addButtonRect.top + addButtonRect.height / 2 - 25
-    }px`;
+    productImage.style.left = `${addButtonRect.left + addButtonRect.width / 2 - 25
+      }px`;
+    productImage.style.top = `${addButtonRect.top + addButtonRect.height / 2 - 25
+      }px`;
 
     gsap.to(productImage, {
       x: cartIconRect.left - addButtonRect.left + cartIconRect.width / 2 - 25,
@@ -202,9 +221,8 @@ function ProductDetail() {
                   {productColors.map((color) => (
                     <div
                       key={color.id}
-                      className={`color-circle ${
-                        selectedColor === color.name ? "selected" : ""
-                      }`}
+                      className={`color-circle ${selectedColor === color.name ? "selected" : ""
+                        }`}
                       style={{ backgroundColor: color.code }}
                       onClick={() => setSelectedColor(color.name)}
                     >
@@ -221,9 +239,8 @@ function ProductDetail() {
                   {["S", "M", "L", "XL"].map((size) => (
                     <div
                       key={size}
-                      className={`size-box ${
-                        selectedSize === size ? "selected" : ""
-                      }`}
+                      className={`size-box ${selectedSize === size ? "selected" : ""
+                        }`}
                       onClick={() => setSelectedSize(size)}
                     >
                       {size}
@@ -265,6 +282,62 @@ function ProductDetail() {
             </div>
           </div>
         </div>
+
+        {/* SECTION ĐÁNH GIÁ SẢN PHẨM */}
+        <div className="reviews-section">
+          <h2>Đánh Giá Sản Phẩm</h2>
+          {reviews.length === 0 ? (
+            <p className="no-reviews">Sản phẩm này chưa có đánh giá!</p>
+          ) : (
+            <>
+              <div className="reviews-list">
+                {reviews.slice(0, visibleReviews).map((review, index) => (
+                  <div key={index} className="review-item">
+                    <div className="review-header">
+                      <span className="review-fullname">
+                        Họ và tên Khách hàng: {review.FullName}
+                        {review.MaskedEmail && (
+                          <span className="review-email-masked"> (Email: {review.MaskedEmail})</span>
+                        )}
+                      </span>
+                      <span className="review-date">Ngày: {new Date(review.CreatedAt).toLocaleDateString("vi-VN")}</span>
+                    </div>
+                    <div className="review-rating">
+                      <span className="rate-label">Rate: </span>
+                      {[...Array(5)].map((_, starIndex) => (
+                        <span key={starIndex} className={starIndex < review.Rating ? "star-filled" : "star-empty"}>
+                          ★
+                        </span>
+                      ))}
+                    </div>
+                    <p className="review-comment">
+                      Bình luận: {review.Comment ? (
+                        review.Comment
+                      ) : (
+                        <span className="no-comment-text">"Không có bình luận về sản phẩm!"</span>
+                      )}
+                    </p>
+                    {/* HIỂN THỊ ẢNH THỰC TẾ */}
+                    <div className="review-image-container">
+                      {review.ImageURL ? (
+                        <img src={`http://localhost:5000${review.ImageURL}`} alt="Ảnh thực tế từ khách hàng" className="review-user-image" />
+                      ) : (
+                        <p className="no-image-text">"Không có dữ liệu ảnh thực tế từ người dùng!"</p>
+                      )}
+                    </div>
+                    <hr className="review-divider" />
+                  </div>
+                ))}
+              </div>
+              {visibleReviews < reviews.length && (
+                <button className="load-more-reviews" onClick={loadMoreReviews}>
+                  Xem thêm
+                </button>
+              )}
+            </>
+          )}
+        </div>
+
         {/* Related Products Section */}
         {relatedProducts.length > 0 && (
           <div className="related-products-section">
