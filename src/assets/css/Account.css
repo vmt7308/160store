@@ -223,33 +223,203 @@
 
 /* Nút hủy đơn – bên cạnh "Xem chi tiết" */
 .cancel-order-btn {
-  background-color: #e74c3c !important;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  margin-left: 10px;
-  transition: background 0.3s;
+    background-color: #e74c3c !important;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background 0.3s;
 }
 
 .cancel-order-btn:hover {
-  background-color: #c0392b;
+    background-color: #c0392b;
+}
+
+/* Nút đánh giá và bình luận sản phẩm – bên cạnh "Xem chi tiết" */
+.review-btn {
+    background-color: #4f3eee !important;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.review-btn:hover {
+    background-color: #45a049;
+}
+
+.review-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.review-content {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 500px;
+    text-align: center;
+}
+
+.review-content select,
+.review-content textarea {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* ================== UPLOAD ẢNH ĐÁNH GIÁ ================== */
+
+/* Hàng ngang: Label + Nút chọn + Tên file */
+.review-upload-row {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.review-upload-label {
+    font-weight: 400;
+    color: #333;
+    white-space: nowrap;
+}
+
+.review-file-input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 250px;
+}
+
+.review-file-input-hidden {
+    display: none;
+}
+
+.review-file-button {
+    background-color: #3498db;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+    transition: background 0.3s;
+}
+
+.review-file-button:hover {
+    background-color: #2980b9;
+}
+
+.review-file-name {
+    font-size: 14px;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+    /* Tên file dài sẽ bị cắt + thêm ... */
+    /* flex: 1; */
+}
+
+/* Phần preview ảnh + nút xóa – căn giữa */
+.review-image-section {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    /* Quan trọng: Đưa nút xuống dưới ảnh */
+    align-items: center;
+    /* Căn giữa theo chiều ngang */
+    gap: 15px;
+    /* Khoảng cách đẹp giữa ảnh và nút */
+}
+
+.review-preview-image {
+    max-width: 100%;
+    max-height: 100px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.review-delete-btn {
+    margin-top: 12px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.review-delete-btn:hover {
+    background-color: #c0392b;
+}
+
+.review-buttons button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.review-buttons button:hover {
+    background: #45a049;
+}
+
+.review-buttons .review-buttons-cancel {
+    background-color: #e74c3c !important;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background 0.3s;
+}
+
+.review-buttons .review-buttons-cancel:hover {
+    background-color: #c0392b;
 }
 
 /* Note dưới tiêu đề "ĐƠN HÀNG ĐÃ MUA" */
 .cancel-note {
-  font-size: 14px;
-  color: #e74c3c;
-  margin: 10px 0 20px 0;
-  line-height: 1.5;
-  text-align: left;
+    font-size: 14px;
+    color: #e74c3c;
+    margin: 10px 0 20px 0;
+    line-height: 1.5;
+    text-align: left;
 }
 
 .note-bold {
-  font-weight: bold; /* *Note in đậm màu đỏ */
-  font-style: italic; /* In nghiêng thông báo */
+    font-weight: bold;
+    /* *Note in đậm màu đỏ */
+    font-style: italic;
+    /* In nghiêng thông báo */
 }
 
 .order-details-overlay {

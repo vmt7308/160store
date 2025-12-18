@@ -247,6 +247,68 @@ function Account() {
     }
   };
 
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [selectedOrderForReview, setSelectedOrderForReview] = useState(null);
+  const [selectedProductForReview, setSelectedProductForReview] = useState(null);
+  const [reviewData, setReviewData] = useState({
+    rating: 5,
+    comment: "",
+    imageBase64: null,
+  });
+  const [imagePreview, setImagePreview] = useState(null); // Preview ảnh
+  const [reviewedOrderIds, setReviewedOrderIds] = useState([]); // Danh sách OrderID đã đánh giá
+
+  useEffect(() => {
+    if (activeTab === "orders" && currentUser && currentUser.UserID) {
+      const fetchData = async () => {
+        try {
+          const ordersRes = await axios.get(
+            `http://localhost:5000/api/orders/user/${currentUser.UserID}`,
+            { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+          );
+          setOrders(ordersRes.data);
+
+          const reviewedRes = await axios.get(
+            "http://localhost:5000/api/reviews/user-orders",
+            { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+          );
+          setReviewedOrderIds(reviewedRes.data);
+        } catch (error) {
+          console.error("Lỗi khi lấy dữ liệu:", error);
+        }
+      };
+      fetchData();
+    }
+  }, [activeTab, currentUser]);
+
+  const handleAddReview = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      await axios.post("http://localhost:5000/api/reviews", {
+        orderId: selectedOrderForReview.OrderID,
+        productId: selectedProductForReview.ProductID,
+        rating: reviewData.rating,
+        comment: reviewData.comment,
+        imageBase64: reviewData.imageBase64 || null, // Không bắt buộc
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      alert("Đánh giá thành công!");
+
+      setReviewedOrderIds(prev => [...prev, selectedOrderForReview.OrderID]);
+
+      setShowReviewModal(false);
+      setReviewData({ rating: 5, comment: "", imageBase64: null });
+      setImagePreview(null);
+      setSelectedOrderForReview(null);
+    } catch (err) {
+      alert(err.response?.data?.message || "Đánh giá thất bại!");
+    }
+  };
+
   return (
     <div className="account-container">
       <Header />
@@ -495,6 +557,16 @@ function Account() {
                               Hủy đơn
                             </button>
                           )}
+
+                          {order.Status === "Delivered" && !reviewedOrderIds.includes(order.OrderID) && (
+                            <button className="review-btn" onClick={() => {
+                              setSelectedOrderForReview(order);
+                              setSelectedProductForReview(order.OrderDetails[0]); // Có thể mở chọn sản phẩm nếu nhiều
+                              setShowReviewModal(true);
+                            }}>
+                              Đánh giá
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -540,6 +612,100 @@ function Account() {
                 <p className="order-total">
                   Tổng cộng: {formatPrice(selectedOrder.TotalAmount)}
                 </p>
+              </div>
+            </div>
+          )}
+
+          {/* Modal đánh giá và bình luận sản phẩm */}
+          {showReviewModal && (
+            <div className="review-modal">
+              <div className="review-content">
+                <h2>Đánh giá đơn hàng #{selectedOrderForReview?.OrderID}</h2>
+                <p>Sản phẩm: {selectedProductForReview?.ProductName}</p>
+                <select value={reviewData.rating} onChange={(e) => setReviewData({ ...reviewData, rating: Number(e.target.value) })}>
+                  <option value="5">5 sao</option>
+                  <option value="4">4 sao</option>
+                  <option value="3">3 sao</option>
+                  <option value="2">2 sao</option>
+                  <option value="1">1 sao</option>
+                </select>
+                <textarea
+                  placeholder="Bình luận của bạn"
+                  value={reviewData.comment}
+                  onChange={(e) => setReviewData({ ...reviewData, comment: e.target.value })}
+                  rows="5"
+                />
+
+                {/* UPLOAD ẢNH THỰC TẾ (TÙY CHỌN) */}
+                <div className="review-upload-row">
+                  <span className="review-upload-label">Ảnh thực tế (tùy chọn):</span>
+                  <div className="review-file-input-group">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      id="review-image-input"
+                      className="review-file-input-hidden"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setReviewData({ ...reviewData, imageBase64: reader.result });
+                            setImagePreview(reader.result);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                    <label htmlFor="review-image-input" className="review-file-button">
+                      Chọn ảnh
+                    </label>
+                    <span className="review-file-name">
+                      {imagePreview
+                        ? (document.getElementById('review-image-input')?.files[0]?.name || "Ảnh đã chọn")
+                        : "Chưa chọn ảnh"
+                      }
+                    </span>
+                  </div>
+                </div>
+
+                {/* PREVIEW ẢNH */}
+                {imagePreview && (
+                  <div className="review-image-section">
+                    <img
+                      src={imagePreview}
+                      alt="Preview ảnh thực tế"
+                      className="review-preview-image"
+                    />
+                    <button
+                      type="button"
+                      className="review-delete-btn"
+                      onClick={() => {
+                        setImagePreview(null);
+                        setReviewData({ ...reviewData, imageBase64: null });
+                        const input = document.getElementById('review-image-input');
+                        if (input) input.value = '';
+                        // Reset tên file
+                        const nameSpan = document.querySelector('.review-file-name');
+                        if (nameSpan) nameSpan.textContent = "Chưa chọn ảnh";
+                      }}
+                    >
+                      Xóa ảnh
+                    </button>
+                  </div>
+                )}
+
+                <div className="review-buttons">
+                  <button onClick={handleAddReview}>Gửi đánh giá</button>
+                  <button
+                    className="review-buttons-cancel"
+                    onClick={() => {
+                      setShowReviewModal(false);
+                      setSelectedOrderForReview(null);
+                      setImagePreview(null);
+                      setReviewData({ rating: 5, comment: "", imageBase64: null });
+                    }}>Hủy</button>
+                </div>
               </div>
             </div>
           )}
