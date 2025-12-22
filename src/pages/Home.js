@@ -25,7 +25,6 @@ function Home() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [showContactOptions, setShowContactOptions] = useState(false);
   const timeoutRef = useRef(null);
   const contactRef = useRef(null);
@@ -69,20 +68,6 @@ function Home() {
     }
     return () => clearTimeout(timeoutRef.current);
   }, [nextSlide, isPaused]);
-
-  // Hiển thị nút khi cuộn xuống
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollToTop(window.scrollY > 300);
-      setShowContactOptions(false); // Đóng danh sách liên hệ khi cuộn chuột
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
 
   // Đóng danh sách khi nhấn bên ngoài
   useEffect(() => {
@@ -772,12 +757,7 @@ function Home() {
           </div>
         )}
       </div>
-      {/* Nút quay lại đầu trang */}
-      {showScrollToTop && (
-        <button className="scroll-to-top" onClick={scrollToTop}>
-          <i class="fa-solid fa-arrow-up"></i>
-        </button>
-      )}
+      
       <Chatbot />
       <Footer />
     </div>

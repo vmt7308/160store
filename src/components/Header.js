@@ -8,6 +8,8 @@ import "../assets/font/font-awesome-pro-v6-6.2.0//css/all.min.css";
 import product1 from "../assets/img/product1.jpg";
 
 function Header({ scrollToSection }) {
+  // STATE VÀ LOGIC SCROLL-TO-TOP
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
   // State để kiểm tra trạng thái đăng nhập
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
@@ -92,6 +94,20 @@ function Header({ scrollToSection }) {
 
   // Tham chiếu để xử lý click outside cho user menu
   const userMenuRef = useRef(null);
+
+  // Hiển thị nút khi cuộn xuống
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollToTop(window.scrollY > 300);
+      // setShowContactOptions(false); // Đóng danh sách liên hệ khi cuộn chuột
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   // Kiểm tra đăng nhập khi component mount
   useEffect(() => {
@@ -1040,6 +1056,12 @@ function Header({ scrollToSection }) {
             </div>
           </div>
         </div>
+      )}
+      {/* Nút quay lại đầu trang */}
+      {showScrollToTop && (
+        <button className="scroll-to-top" onClick={scrollToTop}>
+          <i class="fa-solid fa-arrow-up"></i>
+        </button>
       )}
     </header>
   );
