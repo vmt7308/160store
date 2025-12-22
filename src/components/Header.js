@@ -653,7 +653,10 @@ function Header({ scrollToSection }) {
                     onClick={() => showProductDetails(product)}
                   >
                     <div className="product-image">
-                      <img src={product.ImageURL} alt={product.ProductName} />
+                      <img
+                        src={product.ImageURL && (product.ImageURL.startsWith('/') ? product.ImageURL : `/${product.ImageURL}`)}
+                        alt={product.ProductName}
+                      />
                     </div>
                     <div className="product-info">
                       <h4>{product.ProductName}</h4>
@@ -942,7 +945,11 @@ function Header({ scrollToSection }) {
             <div className="product-details-content">
               <div className="product-details-image">
                 <img
-                  src={selectedProduct.ImageURL}
+                  src={
+                    selectedProduct.ImageURL
+                      ? (selectedProduct.ImageURL.startsWith('/') ? selectedProduct.ImageURL : `/${selectedProduct.ImageURL}`)
+                      : product1
+                  }
                   alt={selectedProduct.ProductName}
                 />
               </div>
