@@ -183,6 +183,12 @@ body {
     color: var(--primary);
 }
 
+/* Khi hover nút → cart-badge(số lượng sản phẩm trong giỏ hàng) đổi nền thành primary, giữ chữ đen */
+.cart-button.header-btn:hover .cart-badge {
+    background-color: var(--primary);
+    color: #000;
+}
+
 /* Menu danh mục sản phẩm */
 .nav-menu {
     background: var(--white);
