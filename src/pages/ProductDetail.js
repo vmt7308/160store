@@ -125,7 +125,7 @@ function ProductDetail() {
 
     gsap.to(productImage, {
       x: cartIconRect.left - addButtonRect.left + cartIconRect.width / 2 - 25,
-      y: cartIconRect.top - addButtonRect.top + cartIconRect.height / 2 - 25,
+      y: cartIconRect.top - addButtonRect.top + cartIconRect.height / 2 - 450,
       scale: 0.3,
       opacity: 0,
       duration: 0.8,
