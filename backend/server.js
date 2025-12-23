@@ -12,6 +12,7 @@ const userRoutes = require("./routes/userRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const chatbotRoutes = require("./routes/chatbotRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
+const newsletterRoutes = require("./routes/newsletterRoutes");
 
 const adminRoutes = require("./routes/adminRoutes");
 
@@ -45,6 +46,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/newsletter", newsletterRoutes);
 
 app.use("/api/admin", adminRoutes);
 

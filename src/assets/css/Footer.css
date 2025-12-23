@@ -62,6 +62,39 @@ footer {
     text-transform: uppercase;
 }
 
+.newsletter-form {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.newsletter-form input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 250px;
+}
+
+.newsletter-form button {
+    padding: 10px 20px;
+    background-color: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.newsletter-form button:hover {
+    background-color: rgb(255, 172, 25) !important;
+}
+
+.newsletter-message {
+    padding-left: 8px;
+    font-size: 14px;
+    color: #08b826;
+}
+
 .subscribe {
     margin-left: 10px;
     display: flex;
