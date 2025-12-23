@@ -154,6 +154,9 @@
 - Thêm sản phẩm vào giỏ hàng.
 - Đăng ký hoặc đăng nhập để tiến hành thanh toán.
 - Theo dõi đơn hàng trong mục "Tài khoản".
+- Đơn hàng: Người dùng có thể hủy đơn trước khi shop xác nhận
+- Đánh giá và bình luận về sản phẩm đã mua: Khách hàng đã mua sản phẩm sẽ rate số sao sản phẩm, để lại ảnh thực tế, đánh giá và bình luận
+- Hiển thị lại Đánh giá và bình luận
 
 2. Quản trị viên
 

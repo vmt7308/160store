@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import "../assets/css/Footer.css";
 import logoSaleNoti from "../assets/img/logoSaleNoti.png";
 import dmcaProtected from "../assets/img/dmcaProtected.png";
@@ -8,6 +9,30 @@ import cod from "../assets/img/cod.png";
 
 const Footer = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      setMessage("Vui lòng nhập email hợp lệ!");
+      return;
+    }
+
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/newsletter/subscribe", { email });
+      setMessage(response.data.message);
+      setEmail("");
+    } catch (error) {
+      setMessage(error.response?.data?.message || "Lỗi đăng ký, vui lòng thử lại!");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <footer>
@@ -15,15 +40,25 @@ const Footer = () => {
         {/* Đăng ký nhận tin */}
         <div className="newsletter">
           <p>ĐĂNG KÝ NHẬN TIN</p>
-          <div className="subscribe">
-            <div className="input-wrapper">
-              <i className="fa-light fa-envelope"></i>
-              <input type="email" placeholder="Email" />
+          <form onSubmit={handleSubscribe} className="newsletter-form">
+            <div className="subscribe">
+              <div className="input-wrapper">
+                <i className="fa-light fa-envelope"></i>
+                <input
+                  type="email"
+                  placeholder="Email của bạn..."
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
+                />
+              </div>
+              <button type="submit" disabled={loading}>
+                <i className="fa fa-paper-plane"></i>
+                {loading ? "Đang gửi..." : "Gửi"}
+              </button>
             </div>
-            <button>
-              <i className="fa fa-paper-plane"></i> ĐĂNG KÝ
-            </button>
-          </div>
+          </form>
+          {message && <p className="newsletter-message">{message}</p>}
         </div>
 
         {/* Nội dung chính của Footer */}
@@ -35,7 +70,7 @@ const Footer = () => {
             <p className="phone">
               <i className="fa-light fa-mobile-screen-button"></i>
               <a href="tel:0522586725">0522586725</a>
-              
+
             </p>
             <p className="contact">
               <i className="fa-light fa-envelope"></i>
@@ -63,9 +98,8 @@ const Footer = () => {
               <li className="toggle-policy" onClick={() => setIsOpen(!isOpen)}>
                 Chính sách
                 <i
-                  className={`fa fa-chevron-${isOpen ? "up" : "down"} ${
-                    isOpen ? "rotate" : ""
-                  }`}
+                  className={`fa fa-chevron-${isOpen ? "up" : "down"} ${isOpen ? "rotate" : ""
+                    }`}
                 ></i>
               </li>
               {isOpen && (
