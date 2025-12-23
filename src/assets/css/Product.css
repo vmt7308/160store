@@ -145,23 +145,22 @@
     background-color: black;
     color: white;
     padding: 12px 24px;
-    font-size: 16px;
-    border: none;
+    font-size: 14px;
+    border: 2px solid transparent;
     cursor: pointer;
-    transition: 0.3s;
+    transition: 0.3s ease;
     border-radius: 5px;
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 1px;
-    position: relative;
-    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .view-all-btn:hover {
     background-color: white;
     color: black;
-    border: 2px solid black;
-    transform: scale(1.05);
+    border-color: black;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
 /* Animations */
