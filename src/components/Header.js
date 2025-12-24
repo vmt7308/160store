@@ -691,7 +691,7 @@ function Header({ scrollToSection }) {
               </ul>
               <div className="view-all-results">
                 <Link
-                  to={`/search?keyword=${encodeURIComponent(searchKeyword)}`}
+                  to={`/search?keyword=${encodeURIComponent(searchKeyword)}${selectedCategory ? `&categoryId=${selectedCategory}` : ''}${priceRange.min ? `&minPrice=${priceRange.min}` : ''}${priceRange.max ? `&maxPrice=${priceRange.max}` : ''}`}
                 >
                   Xem tất cả kết quả
                 </Link>
