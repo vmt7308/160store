@@ -212,6 +212,12 @@ const Checkout = () => {
       localStorage.removeItem("orderNotes");
       localStorage.removeItem("selectedVoucher");
       alert(`Đặt hàng thành công! Mã đơn hàng: ${response.data.orderId}`);
+
+      // Lưu tên
+      if (user && (user.fullName || user.FullName)) {
+        localStorage.setItem("userFullName", user.fullName || user.FullName);
+      }
+
       navigate("/cart");
     } catch (err) {
       console.error("Lỗi khi đặt hàng:", err);
