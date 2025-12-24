@@ -74,7 +74,7 @@ function SearchResults() {
     };
 
     fetchData();
-  }, [keyword, categoryId, minPrice, maxPrice]);
+  }, [location.search]);
 
   // Handle popup open/close
   useEffect(() => {
