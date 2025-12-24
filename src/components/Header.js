@@ -192,8 +192,13 @@ function Header({ scrollToSection }) {
     const user = localStorage.getItem("user");
 
     if (token && user) {
+      const parsedUser = JSON.parse(user);
       setIsLoggedIn(true);
-      setCurrentUser(JSON.parse(user));
+      setCurrentUser(parsedUser);
+
+      // Fallback nếu fullName bị mất
+      const savedFullName = localStorage.getItem("userFullName");
+      const displayName = parsedUser.fullName || parsedUser.FullName || savedFullName || "User";
     } else {
       setIsLoggedIn(false);
       setCurrentUser(null);
@@ -203,6 +208,7 @@ function Header({ scrollToSection }) {
   // Xử lý đăng xuất
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userFullName");
     localStorage.removeItem("user");
     setIsLoggedIn(false);
     setCurrentUser(null);
@@ -719,7 +725,7 @@ function Header({ scrollToSection }) {
                 onClick={() => setShowUserMenu(!showUserMenu)}
               >
                 <i className="fa-light fa-user"></i>
-                Hi, {currentUser?.fullName?.split(" ").pop() || "User"}
+                Hi, {currentUser?.fullName?.split(" ").pop() || localStorage.getItem("userFullName")?.split(" ").pop() || "User"}
               </button>
             </div>
           ) : (
