@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import "../assets/css/ResetPassword.css";
@@ -14,11 +14,24 @@ function ResetPassword() {
   const [success, setSuccess] = useState("");
   const [isResetMode, setIsResetMode] = useState(!!token); // Nếu có token → chế độ đổi mật khẩu
 
+  const emailRef = useRef(null);
+  const newPasswordRef = useRef(null);
+
   useEffect(() => {
     if (token) {
       setIsResetMode(true);
     }
   }, [token]);
+
+  // Auto focus theo mode
+  useEffect(() => {
+    if (!isResetMode && emailRef.current) {
+      emailRef.current.focus();
+    }
+    if (isResetMode && newPasswordRef.current) {
+      newPasswordRef.current.focus();
+    }
+  }, [isResetMode]);
 
   const handleRequestSubmit = async (e) => {
     e.preventDefault();
@@ -56,7 +69,7 @@ function ResetPassword() {
     try {
       const response = await axios.post("http://localhost:5000/api/auth/reset", { token, newPassword });
       setSuccess(response.data.message);
-      setTimeout(() => window.location.href = "/login", 3000); // Redirect về login sau 3 giây
+      setTimeout(() => (window.location.href = "/login"), 3000); // Redirect về login sau 3 giây
     } catch (err) {
       setError(err.response?.data?.message || "Có lỗi xảy ra, thử lại sau.");
     }
@@ -68,26 +81,35 @@ function ResetPassword() {
         <h1>{isResetMode ? "Đổi mật khẩu mới" : "Khôi phục mật khẩu"}</h1>
         {!isResetMode ? (
           <form onSubmit={handleRequestSubmit}>
+            {/* Email */}
             <input
+              ref={emailRef}
               type="email"
               placeholder="Nhập email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
+
             {error && <p className="error">{error}</p>}
             {success && <p className="success">{success}</p>}
+
+            {/* Submit */}
             <button type="submit">Gửi yêu cầu</button>
           </form>
         ) : (
           <form onSubmit={handleResetSubmit}>
+            {/* New password */}
             <input
+              ref={newPasswordRef}
               type="password"
               placeholder="Mật khẩu mới"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
             />
+
+            {/* Confirm password */}
             <input
               type="password"
               placeholder="Xác nhận mật khẩu"
@@ -95,11 +117,16 @@ function ResetPassword() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
+
             {error && <p className="error">{error}</p>}
             {success && <p className="success">{success}</p>}
+
+            {/* Submit */}
             <button type="submit">Đổi mật khẩu</button>
           </form>
         )}
+
+        {/* Links */}
         <p>
           Quay lại <Link to="/login">Đăng nhập</Link>
         </p>

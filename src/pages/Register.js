@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../assets/css/Register.css";
 
@@ -15,6 +15,14 @@ function Register() {
   // Thêm state để kiểm soát hiển thị mật khẩu
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const fullNameRef = useRef(null);
+
+  useEffect(() => {
+    if (fullNameRef.current) {
+      fullNameRef.current.focus();
+    }
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -70,7 +78,9 @@ function Register() {
         <h1>Đăng ký</h1>
         {serverMessage && <p className="server-message">{serverMessage}</p>}
         <form onSubmit={handleSubmit}>
+          {/* Họ và tên */}
           <input
+            ref={fullNameRef}
             type="text"
             name="fullName"
             placeholder="Họ và tên"
@@ -78,6 +88,7 @@ function Register() {
           />
           {errors.fullName && <p className="error">{errors.fullName}</p>}
 
+          {/* Email */}
           <input
             type="email"
             name="email"
@@ -86,6 +97,7 @@ function Register() {
           />
           {errors.email && <p className="error">{errors.email}</p>}
 
+          {/* Mật khẩu */}
           <div className="password-field">
             <input
               type={showPassword ? "text" : "password"}
@@ -97,6 +109,7 @@ function Register() {
               type="button"
               className="toggle-password"
               onClick={() => setShowPassword(!showPassword)}
+              tabIndex={-1}
             >
               {showPassword ? (
                 <i className="fa-solid fa-eye-slash"></i>
@@ -107,6 +120,7 @@ function Register() {
           </div>
           {errors.password && <p className="error">{errors.password}</p>}
 
+          {/* Nhập lại mật khẩu */}
           <div className="password-field">
             <input
               type={showConfirmPassword ? "text" : "password"}
@@ -118,6 +132,7 @@ function Register() {
               type="button"
               className="toggle-password"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              tabIndex={-1}
             >
               {showConfirmPassword ? (
                 <i className="fa-solid fa-eye-slash"></i>
@@ -130,8 +145,11 @@ function Register() {
             <p className="error">{errors.confirmPassword}</p>
           )}
 
+          {/* Đăng ký */}
           <button type="submit">Đăng ký</button>
         </form>
+
+        {/* Links */}
         <p>
           Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
         </p>

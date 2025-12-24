@@ -537,6 +537,14 @@ function Header({ scrollToSection }) {
     window.dispatchEvent(new Event("cartUpdated"));
   };
 
+  const emailInputRef = useRef(null);
+
+  useEffect(() => {
+    if (showLogin && emailInputRef.current) {
+      emailInputRef.current.focus();
+    }
+  }, [showLogin]);
+
   return (
     <header className={`header-container ${isScrolled ? "scrolled" : ""}`}>
       {/* VOUCHER chạy từ phải sang trái */}
@@ -791,39 +799,58 @@ function Header({ scrollToSection }) {
       {showLogin && (
         <div className="popup-login login-popup">
           <div className="popup-arrow-login"></div>
+
           <div className="popup-content">
             <h2>ĐĂNG NHẬP TÀI KHOẢN</h2>
             <p>Nhập email và mật khẩu của bạn:</p>
-            <input
-              type="text"
-              placeholder="Nhập email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <div className="password-field">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Nhập mật khẩu"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button
-                type="button"
-                className="toggle-password"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? (
-                  <i className="fa-solid fa-eye-slash"></i>
-                ) : (
-                  <i className="fa-solid fa-eye"></i>
-                )}
-              </button>
-            </div>
 
-            {error && <p className="error-message">{error}</p>}
-            <button className="login-btn" onClick={handleLogin}>
-              ĐĂNG NHẬP
-            </button>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleLogin();
+              }}
+            >
+              {/* Email */}
+              <input
+                ref={emailInputRef}
+                type="text"
+                placeholder="Nhập email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+
+              {/* Password */}
+              <div className="password-field">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Nhập mật khẩu"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex={-1} // tránh phá thứ tự tab
+                >
+                  {showPassword ? (
+                    <i className="fa-solid fa-eye-slash"></i>
+                  ) : (
+                    <i className="fa-solid fa-eye"></i>
+                  )}
+                </button>
+              </div>
+
+              {/* Error */}
+              {error && <p className="error-message">{error}</p>}
+
+              {/* Login button */}
+              <button type="submit" className="login-btn">
+                ĐĂNG NHẬP
+              </button>
+            </form>
+
+            {/* Links */}
             <p>
               Khách hàng mới?{" "}
               <Link to="/register" className="link">
@@ -836,12 +863,15 @@ function Header({ scrollToSection }) {
                 Khôi phục mật khẩu
               </Link>
             </p>
+
+            {/* Close */}
             <button className="close-btn" onClick={closePopup}>
               <i className="fa-light fa-xmark"></i>
             </button>
           </div>
         </div>
       )}
+
 
       {/* Popup Giỏ hàng */}
       {showCart && (
