@@ -10,29 +10,89 @@ import cod from "../assets/img/cod.png";
 const Footer = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
-      setMessage("Vui lòng nhập email hợp lệ!");
+      toast({
+        title: "Lỗi!",
+        message: "Vui lòng nhập email hợp lệ!",
+        type: "error",
+        duration: 5000,
+      });
       return;
     }
 
     setLoading(true);
-    setMessage("");
 
     try {
       const response = await axios.post("http://localhost:5000/api/newsletter/subscribe", { email });
-      setMessage(response.data.message);
+      toast({
+        title: "Thành công!",
+        message: response.data.message || "Đăng ký nhận tin thành công!",
+        type: "success",
+        duration: 5000,
+      });
       setEmail("");
     } catch (error) {
-      setMessage(error.response?.data?.message || "Lỗi đăng ký, vui lòng thử lại!");
+      toast({
+        title: "Lỗi!",
+        message: error.response?.data?.message || "Lỗi đăng ký, vui lòng thử lại!",
+        type: "error",
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }
   };
+
+  // TOAST FUNCTION
+  function toast({ title = "", message = "", type = "info", duration = 3000 }) {
+    const main = document.getElementById("toast");
+    if (main) {
+      const toastElem = document.createElement("div");
+
+      // Auto remove toast
+      const autoRemoveId = setTimeout(function () {
+        main.removeChild(toastElem);
+      }, duration + 1000);
+
+      // Remove toast when clicked
+      toastElem.onclick = function (e) {
+        if (e.target.closest(".toast__close")) {
+          main.removeChild(toastElem);
+          clearTimeout(autoRemoveId);
+        }
+      };
+
+      const icons = {
+        success: "fas fa-check-circle",
+        info: "fas fa-info-circle",
+        warning: "fas fa-exclamation-circle",
+        error: "fas fa-exclamation-circle",
+      };
+      const icon = icons[type];
+      const delay = (duration / 1000).toFixed(2);
+
+      toastElem.classList.add("toast", `toast--${type}`);
+      toastElem.style.animation = `slideInLeft ease .3s, fadeOut linear 1s ${delay}s forwards`;
+
+      toastElem.innerHTML = `
+      <div class="toast__icon">
+        <i class="${icon}"></i>
+      </div>
+      <div class="toast__body">
+        <h3 class="toast__title">${title}</h3>
+        <p class="toast__msg">${message}</p>
+      </div>
+      <div class="toast__close">
+        <i class="fas fa-times"></i>
+      </div>
+    `;
+      main.appendChild(toastElem);
+    }
+  }
 
   return (
     <footer>
@@ -58,7 +118,6 @@ const Footer = () => {
               </button>
             </div>
           </form>
-          {message && <p className="newsletter-message">{message}</p>}
         </div>
 
         {/* Nội dung chính của Footer */}
@@ -155,6 +214,7 @@ const Footer = () => {
       </div>
       {/* Bản quyền */}
       <div className="footer-bottom">Copyright @MINHTRUNG - HCMUS. All Rights Reserved.</div>
+      <div id="toast"></div>
     </footer>
   );
 };

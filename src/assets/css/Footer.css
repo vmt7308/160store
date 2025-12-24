@@ -76,7 +76,13 @@ footer {
 }
 
 .newsletter-form button {
+    min-width: 120px;
     padding: 10px 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
     background-color: var(--primary);
     color: #fff;
     border: none;
@@ -87,12 +93,6 @@ footer {
 
 .newsletter-form button:hover {
     background-color: rgb(255, 172, 25) !important;
-}
-
-.newsletter-message {
-    padding-left: 8px;
-    font-size: 14px;
-    color: #08b826;
 }
 
 .subscribe {
