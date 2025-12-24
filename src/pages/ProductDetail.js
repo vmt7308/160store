@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import gsap from "gsap";
 import Header from "../components/Header";
@@ -198,6 +198,12 @@ function ProductDetail() {
     <div className="product-detail-page">
       <Header />
       <main className="product-detail-container">
+        {product && (
+          <div className="breadcrumb">
+            <Link to="/" className="breadcrumb-link">Trang chủ</Link> /
+            Chi tiết sản phẩm "{product.ProductName}"
+          </div>
+        )}
         <div className="product-details-content">
           <div className="product-details-image">
             <img
