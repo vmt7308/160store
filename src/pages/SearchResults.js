@@ -33,9 +33,12 @@ function SearchResults() {
     { id: "color4", name: "Vàng nghệ", code: "#FCBF49" },
   ];
 
-  // Extract the keyword from the URL
+  // ĐỌC ĐẦY ĐỦ QUERY PARAMS
   const query = new URLSearchParams(location.search);
   const keyword = query.get("keyword") || "";
+  const categoryId = query.get("categoryId") || "";
+  const minPrice = query.get("minPrice") || "";
+  const maxPrice = query.get("maxPrice") || "";
 
   // Fetch categories and search results
   useEffect(() => {
@@ -48,13 +51,20 @@ function SearchResults() {
         setCategories(catRes.data);
 
         // Tải kết quả tìm kiếm
-        if (keyword) {
+        if (keyword || categoryId || minPrice || maxPrice) {
           const params = new URLSearchParams();
-          params.append("keyword", keyword);
+
+          if (keyword) params.append("keyword", keyword);
+          if (categoryId) params.append("categoryId", categoryId);
+          if (minPrice) params.append("minPrice", minPrice);
+          if (maxPrice) params.append("maxPrice", maxPrice);
+
           const response = await axios.get(
             `http://localhost:5000/api/products/search?${params.toString()}`
           );
           setSearchResults(response.data);
+        } else {
+          setSearchResults([]);
         }
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu:", error);
@@ -64,7 +74,7 @@ function SearchResults() {
     };
 
     fetchData();
-  }, [keyword]);
+  }, [keyword, categoryId, minPrice, maxPrice]);
 
   // Handle popup open/close
   useEffect(() => {
@@ -237,12 +247,10 @@ function SearchResults() {
     const cartIconRect = cartIcon.getBoundingClientRect();
 
     // Set initial position using fixed positioning
-    productImage.style.left = `${
-      addButtonRect.left + addButtonRect.width / 2 - 25
-    }px`;
-    productImage.style.top = `${
-      addButtonRect.top + addButtonRect.height / 2 - 25
-    }px`;
+    productImage.style.left = `${addButtonRect.left + addButtonRect.width / 2 - 25
+      }px`;
+    productImage.style.top = `${addButtonRect.top + addButtonRect.height / 2 - 25
+      }px`;
 
     // GSAP animation
     gsap.to(productImage, {
@@ -369,9 +377,8 @@ function SearchResults() {
             {Array.from({ length: totalPages }).map((_, index) => (
               <button
                 key={index}
-                className={`category-pagination-number ${
-                  index === currentPage ? "active" : ""
-                }`}
+                className={`category-pagination-number ${index === currentPage ? "active" : ""
+                  }`}
                 onClick={() => goToPage(index)}
               >
                 {index + 1}
@@ -421,9 +428,8 @@ function SearchResults() {
                       {productColors.map((color) => (
                         <div
                           key={color.id}
-                          className={`color-circle ${
-                            selectedColor === color.name ? "selected" : ""
-                          }`}
+                          className={`color-circle ${selectedColor === color.name ? "selected" : ""
+                            }`}
                           style={{ backgroundColor: color.code }}
                           onClick={() => setSelectedColor(color.name)}
                         >
@@ -441,9 +447,8 @@ function SearchResults() {
                       {["S", "M", "L", "XL"].map((size) => (
                         <div
                           key={size}
-                          className={`size-box ${
-                            selectedSize === size ? "selected" : ""
-                          }`}
+                          className={`size-box ${selectedSize === size ? "selected" : ""
+                            }`}
                           onClick={() => setSelectedSize(size)}
                         >
                           {size}
