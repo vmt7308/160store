@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "../assets/css/Login.css";
@@ -15,6 +15,15 @@ function Login() {
 
   // Thêm state để kiểm soát hiển thị mật khẩu
   const [showPassword, setShowPassword] = useState(false);
+
+  const emailRef = useRef(null);
+
+  // Auto focus Email khi vào trang
+  useEffect(() => {
+    if (emailRef.current) {
+      emailRef.current.focus();
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -89,7 +98,9 @@ function Login() {
         <h1>Đăng nhập</h1>
         {serverError && <p className="error">{serverError}</p>}
         <form onSubmit={handleSubmit}>
+          {/* Email */}
           <input
+            ref={emailRef}
             id="email"
             type="email"
             name="email"
@@ -100,6 +111,7 @@ function Login() {
           />
           {errors.email && <p className="error">{errors.email}</p>}
 
+          {/* Password */}
           <div className="password-field">
             <input
               id="password"
@@ -114,6 +126,7 @@ function Login() {
               type="button"
               className="toggle-password"
               onClick={() => setShowPassword(!showPassword)}
+              tabIndex={-1}
             >
               {showPassword ? (
                 <i className="fa-solid fa-eye-slash"></i>
@@ -124,15 +137,19 @@ function Login() {
           </div>
           {errors.password && <p className="error">{errors.password}</p>}
 
+          {/* Submit */}
           <button type="submit">Đăng nhập</button>
         </form>
-        <p>
-          Quên mật khẩu? <Link to="/reset-password">Khôi phục mật khẩu</Link>
-        </p>
-        <p>
-          Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
-        </p>
 
+        {/* Links */}
+        <p>
+          Quên mật khẩu?{" "}
+          <Link to="/reset-password">Khôi phục mật khẩu</Link>
+        </p>
+        <p>
+          Chưa có tài khoản?{" "}
+          <Link to="/register">Đăng ký ngay</Link>
+        </p>
         <p className="back-home">
           <Link to="/">← Trở về trang chủ</Link>
         </p>
