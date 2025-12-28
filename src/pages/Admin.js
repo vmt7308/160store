@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../assets/css/Admin.css";
 
 function Admin() {
   const navigate = useNavigate();
-  const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,7 +15,6 @@ function Admin() {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [stats, setStats] = useState([]);
-  const [adminInfo, setAdminInfo] = useState({});
   const [activeTab, setActiveTab] = useState("dashboard");
   const [formData, setFormData] = useState({
     categoryName: "",
@@ -86,33 +84,25 @@ function Admin() {
     }
   };
 
-  const showSuccessToast = (message) => {
+  const showSuccessToast = useCallback((message) => {
     toast({
       title: "Thành công!",
       message,
       type: "success",
       duration: 5000,
     });
-  };
+  }, []);
 
-  const showErrorToast = (message) => {
+  const showErrorToast = useCallback((message) => {
     toast({
       title: "Thất bại!",
       message,
       type: "error",
       duration: 5000,
     });
-  };
-
-  useEffect(() => {
-    const token = localStorage.getItem("adminToken");
-    if (token) {
-      setIsAuthenticated(true);
-      fetchData(token);
-    }
   }, []);
 
-  const fetchData = async (token) => {
+  const fetchData = useCallback(async (token) => {
     try {
       const headers = { Authorization: `Bearer ${token}` };
       const [
@@ -121,7 +111,6 @@ function Admin() {
         productsRes,
         ordersRes,
         statsRes,
-        adminRes,
       ] = await Promise.all([
         axios.get("http://localhost:5000/api/admin/users", { headers }),
         axios.get("http://localhost:5000/api/categories", { headers }),
@@ -135,15 +124,21 @@ function Admin() {
       setProducts(productsRes.data);
       setOrders(ordersRes.data);
       setStats(statsRes.data);
-      setAdminInfo(adminRes.data);
-      // showSuccessToast("Lấy dữ liệu thành công.");
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu:", error);
       localStorage.removeItem("adminToken");
       setIsAuthenticated(false);
       showErrorToast("Có lỗi xảy ra khi lấy dữ liệu, vui lòng thử lại.");
     }
-  };
+  }, [showErrorToast]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("adminToken");
+    if (token) {
+      setIsAuthenticated(true);
+      fetchData(token);
+    }
+  }, [fetchData]);
 
   const handleLogin = async (e) => {
     e.preventDefault();

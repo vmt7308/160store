@@ -95,6 +95,14 @@ function Header({ scrollToSection }) {
   // Tham chiếu để xử lý click outside cho user menu
   const userMenuRef = useRef(null);
 
+  // Tự động chuyển đổi tên danh mục thành ID hợp lệ (thống nhất với Home.js)
+  const getCategorySectionId = (categoryName) => {
+    return categoryName
+      .toLowerCase()
+      .replace(/\s+/g, "-") // Thay tất cả khoảng trắng liên tiếp bằng gạch ngang
+      .replace(/[^\w-]/g, ""); // Xóa ký tự đặc biệt
+  };
+
   // Hiển thị nút khi cuộn xuống
   useEffect(() => {
     const handleScroll = () => {
@@ -195,10 +203,6 @@ function Header({ scrollToSection }) {
       const parsedUser = JSON.parse(user);
       setIsLoggedIn(true);
       setCurrentUser(parsedUser);
-
-      // Fallback nếu fullName bị mất
-      const savedFullName = localStorage.getItem("userFullName");
-      const displayName = parsedUser.fullName || parsedUser.FullName || savedFullName || "User";
     } else {
       setIsLoggedIn(false);
       setCurrentUser(null);
@@ -350,12 +354,6 @@ function Header({ scrollToSection }) {
     }
   };
 
-  // Chuyển về trang chi tiết sản phẩm khi click vào sản phẩm
-  const goToProductDetail = (productId) => {
-    navigate(`/product/${productId}`);
-    setShowSearchResults(false);
-  };
-
   // Đóng popup khi click bên ngoài
   const closePopup = () => {
     setShowLogin(false);
@@ -411,14 +409,6 @@ function Header({ scrollToSection }) {
     } catch (err) {
       setError(err.response?.data?.message || "Đăng nhập thất bại. Thử lại!");
     }
-  };
-
-  // Tự động chuyển đổi tên danh mục thành ID hợp lệ (thống nhất với Home.js)
-  const getCategorySectionId = (categoryName) => {
-    return categoryName
-      .toLowerCase()
-      .replace(/\s+/g, "-") // Thay tất cả khoảng trắng liên tiếp bằng gạch ngang
-      .replace(/[^\w\-]/g, ""); // Xóa ký tự đặc biệt
   };
 
   // Format giá tiền

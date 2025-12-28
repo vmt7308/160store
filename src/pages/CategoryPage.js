@@ -91,7 +91,7 @@ function CategoryPage() {
     return categoryName
       .toLowerCase()
       .replace(/\s+/g, "-")
-      .replace(/[^\w\-]/g, "");
+      .replace(/[^\w-]/g, "");
   };
 
   // Sắp xếp sản phẩm dựa trên tùy chọn

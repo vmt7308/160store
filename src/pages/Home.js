@@ -19,6 +19,49 @@ import banner4 from "../assets/img/banner4.jpg";
 import product1 from "../assets/img/product1.jpg";
 import "../assets/font/font-awesome-pro-v6-6.2.0/css/all.min.css";
 
+// Hàm tạo map màu cho các category
+const generateCategoryColors = (categories, colorPalette) => {
+  // Sao chép mảng màu để tránh thay đổi mảng gốc
+  const availableColors = [...colorPalette];
+  const categoryColors = {};
+
+  categories.forEach((category) => {
+    // Nếu số lượng danh mục nhiều hơn bảng màu, tạo màu ngẫu nhiên
+    let colorIndex;
+    if (availableColors.length > 0) {
+      // Chọn ngẫu nhiên một màu từ mảng có sẵn
+      colorIndex = Math.floor(Math.random() * availableColors.length);
+      categoryColors[category.CategoryID] = availableColors[colorIndex];
+      // Loại bỏ màu đã sử dụng
+      availableColors.splice(colorIndex, 1);
+    } else {
+      // Tạo màu RGB ngẫu nhiên nếu hết màu
+      const r = Math.floor(Math.random() * 200) + 55; // Giới hạn từ 55-255 để tránh màu quá tối
+      const g = Math.floor(Math.random() * 200) + 55;
+      const b = Math.floor(Math.random() * 200) + 55;
+      categoryColors[category.CategoryID] = `rgb(${r}, ${g}, ${b})`;
+    }
+  });
+
+  return categoryColors;
+};
+
+// Tạo map hiệu ứng cho các category
+const generateCategoryEffects = (categories) => {
+  // Danh sách các hiệu ứng
+  const effectTypes = ["falling-leaves", "shooting-stars", "bubbles"];
+  const categoryEffects = {};
+
+  categories.forEach((category) => {
+    // Chọn ngẫu nhiên một hiệu ứng
+    const randomEffect =
+      effectTypes[Math.floor(Math.random() * effectTypes.length)];
+    categoryEffects[category.CategoryID] = randomEffect;
+  });
+
+  return categoryEffects;
+};
+
 function Home() {
   const navigate = useNavigate();
   const banners = [banner1, banner2, banner3, banner4];
@@ -29,21 +72,6 @@ function Home() {
   const timeoutRef = useRef(null);
   const contactRef = useRef(null);
 
-  // Danh sách các hiệu ứng
-  const effectTypes = ["falling-leaves", "shooting-stars", "bubbles"];
-  // Tạo map hiệu ứng cho các category
-  const generateCategoryEffects = (categories) => {
-    const categoryEffects = {};
-
-    categories.forEach((category) => {
-      // Chọn ngẫu nhiên một hiệu ứng
-      const randomEffect =
-        effectTypes[Math.floor(Math.random() * effectTypes.length)];
-      categoryEffects[category.CategoryID] = randomEffect;
-    });
-
-    return categoryEffects;
-  };
   // State lưu trữ hiệu ứng cho mỗi danh mục
   const [categoryEffects, setCategoryEffects] = useState({});
 
@@ -118,33 +146,6 @@ function Home() {
     []
   );
 
-  // Hàm tạo map màu cho các category
-  const generateCategoryColors = (categories) => {
-    // Sao chép mảng màu để tránh thay đổi mảng gốc
-    const availableColors = [...colorPalette];
-    const categoryColors = {};
-
-    categories.forEach((category) => {
-      // Nếu số lượng danh mục nhiều hơn bảng màu, tạo màu ngẫu nhiên
-      let colorIndex;
-      if (availableColors.length > 0) {
-        // Chọn ngẫu nhiên một màu từ mảng có sẵn
-        colorIndex = Math.floor(Math.random() * availableColors.length);
-        categoryColors[category.CategoryID] = availableColors[colorIndex];
-        // Loại bỏ màu đã sử dụng
-        availableColors.splice(colorIndex, 1);
-      } else {
-        // Tạo màu RGB ngẫu nhiên nếu hết màu
-        const r = Math.floor(Math.random() * 200) + 55; // Giới hạn từ 55-255 để tránh màu quá tối
-        const g = Math.floor(Math.random() * 200) + 55;
-        const b = Math.floor(Math.random() * 200) + 55;
-        categoryColors[category.CategoryID] = `rgb(${r}, ${g}, ${b})`;
-      }
-    });
-
-    return categoryColors;
-  };
-
   // State lưu trữ màu cho mỗi danh mục
   const [categoryColors, setCategoryColors] = useState({});
 
@@ -152,7 +153,7 @@ function Home() {
     return categoryName
       .toLowerCase()
       .replace(/\s+/g, "-")
-      .replace(/[^\w\-]/g, ""); // Loại bỏ ký tự đặc biệt
+      .replace(/[^\w-]/g, ""); // Loại bỏ ký tự đặc biệt
   };
 
   const scrollToSection = (id) => {
@@ -189,7 +190,7 @@ function Home() {
           const headerHeight = header ? header.offsetHeight : 140; // fallback 140px nếu không tìm thấy
           // Tính vị trí chính xác của section
           const sectionTop = el.getBoundingClientRect().top + window.pageYOffset;
-          
+
           setTimeout(() => {
             // Scroll đến vị trí: đầu section - chiều cao header - 12px (khoảng cách)
             window.scrollTo({
@@ -211,7 +212,7 @@ function Home() {
         setCategories(catRes.data);
 
         // Tạo bảng màu cho các danh mục
-        const colors = generateCategoryColors(catRes.data);
+        const colors = generateCategoryColors(catRes.data, colorPalette);
         setCategoryColors(colors);
 
         // Tạo hiệu ứng ngẫu nhiên cho các danh mục
@@ -241,7 +242,7 @@ function Home() {
     };
 
     fetchData();
-  }, []);
+  }, [colorPalette]);
 
   // Hàm xử lý lỗi hình ảnh
   const handleImageError = (e) => {
@@ -757,7 +758,7 @@ function Home() {
           </div>
         )}
       </div>
-      
+
       <Chatbot />
       <Footer />
     </div>

@@ -16,6 +16,10 @@ function SearchResults() {
   const location = useLocation();
   const navigate = useNavigate();
   const productsPerPage = 10; // Số sản phẩm trên mỗi trang
+  
+  // ĐỌC QUERY PARAMS TRỰC TIẾP CHO PHẦN HIỂN THỊ TIÊU ĐỀ
+  const queryParams = new URLSearchParams(location.search);
+  const displayKeyword = queryParams.get("keyword")?.trim() || "tất cả sản phẩm";
 
   // State cho popup chi tiết sản phẩm
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -33,13 +37,6 @@ function SearchResults() {
     { id: "color4", name: "Vàng nghệ", code: "#FCBF49" },
   ];
 
-  // ĐỌC ĐẦY ĐỦ QUERY PARAMS
-  const query = new URLSearchParams(location.search);
-  const keyword = query.get("keyword") || "";
-  const categoryId = query.get("categoryId") || "";
-  const minPrice = query.get("minPrice") || "";
-  const maxPrice = query.get("maxPrice") || "";
-
   // Fetch categories and search results
   useEffect(() => {
     const fetchData = async () => {
@@ -49,6 +46,13 @@ function SearchResults() {
           "http://localhost:5000/api/list-categories"
         );
         setCategories(catRes.data);
+
+        // ĐỌC ĐẦY ĐỦ QUERY PARAMS
+        const query = new URLSearchParams(location.search);
+        const keyword = query.get("keyword") || "";
+        const categoryId = query.get("categoryId") || "";
+        const minPrice = query.get("minPrice") || "";
+        const maxPrice = query.get("maxPrice") || "";
 
         // Tải kết quả tìm kiếm
         if (keyword || categoryId || minPrice || maxPrice) {
@@ -306,7 +310,7 @@ function SearchResults() {
       <div className="category-page-container">
         <div className="category-header">
           <h1 className="category-page-title">
-            Kết quả tìm kiếm cho "{keyword}"
+            Kết quả tìm kiếm cho "{displayKeyword}"
           </h1>
 
           <div className="sort-container">

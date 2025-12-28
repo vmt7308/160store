@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -34,8 +34,8 @@ const Cart = () => {
     return localStorage.getItem("orderNotes") || "";
   });
 
-  // Voucher options
-  const vouchers = [
+  // Vouchers
+  const vouchers = useMemo(() => [
     {
       code: "VOUCHER10K",
       name: "VOUCHER 10% TỐI ĐA 10K",
@@ -54,7 +54,7 @@ const Cart = () => {
       discount: 80000,
       minOrder: 999000,
     },
-  ];
+  ], []); // dependency rỗng vì vouchers không bao giờ thay đổi
 
   // Lưu orderNotes vào localStorage khi thay đổi
   useEffect(() => {
@@ -86,7 +86,7 @@ const Cart = () => {
         .find((voucher) => subtotal >= voucher.minOrder);
       setSelectedVoucher(validVoucher || null);
     }
-  }, [cartItems, selectedVoucher]);
+  }, [cartItems, selectedVoucher, vouchers]);
 
   // Calculate subtotal (Đơn giá)
   const subtotal = cartItems.reduce(
@@ -203,9 +203,8 @@ const Cart = () => {
                           {productColors.map((color) => (
                             <div
                               key={color.id}
-                              className={`color-circle ${
-                                item.color === color.name ? "selected" : ""
-                              }`}
+                              className={`color-circle ${item.color === color.name ? "selected" : ""
+                                }`}
                               style={{ backgroundColor: color.code }}
                               onClick={() => updateColor(item.id, color.name)}
                               title={color.name}
@@ -223,9 +222,8 @@ const Cart = () => {
                           {availableSizes.map((size) => (
                             <div
                               key={size}
-                              className={`size-box ${
-                                item.size === size ? "selected" : ""
-                              }`}
+                              className={`size-box ${item.size === size ? "selected" : ""
+                                }`}
                               onClick={() => updateSize(item.id, size)}
                             >
                               {size}

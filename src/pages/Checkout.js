@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/Header";
@@ -17,6 +17,27 @@ const Checkout = () => {
   const [orderNotes, setOrderNotes] = useState("");
   const [selectedVoucher, setSelectedVoucher] = useState(null);
   const [error, setError] = useState("");
+
+  // Hàm lấy thông tin chi tiết user từ DB
+  const fetchUserDetails = useCallback(async (userId, token) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/users/${userId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const updatedUserData = { ...user, ...response.data };
+      setUser(updatedUserData);
+      localStorage.setItem("user", JSON.stringify(updatedUserData));
+    } catch (err) {
+      console.error("Lỗi khi lấy thông tin user:", err);
+      setError("Không thể tải thông tin người dùng! Vui lòng đăng nhập lại.");
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      navigate("/login?redirect=/checkout");
+    }
+  }, [user, navigate]);
 
   // Lấy thông tin giỏ hàng, ghi chú và voucher từ localStorage
   useEffect(() => {
@@ -53,28 +74,7 @@ const Checkout = () => {
     } else {
       navigate("/login?redirect=/checkout");
     }
-  }, [navigate]);
-
-  // Hàm lấy thông tin chi tiết user từ DB
-  const fetchUserDetails = async (userId, token) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:5000/api/users/${userId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      const updatedUserData = { ...user, ...response.data };
-      setUser(updatedUserData);
-      localStorage.setItem("user", JSON.stringify(updatedUserData));
-    } catch (err) {
-      console.error("Lỗi khi lấy thông tin user:", err);
-      setError("Không thể tải thông tin người dùng! Vui lòng đăng nhập lại.");
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      navigate("/login?redirect=/checkout");
-    }
-  };
+  }, [navigate, fetchUserDetails]);
 
   // Cập nhật thông tin user
   const [updatedUser, setUpdatedUser] = useState({
