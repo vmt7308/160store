@@ -12,7 +12,8 @@ CREATE TABLE Users (
     PasswordHash NVARCHAR(255) NOT NULL,
     PhoneNumber NVARCHAR(20),
     Address NVARCHAR(255),
-    CreatedAt DATETIME DEFAULT GETDATE()
+    IsVerified BIT DEFAULT 0, -- Xác thực tài khoản, 0: Chưa xác thực, 1: Đã xác thực
+    CreatedAt DATETIME DEFAULT GETDATE()    
 );
 
 -- Tạo bảng Admin
@@ -37,8 +38,6 @@ CREATE TABLE Products (
     ProductName NVARCHAR(255) NOT NULL,
     ImageURL NVARCHAR(255),
     Price DECIMAL(10,2) NOT NULL,
-    -- Color NVARCHAR(50),
-    -- Size NVARCHAR(20),
     Descriptions NVARCHAR(255),
     CreatedAt DATETIME DEFAULT GETDATE()
 );
@@ -47,10 +46,13 @@ CREATE TABLE Products (
 CREATE TABLE Orders (
     OrderID INT IDENTITY(1,1) PRIMARY KEY,
     UserID INT FOREIGN KEY REFERENCES Users(UserID) ON DELETE CASCADE,
-    OrderDate DATETIME DEFAULT GETDATE(),
     TotalAmount DECIMAL(10,2) NOT NULL,
-    Status NVARCHAR(50) DEFAULT 'Pending'
-);
+    Status NVARCHAR(50) DEFAULT 'Pending',
+    PaymentMethod NVARCHAR(50),
+    OrderNotes NVARCHAR(255),
+    VoucherCode NVARCHAR(50),
+    OrderDate DATETIME DEFAULT GETDATE()
+);    
 
 -- Tạo bảng Chi tiết đơn hàng
 CREATE TABLE OrderDetails (
@@ -61,20 +63,36 @@ CREATE TABLE OrderDetails (
     UnitPrice DECIMAL(10,2) NOT NULL
 );
 
--- Tạo bảng Báo cáo thống kê doanh thu
--- CREATE VIEW RevenueReport AS
--- SELECT
--- 	FORMAT(OrderDate, 'yyyy-MM') AS Month,
--- 	SUM(TotalAmount) AS TotalRevenue
--- FROM Orders
--- GROUP BY FORMAT(OrderDate, 'yyyy-MM');
+-- Tạo bảng Đánh già và bình luận sản phẩm
+CREATE TABLE Reviews (
+  ReviewID INT IDENTITY(1,1) PRIMARY KEY,
+  OrderID INT NOT NULL FOREIGN KEY REFERENCES Orders(OrderID),
+  ProductID INT NOT NULL FOREIGN KEY REFERENCES Products(ProductID),
+  UserID INT NOT NULL FOREIGN KEY REFERENCES Users(UserID),
+  Rating INT NOT NULL CHECK (Rating BETWEEN 1 AND 5),
+  Comment NVARCHAR(MAX),
+  FullName NVARCHAR(100),
+  ImageURL NVARCHAR(255) NULL,
+  CreatedAt DATETIME DEFAULT GETDATE()
+);
 
--- Thêm dữ liệu
+-- Tạo bảng Đăng ký nhận tin
+CREATE TABLE Newsletter (
+  ID INT PRIMARY KEY IDENTITY(1,1),
+  Email NVARCHAR(255) UNIQUE NOT NULL,
+  CreatedAt DATETIME DEFAULT GETDATE()
+);
+
+-- Thêm tài khoản Admin - Mật khẩu: admin123 được hash bằng bcrypt trong ./backend/hash-password.js
+INSERT INTO Admins (FullName, Email, PasswordHash)
+VALUES ('Admin User', 'admin@160store.com', '$2b$10$N//bYagzKoLs/XH3TUI9Seg69Qjs6WrKEow5V1CyP6hggvdIZfLfK');
+
+-- Thêm Danh mục sản phẩm
 INSERT INTO Categories (CategoryName) VALUES
 (N'HÀNG MỚI MỖI NGÀY'), (N'HÀNG BÁN CHẠY'), (N'TỦ ĐỒ MÙA HÈ'), (N'COMBO MIX & MATCH');
 
-INSERT INTO Products (CategoryID, ProductName, ImageURL, Price, Descriptions) VALUES
 -- HÀNG MỚI MỖI NGÀY
+INSERT INTO Products (CategoryID, ProductName, ImageURL, Price, Descriptions) VALUES
 (1, N'Áo Thun Nam ICONDENIM Atheltics Champion', 'uploads/product1.jpg', 349000, N'Vải cotton màu trắng kem êm tay, thoáng khí và thấm hút mồ hôi tốt'),
 (1, N'Áo Polo Nam ICONDENIM Horizontal Stripped', 'uploads/product2.jpg', 419000, N'Chất vải thun cotton nổi bật với khả năng co dãn tốt tạo độ thoải mái cho người mặc'),
 (1, N'Áo Thun Nam ICONDENIM Edge Striped', 'uploads/product3.jpg', 299000, N'Chất vải cotton mềm mại, thoáng khí và thấm hút tốt – cảm giác dễ chịu cả ngày dài khi diện'),
@@ -94,8 +112,8 @@ INSERT INTO Products (CategoryID, ProductName, ImageURL, Price, Descriptions) VA
 (1, N'Áo Thun Nam ICONDENIM Patterned heat-embossed ID', 'uploads/product17.jpg', 329000, N'Chất liệu cotton mềm mại tự nhiên và nhờ khả năng thấm hút mồ hôi tốt và thoáng khí, vải giúp duy trì sự khô ráo'),
 (1, N'Áo Thun Nam ICONDENIM MARVEL Captain Sentinel Of Liberty', 'uploads/product18.jpg', 349000, N'Thiết kế không chỉ khắc họa dáng vẻ kiên cường của đội trưởng Mỹ, mà còn truyền tải tinh thần chính nghĩa và ý chí bất khuất, tạo điểm nhấn ấn tượng cho mọi outfit');
 
-INSERT INTO Products (CategoryID, ProductName, ImageURL, Price, Descriptions) VALUES
 -- HÀNG BÁN CHẠY
+INSERT INTO Products (CategoryID, ProductName, ImageURL, Price, Descriptions) VALUES
 (2, N'Áo Polo Nam ICONDENIM Logo Mark', 'uploads/product19.jpg', 250000, N'Chất liệu Double Face Interlock CVC cá sấu với cấu trúc dệt đan kép hai lớp, chất liệu này không chỉ giúp giữ form áo tốt mà còn tăng khả năng co giãn linh hoạt, tạo sự thoải mái cho người mặc'),
 (2, N'Quần Short Kaki Nam ICONDENIM Garment Dye', 'uploads/product20.jpg', 260000, N'Đây là kỹ thuật nhuộm màu sau khi sản phẩm đã được may hoàn chỉnh, giúp màu sắc thấm đều và tự nhiên'),
 (2, N'Áo Sơ Mi Nam Cuban ICONDENIM ft MARVEL ART COMIC', 'uploads/product21.jpg', 270000, N'Thiết kế này nổi bật với họa tiết in tràn toàn bộ áo, tái hiện sống động nhiều bộ truyện tranh kinh điển của Marvel'),
@@ -112,8 +130,8 @@ INSERT INTO Products (CategoryID, ProductName, ImageURL, Price, Descriptions) VA
 (2, N'Áo Polo Nam ICONDENIM Orgnls', 'uploads/product32.jpg', 250000, N'Chất liệu Double Face Interlock CVC cá sấu với cấu trúc dệt đan kép hai lớp, chất liệu này không chỉ giúp giữ form áo tốt mà còn tăng khả năng co giãn linh hoạt'),
 (2, N'Áo Polo Nam ICONDENIM Pattern Monogram IDOG', 'uploads/product33.jpg', 300000, N'Chiếc này không chỉ là lựa chọn hoàn hảo cho những buổi dạo phố mà còn là món đồ không thể thiếu cho những ai yêu thích thời trang');
 
-INSERT INTO Products (CategoryID, ProductName, ImageURL, Price, Descriptions) VALUES
 -- TỦ ĐỒ MÙA HÈ
+INSERT INTO Products (CategoryID, ProductName, ImageURL, Price, Descriptions) VALUES
 (3, N'Áo Tanktop ICONDENIM Orgnls Logo', 'uploads/product34.jpg', 399000, N'Chất liệu thun cotton cực thoáng mát, mặc lên cực dễ chịu. Thiết kế bản vai to trẻ trung, năng động. Chi tiết in cao bền bỉ, không bong tróc'),
 (3, N'Áo Thun Nam ICONDENIM ICDN Graffy', 'uploads/product35.jpg', 290000, N'Áo thun với chất liệu Cotton mềm mại, thông thoáng. Phong cách Graffity ấn tượng. Hình thêu nhỏ gọn, sắc nét, dễ phối đồ, mặc với quần gì cũng dễ'),
 (3, N'Quần Short Kaki Nam ICONDENIM Orgnls', 'uploads/product36.jpg', 350000, N'Shorts KAKI - một trong những mẫu quần shorts không thể thiếu, chất liệu Kaki dày dặn, co giãn nhẹ, xịn khỏi phải bàn'),
@@ -135,8 +153,8 @@ INSERT INTO Products (CategoryID, ProductName, ImageURL, Price, Descriptions) VA
 (3, N'Quần Short Nam ICONDENIM Regular Fit Short Length', 'uploads/product52.jpg', 399000, N'Chất vải Linen pha mỏng nhẹ, mùa hè mặc siêu mát. Chiếc quần short đơn giản, tiện lợi, dễ mặc, dễ phối. Form Regular trên gối, mặc thoải mái, hạn chế được đa số khuyết điểm'),
 (3, N'Quần Short Nỉ Nam ICONDENIM LeisureLoom', 'uploads/product53.jpg', 290000, N'Quần shorts với kiểu dáng lưng thun trên gối, co giãn thoải mái. Chất liệu nỉ cào mềm mại, mùa hè mặc vẫn mát. Form Regular cực thoải mái khi mặc');
 
-INSERT INTO Products (CategoryID, ProductName, ImageURL, Price, Descriptions) VALUES
 -- COMBO MIX & MATCH
+INSERT INTO Products (CategoryID, ProductName, ImageURL, Price, Descriptions) VALUES
 (4, N'Set Đồ Nam ICONDENIM Rugby Football', 'uploads/product54.jpg', 868000, N'Áo và quần đều được in các họa tiết với phong cách thể thao, tạo cảm giác đồng điệu thu hút. Áo sơ mi cổ lá nhọn, cài nút truyền thống phối túi hộp tạo điểm nhấn'),
 (4, N'Set Đồ Nam RUNPOW Training', 'uploads/product55.jpg', 648000, N'Nổi bật với độ bền cao, mềm mại, co giãn tốt, rất thích hợp cho việc tập luyện. Nhờ cấu trúc sợi tổng hợp, chất liệu này có khả năng kháng nước nhẹ, nhanh khô hơn so với cotton, giúp tiết kiệm thời gian phơi'),
 (4, N'Set Đồ Nam ICONDENIM ORGNLS French Bulldog', 'uploads/product56.jpg', 900000, N'Áo thun cotton mềm mại, thấm hút tốt, mang lại cảm giác dễ chịu và thoáng mát suốt cả ngày. Kết hợp với quần nỉ TC co giãn linh hoạt, giữ nhiệt ổn định nhưng vẫn đảm bảo độ thoáng khí, giúp người mặc luôn thoải mái suốt cả ngày dài'),
@@ -157,20 +175,3 @@ INSERT INTO Products (CategoryID, ProductName, ImageURL, Price, Descriptions) VA
 (4, N'Set Đồ Nam ICONDENIM Maze ID Pattern', 'uploads/product71.jpg', 720000, N'Quần shorts lưng thun co giãn, không quá ôm. Hoạ tiết Maze liên kết bởi 2 kí tự ID được in định vị trên toàn áo, cực ấn tượng. Form Regular năng động, mặc cực thích'),
 (4, N'Set Đồ Nam ICONDENIM Oversize Printed', 'uploads/product72.jpg', 550000, N'Set đồ năng động ICONDENIM với form dáng oversize rộng rãi, giúp bạn tự do vận động cả ngày dài. Thiết kế Oversize mang lại phong cách thời trang tươi mới và thoải mái, phù hợp với nhu cầu của người mua'),
 (4, N'Set Đồ Nam ICONDENIM Maximalism', 'uploads/product73.jpg', 950000, N'Form ở bên ngoài nhưng vẫn giữ được sự mềm mại bên trong, giúp tối đa hóa cảm giác thoải mái của người mặc. Thiết kế được lấy cảm hứng từ những bộ đồ bóng rổ năng động, được cách điệu lại với họa tiết monogram');
-
-ALTER TABLE Orders
-ADD 
-    PaymentMethod NVARCHAR(50),
-    OrderNotes NVARCHAR(255),
-    VoucherCode NVARCHAR(50);
-
-/* - Hãy check file backend/hash-password.js 
-	để biết cách tạo mật khẩu đã được mã hóa hash bằng bcrypt 
-	trước khi thêm tài khoản Admin
-   - Mật khẩu trước khi hash là: admin123 */
-INSERT INTO Admins (FullName, Email, PasswordHash)
-VALUES ('Admin User', 'admin@160store.com', '$2b$10$N//bYagzKoLs/XH3TUI9Seg69Qjs6WrKEow5V1CyP6hggvdIZfLfK');
-
-/* Xóa 1 Admin */
--- DELETE FROM [160storeDB].[dbo].[Admins]
--- WHERE [AdminID] = 1; -- Thay 1 bằng ID của admin cần xóa
