@@ -1,50 +1,44 @@
+// Component FE cho chatbot (giao diện chat bubble).
+// Ghi chú: Gửi message + userId (từ localStorage auth) đến BE. Hiển thị responses.
+
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "../assets/css/Chatbot.css";
 
 function Chatbot() {
-  const [messages, setMessages] = useState([
-    {
-      sender: "bot",
-      text: "Xin chào! Tôi là chatbot của 160store. Bạn muốn tìm sản phẩm hay cần hỗ trợ gì? 😊",
-    },
-  ]);
+  const [messages, setMessages] = useState([{ sender: "bot", text: "Xin chào! Tôi là Chatbot AI của 160store. Bạn cần hỗ trợ gì ạ? 😊" }]);
   const [input, setInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // State mới để kiểm soát loading
   const messagesEndRef = useRef(null);
 
-  // Cuộn xuống cuối danh sách tin nhắn khi có tin nhắn mới
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Gửi tin nhắn đến backend
   const sendMessage = async (e) => {
     e.preventDefault();
     if (!input.trim()) return;
 
-    // Thêm tin nhắn người dùng vào danh sách
-    setMessages((prev) => [...prev, { sender: "user", text: input }]);
+    const userMessage = input.trim();
+    setMessages((prev) => [...prev, { sender: "user", text: userMessage }]);
     setInput("");
 
-    try {
-      const response = await axios.post("http://localhost:5000/api/chatbot", {
-        message: input,
-      });
-      const botReply = response.data.reply;
+    // Hiển thị loading indicator ngay lập tức
+    setIsLoading(true);
+    setMessages((prev) => [...prev, { sender: "bot", text: "typing" }]); // Message tạm với text đặc biệt
 
-      // Thêm phản hồi của bot
-      setMessages((prev) => [...prev, { sender: "bot", text: botReply }]);
+    try {
+      const response = await axios.post("http://localhost:5000/api/chatbot", { message: userMessage, userId: localStorage.getItem('userId') });
+
+      // Xóa loading và thêm phản hồi thật
+      setMessages((prev) => prev.filter(msg => msg.text !== "typing"));
+      setMessages((prev) => [...prev, { sender: "bot", text: response.data.reply }]);
     } catch (error) {
-      console.error("Error sending message:", error);
-      setMessages((prev) => [
-        ...prev,
-        { sender: "bot", text: "Có lỗi xảy ra, vui lòng thử lại!" },
-      ]);
+      setMessages((prev) => prev.filter(msg => msg.text !== "typing"));
+      setMessages((prev) => [...prev, { sender: "bot", text: "Lỗi, thử lại!" }]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -57,13 +51,16 @@ function Chatbot() {
         <div className="chatbot-window">
           <div className="chatbot-messages">
             {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`chatbot-message ${
-                  msg.sender === "user" ? "user" : "bot"
-                }`}
-              >
-                {msg.text}
+              <div key={index} className={`chatbot-message ${msg.sender}`}>
+                {msg.text === "typing" ? (
+                  <div className="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                ) : (
+                  msg.text
+                )}
               </div>
             ))}
             <div ref={messagesEndRef} />
@@ -73,9 +70,10 @@ function Chatbot() {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Nhập tin nhắn..."
+              placeholder="Nhập tin nhắn..." 
+              disabled={isLoading} // Disable input khi đang loading (tùy chọn)  
             />
-            <button type="submit">Gửi</button>
+            <button type="submit" disabled={isLoading}>Gửi</button>
           </form>
         </div>
       )}

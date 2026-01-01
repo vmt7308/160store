@@ -2,7 +2,7 @@
 
 ## Giới thiệu
 
-160STORE là một hệ thống quản lý và bán hàng trực tuyến chuyên về thời trang nam. Dự án bao gồm các tính năng như quản lý sản phẩm, danh mục, giỏ hàng, thanh toán, quản lý đơn hàng, và giao diện quản trị viên. Hệ thống được xây dựng với kiến trúc client-server, sử dụng ReactJS cho giao diện người dùng và Node ExpressJS cho backend.
+160STORE là một hệ thống quản lý và bán hàng trực tuyến chuyên về thời trang nam. Dự án bao gồm các tính năng như quản lý sản phẩm, danh mục, giỏ hàng, thanh toán, quản lý đơn hàng, và giao diện quản trị viên. Hệ thống được xây dựng với kiến trúc client-server, MVC, sử dụng ReactJS cho giao diện người dùng và Node ExpressJS cho backend.
 
 ---
 
@@ -26,7 +26,6 @@
 - Node.js >= 14.x
 - npm >= 6.x
 - MySQL hoặc SQL Server
-- Python: 3.8 đến 3.11
 
 ### Hướng dẫn cài đặt
 
@@ -54,43 +53,21 @@
 
    ```
 
-4. Cấu hình cơ sở dữ liệu và python cho chatbot ai:
+4. Cấu hình cơ sở dữ liệu và chatbot ai:
    - Tạo cơ sở dữ liệu và import file 160storeDB.sql từ thư mục backend/160storeDB.sql
    - Cập nhật thông tin kết nối cơ sở dữ liệu trong file .env ở thư mục backend/.env
-   - Cài đặt python: Giới hạn sử dụng python version từ 3.8 đến 3.11 để tránh phát sinh lỗi chatbot ai (spaCy)
-   - Cài đặt các thư viện Python cần thiết:
-
+   - Cài đặt thư viện cần thiết cho backend:
    ```bash
-   https://www.python.org/downloads/
-   pip install spacy pyodbc
-   python -m spacy download en_core_web_sm
+   cd backend
+   npm i natural@latest ml-matrix@latest mssql@latest axios@latest dotenv@latest
+
    ```
 
 5. Chạy backend:
-   Không sử dụng chatbot ai
    ```bash
    cd backend
    node server.js
 
-   ```
-   Sử dụng chatbot ai
-   ```bash
-   Mở Command Prompt hoặc PowerShell: Cd đến thư mục dự án lưu file của bạn
-   Ví dụ: cd C:\Users\VMT\Desktop\160store\backend
-
-   Tiếp theo tạo biến môi trường:
-   python -m venv venv
-
-   Kích hoạt môi trường ảo:
-   .\venv\Scripts\activate
-   => Sau đó (venv) xuất hiện trước dấu nhắc lệnh
-
-   Cài đặt các thư viện sau:
-   pip install spacy pyodbc
-   python.exe -m pip install --upgrade pip
-   python -m spacy download en_core_web_sm
-   Lưu ý phải Kích hoạt môi trường ảo: .\venv\Scripts\activate rồi mới chạy cd backend rồi node server.js để Chatbot AI hoạt động
-   
    ```
 
 6. Chạy frontend:
@@ -210,7 +187,7 @@
 2. Backend: Node.js, Express.js, MSSQL Server (hoặc MySQL)
 3. Khác: 
    - CSS3, GSAP (Hiệu ứng động cho thêm sản phẩm vào giỏ hàng)
-   - Python for Chatbot AI with spaCy xử lý ngôn ngữ tự nhiên NLP
+
 ## Đóng góp
 
 1. Fork dự án.
