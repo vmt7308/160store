@@ -13,6 +13,7 @@ import Stores from "./pages/Stores";
 import CategoryPage from "./pages/CategoryPage";
 import Account from "./pages/Account";
 import SearchResults from "./pages/SearchResults";
+import CheckoutSuccess from "./pages/CheckoutSuccess";
 
 import Admin from "./pages/Admin";
 
@@ -47,6 +48,7 @@ function App() {
         <Route path="/collections/:categoryId" element={<CategoryPage />} />
         <Route path="/account" element={<Account />} />
         <Route path="/search" element={<SearchResults />} />
+        <Route path="/checkout/success" element={<CheckoutSuccess />} />
 
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin/:tab" element={<Admin />} />

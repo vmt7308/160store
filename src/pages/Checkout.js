@@ -165,6 +165,7 @@ const Checkout = () => {
 
   // Xử lý hoàn tất đơn hàng
   const handleCompleteOrder = async () => {
+    // Validate chung
     if (!user) {
       alert("Vui lòng đăng nhập để tiếp tục!");
       navigate("/login?redirect=/checkout");
@@ -173,9 +174,7 @@ const Checkout = () => {
 
     const { FullName, Email, PhoneNumber, Address } = user;
     if (!FullName || !Email || !PhoneNumber || !Address) {
-      setError(
-        "Vui lòng cập nhật đầy đủ thông tin giao hàng trước khi đặt hàng!"
-      );
+      setError("Vui lòng cập nhật đầy đủ thông tin giao hàng trước khi đặt hàng!");
       return;
     }
 
@@ -184,22 +183,25 @@ const Checkout = () => {
       return;
     }
 
+    // DỮ LIỆU ĐƠN HÀNG CHUNG CHO CẢ COD VÀ MOMO
+    const orderData = {
+      UserID: user.UserID || user.id,
+      TotalAmount: total,
+      PaymentMethod: paymentMethod,
+      OrderNotes: orderNotes || null,
+      VoucherCode: selectedVoucher ? selectedVoucher.code : null,
+      OrderDetails: cartItems.map((item) => ({
+        ProductID: item.productId,
+        Quantity: item.quantity,
+        UnitPrice: item.price,
+      })),
+    };
+
     try {
       const token = localStorage.getItem("token");
-      const orderData = {
-        UserID: user.UserID || user.id, // Hỗ trợ cả UserID và id
-        TotalAmount: total,
-        PaymentMethod: paymentMethod,
-        OrderNotes: orderNotes || null,
-        VoucherCode: selectedVoucher ? selectedVoucher.code : null,
-        OrderDetails: cartItems.map((item) => ({
-          ProductID: item.productId,
-          Quantity: item.quantity,
-          UnitPrice: item.price,
-        })),
-      };
 
-      const response = await axios.post(
+      // BƯỚC 1: TẠO ĐƠN HÀNG TRÊN DB TRƯỚC (chung cho cả COD và MoMo)
+      const orderResponse = await axios.post(
         "http://localhost:5000/api/orders",
         orderData,
         {
@@ -207,20 +209,49 @@ const Checkout = () => {
         }
       );
 
-      // Xóa giỏ hàng sau khi đặt hàng thành công
+      const orderId = orderResponse.data.orderId; // Lấy orderId thật từ BE
+
+      // BƯỚC 2: XỬ LÝ THEO PHƯƠNG THỨC THANH TOÁN
+      if (paymentMethod === "MOMO") {
+        // GỌI API MOMO VỚI ORDERID THẬT
+        const momoResponse = await axios.post(
+          "http://localhost:5000/api/momo/create",
+          {
+            orderId: `ORDER_${orderId}`, // Dùng orderId thật
+            amount: total,
+            orderInfo: `Thanh toán đơn hàng #${orderId} tại 160STORE - ${FullName} - ${Email}`,
+          }
+        );
+
+        // Lưu tên khách hàng
+        if (user && (user.fullName || user.FullName)) {
+          localStorage.setItem("userFullName", user.fullName || user.FullName);
+        }
+
+        if (momoResponse.data.payUrl) {
+          window.location.href = momoResponse.data.payUrl;
+          return; // dừng hoàn toàn tại đây
+        } else {
+          throw new Error("Không tạo được link MoMo");
+        }
+      }
+
+      // BƯỚC 3: COD HOẶC MOMO THÀNH CÔNG (fallback nếu MoMo lỗi)
+      // Xóa giỏ hàng
       localStorage.removeItem("cart");
       localStorage.removeItem("orderNotes");
       localStorage.removeItem("selectedVoucher");
-      alert(`Đặt hàng thành công! Mã đơn hàng: ${response.data.orderId}`);
 
-      // Lưu tên
+      alert(`Đặt hàng thành công! Mã đơn hàng: ${orderId}`);
+
+      // Lưu tên khách hàng
       if (user && (user.fullName || user.FullName)) {
         localStorage.setItem("userFullName", user.fullName || user.FullName);
       }
 
       navigate("/cart");
     } catch (err) {
-      console.error("Lỗi khi đặt hàng:", err);
+      console.error("Lỗi khi tạo đơn hàng:", err);
       setError(
         err.response?.data?.message || "Lỗi khi đặt hàng! Vui lòng thử lại."
       );
@@ -361,9 +392,9 @@ const Checkout = () => {
               <input
                 type="radio"
                 name="payment"
-                value="MoMo"
-                checked={paymentMethod === "MoMo"}
-                onChange={() => setPaymentMethod("MoMo")}
+                value="MOMO"
+                checked={paymentMethod === "MOMO"}
+                onChange={() => setPaymentMethod("MOMO")}
               />
               <img src={momo} alt="MoMo" />
               Thanh toán qua ví MoMo

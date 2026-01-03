@@ -7,7 +7,7 @@ import "../assets/css/Header.css";
 import "../assets/font/font-awesome-pro-v6-6.2.0//css/all.min.css";
 import product1 from "../assets/img/product1.jpg";
 
-function Header({ scrollToSection }) {
+function Header({ scrollToSection = null }) {
   // STATE VÀ LOGIC SCROLL-TO-TOP
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   // State để kiểm tra trạng thái đăng nhập
@@ -765,7 +765,9 @@ function Header({ scrollToSection }) {
                       // Nếu đang ở trang chủ rồi thì mới scroll, còn không thì để navigate tự xử lý
                       if (window.location.pathname === "/") {
                         e.preventDefault(); // Ngăn navigate nếu đã ở trang chủ
-                        scrollToSection(getCategorySectionId(category.CategoryName));
+                        if (typeof scrollToSection === "function") {
+                          scrollToSection(getCategorySectionId(category.CategoryName));
+                        }
                       }
                       // Nếu đang ở trang khác → navigate đến "/#id", Home.js sẽ tự scroll
                     }}

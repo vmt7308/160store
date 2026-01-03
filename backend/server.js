@@ -13,6 +13,7 @@ const orderRoutes = require("./routes/orderRoutes");
 const chatbotRoutes = require("./routes/chatbotRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const newsletterRoutes = require("./routes/newsletterRoutes");
+const momoController = require("./controllers/momoController");
 
 const adminRoutes = require("./routes/adminRoutes");
 
@@ -47,6 +48,8 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/newsletter", newsletterRoutes);
+app.post("/api/momo/create", momoController.createMoMoPayment);
+app.post("/api/momo/ipn", momoController.momoIPN);
 
 app.use("/api/admin", adminRoutes);
 

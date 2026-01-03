@@ -47,7 +47,7 @@ CREATE TABLE Orders (
     OrderID INT IDENTITY(1,1) PRIMARY KEY,
     UserID INT FOREIGN KEY REFERENCES Users(UserID) ON DELETE CASCADE,
     TotalAmount DECIMAL(10,2) NOT NULL,
-    Status NVARCHAR(50) DEFAULT 'Pending',
+    Status NVARCHAR(50) DEFAULT 'Pending', -- Pending: chưa thanh toán, Paid: đã thanh toán
     PaymentMethod NVARCHAR(50),
     OrderNotes NVARCHAR(255),
     VoucherCode NVARCHAR(50),
