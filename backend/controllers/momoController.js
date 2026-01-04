@@ -82,7 +82,7 @@ exports.momoIPN = async (req, res) => {
             .input("OrderID", orderId)
             .query(`
         UPDATE Orders
-        SET Status = 'Paid'
+        SET PaymentStatus = 'Paid'
         WHERE OrderID = @OrderID
       `);
     }
