@@ -15,6 +15,9 @@ function Admin() {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [stats, setStats] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [newsletter, setNewsletter] = useState([]);
+  const [adminProfile, setAdminProfile] = useState({});
   const [activeTab, setActiveTab] = useState("dashboard");
   const [formData, setFormData] = useState({
     categoryName: "",
@@ -30,6 +33,7 @@ function Admin() {
     address: "",
     adminFullName: "",
     adminEmail: "",
+    adminPassword: "",
     orderId: "",
     status: "",
   });
@@ -105,12 +109,16 @@ function Admin() {
   const fetchData = useCallback(async (token) => {
     try {
       const headers = { Authorization: `Bearer ${token}` };
+
       const [
         usersRes,
         categoriesRes,
         productsRes,
         ordersRes,
         statsRes,
+        adminRes,
+        reviewsRes,
+        newsletterRes,
       ] = await Promise.all([
         axios.get("http://localhost:5000/api/admin/users", { headers }),
         axios.get("http://localhost:5000/api/categories", { headers }),
@@ -118,12 +126,22 @@ function Admin() {
         axios.get("http://localhost:5000/api/admin/orders", { headers }),
         axios.get("http://localhost:5000/api/admin/stats", { headers }),
         axios.get("http://localhost:5000/api/admin/profile", { headers }),
+        axios.get("http://localhost:5000/api/admin/reviews", { headers }),
+        axios.get("http://localhost:5000/api/admin/newsletter", { headers }),
       ]);
+
+      // SET LIST DATA (KHÔNG ĐỤNG FORM)
       setUsers(usersRes.data);
       setCategories(categoriesRes.data);
       setProducts(productsRes.data);
       setOrders(ordersRes.data);
       setStats(statsRes.data);
+      setReviews(reviewsRes.data);
+      setNewsletter(newsletterRes.data);
+
+      // SET ADMIN PROFILE RIÊNG
+      setAdminProfile(adminRes.data);
+
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu:", error);
       localStorage.removeItem("adminToken");
@@ -131,6 +149,18 @@ function Admin() {
       showErrorToast("Có lỗi xảy ra khi lấy dữ liệu, vui lòng thử lại.");
     }
   }, [showErrorToast]);
+
+  useEffect(() => {
+    if (adminProfile?.AdminID) {
+      setFormData((prev) => ({
+        ...prev,
+        adminFullName: adminProfile.FullName || "",
+        adminEmail: adminProfile.Email || "",
+        adminPassword: "",
+      }));
+    }
+  }, [adminProfile]);
+
 
   useEffect(() => {
     const token = localStorage.getItem("adminToken");
@@ -385,7 +415,11 @@ function Admin() {
     try {
       await axios.put(
         "http://localhost:5000/api/admin/profile",
-        { fullName: formData.adminFullName, email: formData.adminEmail },
+        {
+          fullName: formData.adminFullName,
+          email: formData.adminEmail, // Giữ nguyên, không thay đổi
+          password: formData.adminPassword || undefined, // Chỉ gửi nếu có
+        },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
@@ -398,6 +432,27 @@ function Admin() {
       console.error("Lỗi khi cập nhật thông tin admin:", error);
       showErrorToast(
         "Có lỗi xảy ra khi cập nhật thông tin admin, vui lòng thử lại."
+      );
+    }
+  };
+
+  // Hàm xóa review
+  const handleDeleteReview = async (reviewId) => {
+    try {
+      await axios.delete(
+        `http://localhost:5000/api/admin/reviews/${reviewId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+          },
+        }
+      );
+      fetchData(localStorage.getItem("adminToken"));
+      showSuccessToast("Xóa review thành công.");
+    } catch (error) {
+      console.error("Lỗi khi xóa review:", error);
+      showErrorToast(
+        "Có lỗi xảy ra khi xóa review, vui lòng thử lại."
       );
     }
   };
@@ -448,6 +503,7 @@ function Admin() {
 
   return (
     <div className="admin-container">
+      <div id="toast"></div>
       <aside className="sidebar">
         <h2>Admin Panel</h2>
         <ul>
@@ -488,85 +544,55 @@ function Admin() {
             Thống kê
           </li>
           <li
+            className={activeTab === "reviews" ? "active" : ""}
+            onClick={() => handleTabChange("reviews")}
+          >
+            Đánh giá
+          </li>
+          <li
+            className={activeTab === "newsletter" ? "active" : ""}
+            onClick={() => handleTabChange("newsletter")}
+          >
+            News letter
+          </li>
+          <li
             className={activeTab === "profile" ? "active" : ""}
             onClick={() => handleTabChange("profile")}
           >
-            Admin
+            Thông tin Admin
           </li>
           <li onClick={handleLogout}>Đăng xuất</li>
         </ul>
       </aside>
       <main className="dashboard">
-        <div id="toast"></div>
         {activeTab === "dashboard" && (
           <div>
-            <h1>Tổng quan</h1>
+            <h2>Tổng quan</h2>
             <div className="stats">
               <div className="card">
-                Doanh thu:{" "}
-                {stats
-                  .reduce((sum, stat) => sum + stat.TotalRevenue, 0)
-                  .toLocaleString()}{" "}
-                đ
+                <h3>Khách hàng</h3>
+                <p>{users.length}</p>
               </div>
-              <div className="card">Tổng đơn hàng: {orders.length}</div>
-              <div className="card">Tổng sản phẩm: {products.length}</div>
+              <div className="card">
+                <h3>Sản phẩm</h3>
+                <p>{products.length}</p>
+              </div>
+              <div className="card">
+                <h3>Đơn hàng</h3>
+                <p>{orders.length}</p>
+              </div>
+              <div className="card">
+                <h3>Doanh thu</h3>
+                <p>{stats.reduce((acc, stat) => acc + stat.TotalRevenue, 0).toLocaleString()} đ</p>
+              </div>
             </div>
           </div>
         )}
 
         {activeTab === "users" && (
           <div>
-            <h2>Quản lý khách hàng</h2>
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Họ tên</th>
-                  <th>Email</th>
-                  <th>Số điện thoại</th>
-                  <th>Địa chỉ</th>
-                  <th>Hành động</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user.UserID}>
-                    <td>{user.UserID}</td>
-                    <td>{user.FullName}</td>
-                    <td>{user.Email}</td>
-                    <td>{user.PhoneNumber}</td>
-                    <td>{user.Address}</td>
-                    <td>
-                      <button
-                        onClick={() => {
-                          setFormData({
-                            ...formData,
-                            userId: user.UserID,
-                            fullName: user.FullName,
-                            userEmail: user.Email,
-                            phoneNumber: user.PhoneNumber,
-                            address: user.Address,
-                          });
-                        }}
-                      >
-                        Sửa
-                      </button>
-                      <button onClick={() => handleDeleteUser(user.UserID)}>
-                        Xóa
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleUpdateUser(formData.userId);
-              }}
-            >
-              <h3>Cập nhật thông tin khách hàng</h3>
+            <h2>Quản lý Khách hàng</h2>
+            <form onSubmit={(e) => { e.preventDefault(); handleUpdateUser(formData.userId); }}>
               <input
                 type="text"
                 name="fullName"
@@ -586,7 +612,7 @@ function Admin() {
                 name="phoneNumber"
                 value={formData.phoneNumber}
                 onChange={handleInputChange}
-                placeholder="Số điện thoại"
+                placeholder="SĐT"
               />
               <input
                 type="text"
@@ -595,14 +621,70 @@ function Admin() {
                 onChange={handleInputChange}
                 placeholder="Địa chỉ"
               />
-              <button type="submit">Cập nhật</button>
+              <button type="submit">Cập nhật User</button>
             </form>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Họ tên</th>
+                  <th>Email</th>
+                  <th>SĐT</th>
+                  <th>Địa chỉ</th>
+                  <th>Xác thực</th>
+                  <th>Ngày tạo</th>
+                  <th>Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.UserID}>
+                    <td>{user.UserID}</td>
+                    <td>{user.FullName}</td>
+                    <td>{user.Email}</td>
+                    <td>{user.PhoneNumber}</td>
+                    <td>{user.Address}</td>
+                    <td>{user.IsVerified ? "Đã xác thực" : "Chưa xác thực"}</td>
+                    <td>{new Date(user.CreatedAt).toLocaleDateString()}</td>
+                    <td>
+                      <button
+                        className="edit-btn"
+                        onClick={() => {
+                          setFormData({
+                            ...formData,
+                            userId: user.UserID,
+                            fullName: user.FullName,
+                            userEmail: user.Email,
+                            phoneNumber: user.PhoneNumber,
+                            address: user.Address,
+                          });
+                        }}
+                      >
+                        Sửa
+                      </button>
+                      <button
+                        className="delete-btn"
+                        onClick={() => handleDeleteUser(user.UserID)}
+                      >
+                        Xóa
+                      </button>
+                      <button
+                        className="save-btn"
+                        onClick={() => handleUpdateUser(user.UserID)}
+                      >
+                        Lưu
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
 
         {activeTab === "categories" && (
           <div>
-            <h2>Quản lý danh mục</h2>
+            <h2>Quản lý Danh mục</h2>
             <form onSubmit={handleCreateCategory}>
               <input
                 type="text"
@@ -628,6 +710,7 @@ function Admin() {
                     <td>{category.CategoryName}</td>
                     <td>
                       <button
+                        className="edit-btn"
                         onClick={() => {
                           setFormData({
                             ...formData,
@@ -638,16 +721,14 @@ function Admin() {
                         Sửa
                       </button>
                       <button
-                        onClick={() =>
-                          handleDeleteCategory(category.CategoryID)
-                        }
+                        className="delete-btn"
+                        onClick={() => handleDeleteCategory(category.CategoryID)}
                       >
                         Xóa
                       </button>
                       <button
-                        onClick={() =>
-                          handleUpdateCategory(category.CategoryID)
-                        }
+                        className="save-btn"
+                        onClick={() => handleUpdateCategory(category.CategoryID)}
                       >
                         Lưu
                       </button>
@@ -661,7 +742,7 @@ function Admin() {
 
         {activeTab === "products" && (
           <div>
-            <h2>Quản lý sản phẩm</h2>
+            <h2>Quản lý Sản phẩm</h2>
             <form onSubmit={handleCreateProduct}>
               <select
                 name="categoryId"
@@ -687,7 +768,7 @@ function Admin() {
                 name="imageUrl"
                 value={formData.imageUrl}
                 onChange={handleInputChange}
-                placeholder="URL hình ảnh"
+                placeholder="URL ảnh"
               />
               <input
                 type="number"
@@ -712,6 +793,9 @@ function Admin() {
                   <th>Tên sản phẩm</th>
                   <th>Danh mục</th>
                   <th>Giá</th>
+                  <th>Ảnh</th>
+                  <th>Mô tả</th>
+                  <th>Ngày tạo</th>
                   <th>Hành động</th>
                 </tr>
               </thead>
@@ -728,8 +812,12 @@ function Admin() {
                       }
                     </td>
                     <td>{product.Price.toLocaleString()} đ</td>
+                    <td>{product.ImageURL}</td>
+                    <td>{product.Descriptions}</td>
+                    <td>{new Date(product.CreatedAt).toLocaleDateString()}</td>
                     <td>
                       <button
+                        className="edit-btn"
                         onClick={() => {
                           setFormData({
                             ...formData,
@@ -744,11 +832,13 @@ function Admin() {
                         Sửa
                       </button>
                       <button
+                        className="delete-btn"
                         onClick={() => handleDeleteProduct(product.ProductID)}
                       >
                         Xóa
                       </button>
                       <button
+                        className="save-btn"
                         onClick={() => handleUpdateProduct(product.ProductID)}
                       >
                         Lưu
@@ -772,6 +862,11 @@ function Admin() {
                   <th>Ngày đặt</th>
                   <th>Tổng tiền</th>
                   <th>Trạng thái</th>
+                  <th>Phương thức thanh toán</th>
+                  <th>Ghi chú</th>
+                  <th>Mã voucher</th>
+                  <th>Trạng thái thanh toán</th>
+                  <th>Chi tiết đơn</th>
                   <th>Hành động</th>
                 </tr>
               </thead>
@@ -783,6 +878,19 @@ function Admin() {
                     <td>{new Date(order.OrderDate).toLocaleDateString()}</td>
                     <td>{order.TotalAmount.toLocaleString()} đ</td>
                     <td>{order.Status}</td>
+                    <td>{order.PaymentMethod}</td>
+                    <td>{order.OrderNotes}</td>
+                    <td>{order.VoucherCode}</td>
+                    <td>{order.PaymentStatus}</td>
+                    <td>
+                      <ul>
+                        {order.OrderDetails.map((detail) => (
+                          <li key={detail.OrderDetailID}>
+                            ID: {detail.OrderDetailID}, Sản phẩm: {detail.ProductName}, Số lượng: {detail.Quantity}, Giá: {detail.UnitPrice.toLocaleString()} đ
+                          </li>
+                        ))}
+                      </ul>
+                    </td>
                     <td>
                       <select
                         name="status"
@@ -796,6 +904,7 @@ function Admin() {
                         <option value="Cancelled">Cancelled</option>
                       </select>
                       <button
+                        className="update-btn"
                         onClick={() => handleUpdateOrderStatus(order.OrderID)}
                       >
                         Cập nhật
@@ -830,9 +939,80 @@ function Admin() {
           </div>
         )}
 
+        {activeTab === "reviews" && (
+          <div>
+            <h2>Quản lý Đánh giá</h2>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Đơn hàng ID</th>
+                  <th>Sản phẩm ID</th>
+                  <th>Người dùng ID</th>
+                  <th>Điểm</th>
+                  <th>Bình luận</th>
+                  <th>Tên</th>
+                  <th>Ảnh</th>
+                  <th>Ngày tạo</th>
+                  <th>Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reviews.map((review) => (
+                  <tr key={review.ReviewID}>
+                    <td>{review.ReviewID}</td>
+                    <td>{review.OrderID}</td>
+                    <td>{review.ProductID}</td>
+                    <td>{review.UserID}</td>
+                    <td>{review.Rating}</td>
+                    <td>{review.Comment}</td>
+                    <td>{review.FullName}</td>
+                    <td>{review.ImageURL}</td>
+                    <td>{new Date(review.CreatedAt).toLocaleDateString()}</td>
+                    <td>
+                      <button
+                        className="delete-btn"
+                        onClick={() => handleDeleteReview(review.ReviewID)}
+                      >
+                        Xóa
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {activeTab === "newsletter" && (
+          <div>
+            <h2>Quản lý Newsletter</h2>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Email</th>
+                  <th>Ngày tạo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {newsletter.map((item) => (
+                  <tr key={item.ID}>
+                    <td>{item.ID}</td>
+                    <td>{item.Email}</td>
+                    <td>{new Date(item.CreatedAt).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
         {activeTab === "profile" && (
           <div>
             <h2>Thông tin Admin</h2>
+            <p>Admin ID: {adminProfile.AdminID}</p>
+            <p>Ngày tạo: {new Date(adminProfile.CreatedAt).toLocaleDateString()}</p>
             <form onSubmit={handleUpdateAdmin}>
               <input
                 type="text"
@@ -845,8 +1025,15 @@ function Admin() {
                 type="email"
                 name="adminEmail"
                 value={formData.adminEmail}
-                onChange={handleInputChange}
+                readOnly // Không cho thay đổi email
                 placeholder="Email"
+              />
+              <input
+                type="password"
+                name="adminPassword"
+                value={formData.adminPassword}
+                onChange={handleInputChange}
+                placeholder="Nhập mật khẩu mới (nếu muốn thay đổi)"
               />
               <button type="submit">Cập nhật</button>
             </form>

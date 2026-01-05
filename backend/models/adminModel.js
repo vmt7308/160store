@@ -30,18 +30,19 @@ exports.findAdminById = async (adminId) => {
   }
 };
 
-// Cập nhật thông tin Admin
-exports.updateAdmin = async (adminId, fullName, email) => {
+// Cập nhật thông tin Admin (hỗ trợ đổi password)
+exports.updateAdmin = async (adminId, fullName, email, passwordHash = null) => {
   try {
     const pool = await poolPromise;
-    await pool
-      .request()
+    let query = "UPDATE Admins SET FullName = @FullName, Email = @Email";
+    if (passwordHash) query += ", PasswordHash = @PasswordHash";
+    query += " WHERE AdminID = @AdminID";
+    const request = pool.request()
       .input("AdminID", sql.Int, adminId)
       .input("FullName", sql.NVarChar, fullName)
-      .input("Email", sql.NVarChar, email)
-      .query(
-        "UPDATE Admins SET FullName = @FullName, Email = @Email WHERE AdminID = @AdminID"
-      );
+      .input("Email", sql.NVarChar, email);
+    if (passwordHash) request.input("PasswordHash", sql.NVarChar, passwordHash);
+    await request.query(query);
   } catch (error) {
     console.error("❌ Lỗi khi cập nhật admin:", error);
     throw error;
@@ -106,7 +107,7 @@ exports.createCategory = async (categoryName) => {
       );
     return result.recordset[0].CategoryID;
   } catch (error) {
-    console.error("� koc Lỗi khi tạo danh mục:", error);
+    console.error("❌ Lỗi khi tạo danh mục:", error);
     throw error;
   }
 };
@@ -154,7 +155,7 @@ exports.createProduct = async (
     const pool = await poolPromise;
     const result = await pool
       .request()
-      .input("_CategoryID", sql.Int, categoryId)
+      .input("CategoryID", sql.Int, categoryId)
       .input("ProductName", sql.NVarChar, productName)
       .input("ImageURL", sql.NVarChar, imageUrl)
       .input("Price", sql.Decimal(10, 2), price)
@@ -216,7 +217,7 @@ exports.getAllOrders = async () => {
   try {
     const pool = await poolPromise;
     const result = await pool.request().query(`
-      SELECT o.OrderID, o.UserID, o.OrderDate, o.TotalAmount, o.Status, o.PaymentMethod, o.OrderNotes, o.VoucherCode,
+      SELECT o.OrderID, o.UserID, o.OrderDate, o.TotalAmount, o.Status, o.PaymentMethod, o.OrderNotes, o.VoucherCode, o.PaymentStatus,
              od.OrderDetailID, od.ProductID, od.Quantity, od.UnitPrice,
              p.ProductName, u.FullName, u.Email
       FROM Orders o
@@ -246,18 +247,63 @@ exports.updateOrderStatus = async (orderId, status) => {
   }
 };
 
-// Báo cáo thống kê doanh thu
+// Báo cáo thống kê doanh thu (Chỉ tính doanh thu với điều kiện giao hàng thành công = Delivered và thanh toán thành công qua momo = Paid, loại hủy bỏ đơn = Cancelled)
 exports.getRevenueStats = async () => {
   try {
     const pool = await poolPromise;
     const result = await pool.request().query(`
       SELECT FORMAT(OrderDate, 'yyyy-MM') AS Month, SUM(TotalAmount) AS TotalRevenue
       FROM Orders
+      WHERE Status = 'Delivered' AND PaymentStatus = 'Paid' AND Status != 'Cancelled'
       GROUP BY FORMAT(OrderDate, 'yyyy-MM')
     `);
     return result.recordset;
   } catch (error) {
     console.error("❌ Lỗi khi lấy thống kê doanh thu:", error);
+    throw error;
+  }
+};
+
+// Reviews - Đánh giá và bình luận sản phẩm sau khi mua
+exports.getAllReviews = async () => {
+  try {
+    const pool = await poolPromise;
+    const result = await pool.request().query(`
+      SELECT r.ReviewID, r.OrderID, r.ProductID, r.UserID, r.Rating, r.Comment, r.FullName, r.ImageURL, r.CreatedAt,
+             p.ProductName, u.FullName AS UserFullName
+      FROM Reviews r
+      LEFT JOIN Products p ON r.ProductID = p.ProductID
+      LEFT JOIN Users u ON r.UserID = u.UserID
+    `);
+    return result.recordset;
+  } catch (error) {
+    console.error("❌ Lỗi khi lấy danh sách reviews:", error);
+    throw error;
+  }
+};
+
+// Xóa đánh giá xấu
+exports.deleteReview = async (reviewId) => {
+  try {
+    const pool = await poolPromise;
+    await pool
+      .request()
+      .input("ReviewID", sql.Int, reviewId)
+      .query("DELETE FROM Reviews WHERE ReviewID = @ReviewID");
+  } catch (error) {
+    console.error("❌ Lỗi khi xóa review:", error);
+    throw error;
+  }
+};
+
+// Newsletter - Đăng ký nhận tin
+exports.getAllNewsletter = async () => {
+  try {
+    const pool = await poolPromise;
+    const result = await pool.request().query("SELECT * FROM Newsletter");
+    return result.recordset;
+  } catch (error) {
+    console.error("❌ Lỗi khi lấy danh sách newsletter:", error);
     throw error;
   }
 };

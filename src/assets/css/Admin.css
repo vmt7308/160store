@@ -150,7 +150,6 @@
 }
 
 .admin-table button {
-  background-color: #71be34;
   color: #fff;
   border: none;
   padding: 5px 10px;
@@ -159,8 +158,36 @@
   margin-right: 5px;
 }
 
-.admin-table button:hover {
+.edit-btn {
+  background-color: #71be34;
+}
+
+.edit-btn:hover {
   background-color: #5aa026;
+}
+
+.delete-btn {
+  background-color: #ff623d;
+}
+
+.delete-btn:hover {
+  background-color: #d9534f;
+}
+
+.save-btn {
+  background-color: #007bff;
+}
+
+.save-btn:hover {
+  background-color: #0056b3;
+}
+
+.update-btn {
+  background-color: #ffc107;
+}
+
+.update-btn:hover {
+  background-color: #e0a800;
 }
 
 .dashboard form {

@@ -16,6 +16,9 @@ const {
   getAllOrders,
   updateOrderStatus,
   getRevenueStats,
+  getAllReviews,
+  deleteReview,
+  getAllNewsletter,
 } = require("../models/adminModel");
 require("dotenv").config();
 
@@ -62,21 +65,25 @@ exports.getAdminById = async (req, res) => {
       return res.status(404).json({ message: "Không tìm thấy admin!" });
     }
 
-    const { PasswordHash, ...adminData } = admin;
-    res.json(adminData);
+    res.json(admin); // Trả đầy đủ bao gồm AdminID, PasswordHash, CreatedAt
   } catch (error) {
     console.error("❌ Lỗi khi lấy thông tin admin:", error);
     res.status(500).json({ message: "Lỗi server!" });
   }
 };
 
-// Cập nhật thông tin admin
+// Cập nhật thông tin admin (hỗ trợ đổi password)
 exports.updateAdmin = async (req, res) => {
   const adminId = req.admin.adminId;
-  const { fullName, email } = req.body;
+  const { fullName, email, password } = req.body;
+  let passwordHash = null;
+  if (password) {
+    const salt = await bcrypt.genSalt(10);
+    passwordHash = await bcrypt.hash(password, salt);
+  }
 
   try {
-    await updateAdmin(adminId, fullName, email);
+    await updateAdmin(adminId, fullName, email, passwordHash);
     res.json({ message: "Cập nhật thông tin admin thành công!" });
   } catch (error) {
     console.error("❌ Lỗi khi cập nhật admin:", error);
@@ -235,6 +242,7 @@ exports.getAllOrders = async (req, res) => {
           PaymentMethod: row.PaymentMethod,
           OrderNotes: row.OrderNotes,
           VoucherCode: row.VoucherCode,
+          PaymentStatus: row.PaymentStatus,
           OrderDetails: [],
         };
         result.push(orderMap[row.OrderID]);
@@ -278,6 +286,41 @@ exports.getRevenueStats = async (req, res) => {
     res.json(stats);
   } catch (error) {
     console.error("❌ Lỗi khi lấy thống kê doanh thu:", error);
+    res.status(500).json({ message: "Lỗi server!" });
+  }
+};
+
+// Reviews - Đánh giá và bình luận sản phẩm sau khi mua
+exports.getAllReviews = async (req, res) => {
+  try {
+    const reviews = await getAllReviews();
+    res.json(reviews);
+  } catch (error) {
+    console.error("❌ Lỗi khi lấy danh sách reviews:", error);
+    res.status(500).json({ message: "Lỗi server!" });
+  }
+};
+
+// Xóa đánh giá xấu
+exports.deleteReview = async (req, res) => {
+  const reviewId = req.params.reviewId;
+
+  try {
+    await deleteReview(reviewId);
+    res.json({ message: "Xóa review thành công!" });
+  } catch (error) {
+    console.error("❌ Lỗi khi xóa review:", error);
+    res.status(500).json({ message: "Lỗi server!" });
+  }
+};
+
+// Newsletter - Đăng ký nhận tin
+exports.getAllNewsletter = async (req, res) => {
+  try {
+    const newsletter = await getAllNewsletter();
+    res.json(newsletter);
+  } catch (error) {
+    console.error("❌ Lỗi khi lấy danh sách newsletter:", error);
     res.status(500).json({ message: "Lỗi server!" });
   }
 };

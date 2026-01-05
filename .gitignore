@@ -9,6 +9,9 @@ backend/.env
 .env.development.local
 .env.production.local
 
+# Ignore gitignore itself (nếu không muốn push)
+.gitignore
+
 # Virtual environment (nếu dùng Python)
 /.venv
 /venv
@@ -40,3 +43,4 @@ Thumbs.db
 
 # Patch files (nếu có)
 *.patch
+backend/.env
