@@ -464,18 +464,21 @@ function Admin() {
         <h2>Đăng nhập Admin</h2>
         <form onSubmit={handleLogin}>
           <div className="form-group">
-            <label>Email</label>
+            <label htmlFor="admin-email">Email</label>
             <input
+              id="admin-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="Nhập email"
+              autoFocus // Tự động focus khi vào trang
             />
           </div>
           <div className="form-group password-field">
-            <label>Mật khẩu</label>
+            <label htmlFor="admin-password">Mật khẩu</label>
             <input
+              id="admin-password"
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
