@@ -67,14 +67,14 @@ exports.updateAdmin = async (adminId, fullName, passwordHash = null) => {
   }
 };
 
-// Quản lý user khách hàng
+// Quản lý user khách hàng - lọc bỏ IsDeleted = 1 (không hiển thị user đã xóa mềm)
 exports.getAllUsers = async () => {
   try {
     const pool = await poolPromise;
-    const result = await pool.request().query("SELECT * FROM Users");
+    const result = await pool.request().query("SELECT * FROM Users WHERE IsDeleted = 0");
     return result.recordset;
   } catch (error) {
-    console.error("❌ Lỗi khi lấy danh sách user:", error);
+    console.error("❌ Lỗi khi lấy users:", error);
     throw error;
   }
 };
@@ -99,16 +99,28 @@ exports.updateUser = async (userId, fullName, email, phoneNumber, address) => {
   }
 };
 
-// Xóa 1 khách hàng
-exports.deleteUser = async (userId) => {
+// Soft delete user (set IsDeleted = 1)
+exports.softDeleteUser = async (userId) => {
   try {
     const pool = await poolPromise;
-    await pool
-      .request()
+    await pool.request()
       .input("UserID", sql.Int, userId)
-      .query("DELETE FROM Users WHERE UserID = @UserID");
+      .query("UPDATE Users SET IsDeleted = 1 WHERE UserID = @UserID");
   } catch (error) {
-    console.error("❌ Lỗi khi xóa user:", error);
+    console.error("❌ Lỗi khi soft delete user:", error);
+    throw error;
+  }
+};
+
+// Soft delete tất cả reviews của user (set IsDeleted = 1)
+exports.softDeleteReviewsByUser = async (userId) => {
+  try {
+    const pool = await poolPromise;
+    await pool.request()
+      .input("UserID", sql.Int, userId)
+      .query("UPDATE Reviews SET IsDeleted = 1 WHERE UserID = @UserID");
+  } catch (error) {
+    console.error("❌ Lỗi khi soft delete reviews của user:", error);
     throw error;
   }
 };
@@ -307,7 +319,7 @@ exports.getTotalRevenue = async () => {
   }
 };
 
-// Reviews - Đánh giá và bình luận sản phẩm sau khi mua
+// Reviews - Đánh giá và bình luận sản phẩm sau khi mua (lọc IsDeleted = 0)
 exports.getAllReviews = async () => {
   try {
     const pool = await poolPromise;
@@ -317,6 +329,7 @@ exports.getAllReviews = async () => {
       FROM Reviews r
       LEFT JOIN Products p ON r.ProductID = p.ProductID
       LEFT JOIN Users u ON r.UserID = u.UserID
+      WHERE r.IsDeleted = 0  -- Chỉ lấy các review chưa bị xóa mềm
     `);
     return result.recordset;
   } catch (error) {

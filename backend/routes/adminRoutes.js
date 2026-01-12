@@ -6,7 +6,7 @@ const {
   updateAdmin,
   getAllUsers,
   updateUser,
-  deleteUser,
+  softDeleteUser,
   createCategory,
   updateCategory,
   deleteCategory,
@@ -28,7 +28,7 @@ router.get("/profile", authMiddleware, getAdminById);
 router.put("/profile", authMiddleware, updateAdmin);
 router.get("/users", authMiddleware, getAllUsers);
 router.put("/users/:userId", authMiddleware, updateUser);
-router.delete("/users/:userId", authMiddleware, deleteUser);
+router.delete("/users/:userId", authMiddleware, softDeleteUser);
 router.post("/categories", authMiddleware, createCategory);
 router.put("/categories/:categoryId", authMiddleware, updateCategory);
 router.delete("/categories/:categoryId", authMiddleware, deleteCategory);

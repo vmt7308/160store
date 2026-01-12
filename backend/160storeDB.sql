@@ -13,6 +13,7 @@ CREATE TABLE Users (
     PhoneNumber NVARCHAR(20),
     Address NVARCHAR(255),
     IsVerified BIT DEFAULT 0, -- Xác thực tài khoản, 0: Chưa xác thực, 1: Đã xác thực
+    IsDeleted BIT DEFAULT 0 NOT NULL, -- Xóa mềm user: IsDeleted = 0 nghĩa là active (hiển thị), 1 là deleted (ẩn)
     CreatedAt DATETIME DEFAULT GETDATE()    
 );
 
@@ -74,6 +75,7 @@ CREATE TABLE Reviews (
   Comment NVARCHAR(MAX),
   FullName NVARCHAR(100),
   ImageURL NVARCHAR(255) NULL,
+  IsDeleted BIT DEFAULT 0 NOT NULL, -- Xóa mềm review khi xóa user
   CreatedAt DATETIME DEFAULT GETDATE()
 );
 

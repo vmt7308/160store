@@ -6,7 +6,6 @@ const {
   updateAdmin,
   getAllUsers,
   updateUser,
-  deleteUser,
   createCategory,
   updateCategory,
   deleteCategory,
@@ -20,6 +19,8 @@ const {
   deleteReview,
   getAllNewsletter,
   getTotalRevenue,
+  softDeleteUser,
+  softDeleteReviewsByUser,
 } = require("../models/adminModel");
 require("dotenv").config();
 
@@ -152,15 +153,20 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-// Xóa một khách hàng
-exports.deleteUser = async (req, res) => {
-  const userId = req.params.userId;
-
+// Soft delete user và liên quan (thay vì delete vĩnh viễn)
+exports.softDeleteUser = async (req, res) => {
   try {
-    await deleteUser(userId);
-    res.json({ message: "Xóa user thành công!" });
+    const { userId } = req.params;
+
+    // Soft delete reviews của user trước
+    await softDeleteReviewsByUser(userId);
+
+    // Soft delete user
+    await softDeleteUser(userId);
+
+    res.json({ message: "Xóa mềm user và các đánh giá liên quan thành công!" });
   } catch (error) {
-    console.error("❌ Lỗi khi xóa user:", error);
+    console.error("❌ Lỗi khi soft delete user:", error);
     res.status(500).json({ message: "Lỗi server!" });
   }
 };
