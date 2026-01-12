@@ -19,6 +19,7 @@ const {
   getAllReviews,
   deleteReview,
   getAllNewsletter,
+  getTotalRevenue,
 } = require("../controllers/adminController");
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -37,6 +38,7 @@ router.delete("/products/:productId", authMiddleware, deleteProduct);
 router.get("/orders", authMiddleware, getAllOrders);
 router.put("/orders/:orderId", authMiddleware, updateOrderStatus);
 router.get("/stats", authMiddleware, getRevenueStats);
+router.get("/stats/total-revenue", authMiddleware, getTotalRevenue);
 router.get("/reviews", authMiddleware, getAllReviews);
 router.delete("/reviews/:reviewId", authMiddleware, deleteReview);
 router.get("/newsletter", authMiddleware, getAllNewsletter);

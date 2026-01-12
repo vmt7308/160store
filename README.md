@@ -45,6 +45,13 @@
 
    ```
 
+   - Cài đặt thư viện cần thiết cho frontend:
+   ```bash
+   cd 160store
+   npm install chart.js react-chartjs-2
+
+   ```
+
 3. Cài đặt dependencies cho backend:
 
    ```bash
@@ -53,15 +60,16 @@
 
    ```
 
-4. Cấu hình cơ sở dữ liệu và chatbot ai:
-   - Tạo cơ sở dữ liệu và import file 160storeDB.sql từ thư mục backend/160storeDB.sql
-   - Cập nhật thông tin kết nối cơ sở dữ liệu trong file .env ở thư mục backend/.env
    - Cài đặt thư viện cần thiết cho backend:
    ```bash
-   cd backend
+   cd 160store\backend
    npm i natural@latest ml-matrix@latest mssql@latest axios@latest dotenv@latest
 
    ```
+
+4. Cấu hình cơ sở dữ liệu và chatbot ai:
+   - Tạo cơ sở dữ liệu và import file 160storeDB.sql từ thư mục backend/160storeDB.sql
+   - Cập nhật thông tin kết nối cơ sở dữ liệu trong file .env ở thư mục backend/.env
 
 5. Chạy backend:
    ```bash

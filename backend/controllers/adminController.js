@@ -19,6 +19,7 @@ const {
   getAllReviews,
   deleteReview,
   getAllNewsletter,
+  getTotalRevenue,
 } = require("../models/adminModel");
 require("dotenv").config();
 
@@ -72,19 +73,54 @@ exports.getAdminById = async (req, res) => {
   }
 };
 
-// Cập nhật thông tin admin (hỗ trợ đổi password)
+// Cập nhật thông tin admin (hỗ trợ đổi password với xác thực mật khẩu hiện tại)
 exports.updateAdmin = async (req, res) => {
-  const adminId = req.admin.adminId;
-  const { fullName, email, password } = req.body;
-  let passwordHash = null;
-  if (password) {
-    const salt = await bcrypt.genSalt(10);
-    passwordHash = await bcrypt.hash(password, salt);
-  }
-
   try {
-    await updateAdmin(adminId, fullName, email, passwordHash);
-    res.json({ message: "Cập nhật thông tin admin thành công!" });
+    const adminId = req.admin.adminId; // Lấy từ authMiddleware
+    const { fullName, currentPassword, newPassword } = req.body;
+
+    // Tìm admin hiện tại để lấy thông tin cũ (để tránh gửi NULL)
+    const admin = await findAdminById(adminId);
+    if (!admin) {
+      return res.status(404).json({ message: "Admin không tồn tại." });
+    }
+
+    // Chuẩn bị dữ liệu cập nhật (chỉ gửi những trường thực sự thay đổi)
+    let updateData = {};
+
+    // Cập nhật tên nếu có
+    if (fullName && fullName.trim() !== "") {
+      updateData.FullName = fullName.trim();
+    }
+
+    // Xử lý đổi mật khẩu (nếu có yêu cầu)
+    if (newPassword && newPassword.trim() !== "") {
+      // Bắt buộc phải nhập mật khẩu hiện tại
+      if (!currentPassword || currentPassword.trim() === "") {
+        return res.status(400).json({ message: "Vui lòng nhập mật khẩu hiện tại để xác nhận." });
+      }
+
+      // So sánh mật khẩu hiện tại
+      const isMatch = await bcrypt.compare(currentPassword.trim(), admin.PasswordHash);
+      if (!isMatch) {
+        return res.status(401).json({ message: "Mật khẩu hiện tại không đúng." });
+      }
+
+      // Mã hóa mật khẩu mới
+      const salt = await bcrypt.genSalt(10);
+      const hashedNewPassword = await bcrypt.hash(newPassword.trim(), salt);
+      updateData.PasswordHash = hashedNewPassword;
+    }
+
+    // Nếu không có dữ liệu gì để cập nhật => báo lỗi
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ message: "Không có thông tin nào để cập nhật." });
+    }
+
+    // Thực hiện cập nhật vào DB (chỉ các trường thay đổi)
+    await updateAdmin(adminId, updateData.FullName, updateData.PasswordHash);
+
+    res.json({ message: "Cập nhật thông tin admin thành công." });
   } catch (error) {
     console.error("❌ Lỗi khi cập nhật admin:", error);
     res.status(500).json({ message: "Lỗi server!" });
@@ -286,6 +322,17 @@ exports.getRevenueStats = async (req, res) => {
     res.json(stats);
   } catch (error) {
     console.error("❌ Lỗi khi lấy thống kê doanh thu:", error);
+    res.status(500).json({ message: "Lỗi server!" });
+  }
+};
+
+// Lấy tổng doanh thu toàn thời gian
+exports.getTotalRevenue = async (req, res) => {
+  try {
+    const total = await getTotalRevenue();
+    res.json({ totalRevenue: total });
+  } catch (error) {
+    console.error("❌ Lỗi khi lấy tổng doanh thu:", error);
     res.status(500).json({ message: "Lỗi server!" });
   }
 };

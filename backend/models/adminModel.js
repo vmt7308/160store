@@ -10,7 +10,7 @@ exports.findAdminByEmail = async (email) => {
       .query("SELECT * FROM Admins WHERE Email = @Email");
     return result.recordset[0];
   } catch (error) {
-    console.error("❌ Lỗi khi tìm admin:", error);
+    console.error("❌ Lỗi khi tìm admin bằng email:", error);
     throw error;
   }
 };
@@ -30,18 +30,36 @@ exports.findAdminById = async (adminId) => {
   }
 };
 
-// Cập nhật thông tin Admin (hỗ trợ đổi password)
-exports.updateAdmin = async (adminId, fullName, email, passwordHash = null) => {
+// Cập nhật thông tin Admin (hỗ trợ đổi password - chỉ cập nhật trường không null)
+exports.updateAdmin = async (adminId, fullName, passwordHash = null) => {
   try {
     const pool = await poolPromise;
-    let query = "UPDATE Admins SET FullName = @FullName, Email = @Email";
-    if (passwordHash) query += ", PasswordHash = @PasswordHash";
-    query += " WHERE AdminID = @AdminID";
     const request = pool.request()
-      .input("AdminID", sql.Int, adminId)
-      .input("FullName", sql.NVarChar, fullName)
-      .input("Email", sql.NVarChar, email);
-    if (passwordHash) request.input("PasswordHash", sql.NVarChar, passwordHash);
+      .input("AdminID", sql.Int, adminId);
+
+    let query = "UPDATE Admins SET ";
+    const fields = [];
+
+    // Nếu có fullName thì thêm vào query
+    if (fullName !== undefined && fullName !== null && fullName.trim() !== "") {
+      fields.push("FullName = @FullName");
+      request.input("FullName", sql.NVarChar, fullName.trim());
+    }
+
+    // Nếu có passwordHash thì thêm vào query
+    if (passwordHash !== undefined && passwordHash !== null) {
+      fields.push("PasswordHash = @PasswordHash");
+      request.input("PasswordHash", sql.NVarChar, passwordHash);
+    }
+
+    // Nếu không có trường nào để cập nhật => báo lỗi
+    if (fields.length === 0) {
+      throw new Error("Không có thông tin nào để cập nhật.");
+    }
+
+    // Ghép query và thêm WHERE
+    query += fields.join(", ") + " WHERE AdminID = @AdminID";
+
     await request.query(query);
   } catch (error) {
     console.error("❌ Lỗi khi cập nhật admin:", error);
@@ -252,14 +270,39 @@ exports.getRevenueStats = async () => {
   try {
     const pool = await poolPromise;
     const result = await pool.request().query(`
-      SELECT FORMAT(OrderDate, 'yyyy-MM') AS Month, SUM(TotalAmount) AS TotalRevenue
+      SELECT 
+        FORMAT(OrderDate, 'yyyy-MM') AS Month,
+        SUM(TotalAmount) AS TotalRevenue
       FROM Orders
-      WHERE Status = 'Delivered' AND PaymentStatus = 'Paid' AND Status != 'Cancelled'
+      WHERE 
+        Status = 'Delivered'          -- Chỉ đơn đã giao thành công
+        AND PaymentStatus = 'Paid'    -- Chỉ đơn thanh toán MoMo thành công
+        AND Status != 'Cancelled'     -- Loại bỏ hoàn toàn đơn hủy
       GROUP BY FORMAT(OrderDate, 'yyyy-MM')
+      ORDER BY Month
     `);
-    return result.recordset;
+    return result.recordset; // Trả mảng: [{Month: '2025-01', TotalRevenue: 500000}, ...]
   } catch (error) {
     console.error("❌ Lỗi khi lấy thống kê doanh thu:", error);
+    throw error;
+  }
+};
+
+// Tính tổng doanh thu toàn thời gian (chỉ Delivered + Paid, loại Cancelled)
+exports.getTotalRevenue = async () => {
+  try {
+    const pool = await poolPromise;
+    const result = await pool.request().query(`
+      SELECT ISNULL(SUM(TotalAmount), 0) AS TotalRevenue
+      FROM Orders
+      WHERE 
+        Status = 'Delivered' 
+        AND PaymentStatus = 'Paid' 
+        AND Status != 'Cancelled'
+    `);
+    return result.recordset[0]?.TotalRevenue || 0;
+  } catch (error) {
+    console.error("❌ Lỗi khi lấy tổng doanh thu:", error);
     throw error;
   }
 };

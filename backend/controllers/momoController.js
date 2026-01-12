@@ -1,5 +1,6 @@
 const axios = require("axios");
 const crypto = require("crypto");
+const { poolPromise, sql } = require("../db");
 
 // Test keys công khai từ MoMo sandbox (chỉ dùng để test, không nhận tiền thật)
 const partnerCode = "MOMOUDLU20220629";
@@ -8,7 +9,7 @@ const secretKey = "nI4o1MBg53oY5MWP3IHnYcxoUD2x2dm8";
 
 // Cấu hình callback
 const redirectUrl = "http://localhost:3000/checkout/success"; // Trang success sau khi thanh toán test
-const ipnUrl = "http://localhost:5000/api/momo/ipn"; // MoMo gọi về BE khi thanh toán (tùy chọn)
+const ipnUrl = "https://c264b6e31015.ngrok-free.app/api/momo/ipn"; // MoMo gọi về BE khi thanh toán (tùy chọn)
 const requestType = "captureWallet"; // Loại thanh toán test
 
 // Hàm tạo thanh toán MoMo test - NHẬN ORDERID THẬT TỪ FE
@@ -75,17 +76,34 @@ exports.createMoMoPayment = async (req, res) => {
 
 // IPN callback - MoMo gọi về khi thanh toán test thành công
 exports.momoIPN = async (req, res) => {
-    const { resultCode, orderId, amount } = req.body;
+  try {
+    console.log("MoMo IPN received:", req.body);
+
+    const { resultCode, orderId, amount, extraData } = req.body;
 
     if (resultCode === 0) {
-        await poolPromise.request()
-            .input("OrderID", orderId)
-            .query(`
-        UPDATE Orders
-        SET PaymentStatus = 'Paid'
-        WHERE OrderID = @OrderID
-      `);
+      // Thanh toán test thành công → update PaymentStatus = 'Paid'
+      const realOrderId = orderId.replace("ORDER_", ""); // Lấy OrderID thật từ ORDER_XX
+
+      const pool = await poolPromise;
+      await pool.request()
+        .input("OrderID", sql.Int, realOrderId)
+        .input("PaymentStatus", sql.NVarChar, "Paid")
+        .query(`
+          UPDATE Orders 
+          SET PaymentStatus = @PaymentStatus 
+          WHERE OrderID = @OrderID
+        `);
+
+      console.log(`✅ Thanh toán MoMo thành công cho đơn #${realOrderId}, số tiền: ${amount}đ`);
+    } else {
+      console.log(`❌ Thanh toán MoMo thất bại cho đơn: ${orderId}, code: ${resultCode}`);
     }
 
-    res.json({ message: "OK" });
+    // Luôn trả OK cho MoMo (yêu cầu bắt buộc)
+    res.status(200).json({ message: "OK" });
+  } catch (error) {
+    console.error("❌ Lỗi xử lý IPN MoMo:", error);
+    res.status(500).json({ message: "Lỗi server" });
+  }
 };
