@@ -19,15 +19,13 @@ const Checkout = () => {
   const [error, setError] = useState("");
 
   // Hàm lấy thông tin chi tiết user từ DB
-  const fetchUserDetails = useCallback(async (userId, token) => {
+  const fetchUserDetails = useCallback(async (userId, token, currentUser) => {
     try {
       const response = await axios.get(
         `http://localhost:5000/api/users/${userId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      const updatedUserData = { ...user, ...response.data };
+      const updatedUserData = { ...currentUser, ...response.data };
       setUser(updatedUserData);
       localStorage.setItem("user", JSON.stringify(updatedUserData));
     } catch (err) {
@@ -37,14 +35,14 @@ const Checkout = () => {
       localStorage.removeItem("user");
       navigate("/login?redirect=/checkout");
     }
-  }, [user, navigate]);
+  }, [navigate]);
 
   // Lấy thông tin giỏ hàng, ghi chú và voucher từ localStorage
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
     const savedNotes = localStorage.getItem("orderNotes") || "";
-    const savedVoucher =
-      JSON.parse(localStorage.getItem("selectedVoucher")) || null;
+    const savedVoucher = JSON.parse(localStorage.getItem("selectedVoucher")) || null;
+
     setCartItems(savedCart);
     setOrderNotes(savedNotes);
     setSelectedVoucher(savedVoucher);
@@ -58,22 +56,24 @@ const Checkout = () => {
       console.error("Lỗi khi parse user từ localStorage:", err);
     }
 
-    if (token && userData) {
-      // Chấp nhận cả userData.UserID hoặc userData.id
-      const userId = userData.UserID || userData.id;
-      if (userId) {
-        setUser(userData);
-        // Lấy thông tin chi tiết từ DB
-        fetchUserDetails(userId, token);
-      } else {
-        console.warn("userData không có UserID hoặc id:", userData);
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        navigate("/login?redirect=/checkout");
-      }
-    } else {
+    if (!token || !userData) {
       navigate("/login?redirect=/checkout");
+      return;
     }
+
+    // Chấp nhận cả userData.UserID hoặc userData.id
+    const userId = userData.UserID || userData.id;
+    if (!userId) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      navigate("/login?redirect=/checkout");
+      return;
+    }
+    // Chỉ setUser 1 lần ban đầu từ localStorage
+    setUser(userData);
+
+    // Sau đó fetch chi tiết từ API (chỉ gọi 1 lần)
+    fetchUserDetails(userId, token, userData);
   }, [navigate, fetchUserDetails]);
 
   // Cập nhật thông tin user
@@ -344,7 +344,7 @@ const Checkout = () => {
                   }}
                   title="Email là tài khoản (username) của bạn nên không thể thay đổi!"
                 >
-                  <i class="fa-solid fa-lock"></i>
+                  <i className="fa-solid fa-lock"></i>
                 </span>
               </div>
               <label>Số điện thoại</label>
