@@ -254,23 +254,41 @@
 
 .view-map-btn {
     background: none;
-    border: none;
-    padding: 0;
+    border: 1px solid #007bff;
+    border-radius: 6px;
+    padding: 8px 14px;
     font-size: 14px;
     color: #007bff;
     display: flex;
     align-items: center;
+    justify-content: center;
     cursor: pointer;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.15);
+    background-color: rgba(0, 123, 255, 0.05);
 }
 
 .view-map-btn:hover {
-    color: #0056b3;
+    color: #ffffff;
+    background-color: #007bff;
+    border-color: #0056b3;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    transform: translateY(-2px); /* Nâng nhẹ nút lên (hiệu ứng nổi) */
+}
+
+.view-map-btn:active {
+    transform: translateY(0); /* Khi click thì hạ xuống */
+    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.2);
 }
 
 .view-map-btn i {
-    margin-left: 5px;
-    font-size: 14px;
+    margin-right: 8px;
+    font-size: 16px;
+    transition: transform 0.3s ease;
+}
+
+.view-map-btn:hover i {
+    transform: translateX(4px); /* Icon dịch sang phải khi hover (hiệu ứng động) */
 }
 
 /* Pagination */
