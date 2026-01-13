@@ -3,16 +3,18 @@
 // Ghi chú: Switch cho 50 intents, mỗi case query DB phù hợp (sử dụng poolPromise hiện có).
 // Nếu intent generative, dùng generateWithAI. Add ML cho recs.
 // Mỗi intent có comment giải thích: Mô tả tính năng, query DB dùng, và cách xử lý response.
+// TTS cho voice output bằng tiếng Việt. Sau khi có reply, generate audioUrl từ FPT.AI TTS để voice chat tiếng Việt chất lượng cao.
 
 const { poolPromise } = require('../db');  // Kết nối DB MSSQL từ file hiện có của dự án
 const { recognizeIntent } = require('../utils/intentRecognizer');  // Nhận diện intent và entities từ message
 const { generateWithAI } = require('../utils/aiProviders');  // Generative AI với 10 providers fallback
 const { getRecommendations } = require('../utils/mlRecommendations');  // Gợi ý ML dựa trên user orders
+const axios = require('axios'); // Để gọi FPT.AI TTS
 
 // Hàm chính xử lý request từ route /api/chatbot
 // Input: req.body { message, userId }
-// Output: res.json { reply }
-// Giải thích: Lấy pool DB, recognize intent, handle intent để tạo reply, catch error gửi response lỗi
+// Output: res.json { reply, audioUrl }
+// Giải thích: Lấy pool DB, recognize intent, handle intent để tạo reply, generate TTS audio, catch error gửi response lỗi
 exports.processMessage = async (req, res) => {
   const { message, userId = 1 } = req.body;  // userId mặc định nếu không có auth
 
@@ -22,7 +24,23 @@ exports.processMessage = async (req, res) => {
     const pool = await poolPromise;
     const { intent, entities } = recognizeIntent(message);
     let reply = await handleIntent(intent, entities, pool, userId, message);
-    res.json({ reply });
+
+    // Generate audio từ TTS FPT.AI
+    const ttsResponse = await axios.post('https://api.fpt.ai/hmi/tts/v5', reply, {
+      headers: {
+        'api-key': process.env.FPT_API_KEY,
+        'voice': 'banmai', // Giọng Bắc, nam; có thể thay 'banmai' (nữ), 'minhtri' v.v. để test
+        'speed': '0', // Tốc độ trung bình - Giữ 0 hoặc thử -1 / 1 để điều chỉnh tốc độ
+        'Content-Type': 'text/plain'
+      }
+    });
+
+    const audioUrl = ttsResponse.data.async; // FPT trả async URL, chờ 1-2s để audio sẵn
+
+    // Chờ audio sẵn (delay đơn giản, hoặc poll nếu cần chính xác hơn)
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Delay 2s
+
+    res.json({ reply, audioUrl });
   } catch (error) {
     console.error(error);
     res.status(500).json({ reply: 'Lỗi server, thử lại sau!' });

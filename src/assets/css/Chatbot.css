@@ -135,3 +135,22 @@
 }
 
 /* ===== KẾT THÚC HIỆU ỨNG TYPING INDICATOR ===== */
+
+/* Style cho button voice */
+.voice-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s;
+}
+
+.voice-button:hover {
+    background-color: #2980b9;
+}
+
+.voice-button.recording {
+    background-color: #e74c3c;
+}
