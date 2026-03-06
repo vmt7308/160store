@@ -8,9 +8,9 @@ const dbConfig = {
   database: process.env.DB_DATABASE,
   port: parseInt(process.env.DB_PORT),
   options: {
-    encrypt: false, // Để tắt SSL nếu bạn chưa bật trong SQL Server
+    encrypt: true,
     enableArithAbort: true,
-    trustServerCertificate: true,
+    trustServerCertificate: false,
   },
 };
 

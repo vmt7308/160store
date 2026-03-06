@@ -22,7 +22,7 @@ const app = express();
 // Middleware: Cho phép FE truy cập
 // FIX CORS – CHO PHÉP localhost:3000 GỌI localhost:5000
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: process.env.FRONTEND_URL || "http://localhost:3000",
   credentials: true, // Cho phép gửi cookie/token
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
