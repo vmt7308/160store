@@ -6,6 +6,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import product1 from "../assets/img/product1.jpg";
 import "../assets/css/ProductDetail.css";
+import { API_URL } from '../config';
 
 function ProductDetail() {
   const { id } = useParams();
@@ -34,7 +35,7 @@ function ProductDetail() {
     if (id) {
       const fetchReviews = async () => {
         try {
-          const response = await axios.get(`http://localhost:5000/api/reviews/product/${id}`);
+          const response = await axios.get(`${API_URL}/api/reviews/product/${id}`);
           setReviews(response.data);
         } catch (error) {
           console.error("Lỗi lấy đánh giá:", error);
@@ -53,14 +54,14 @@ function ProductDetail() {
     const fetchProduct = async () => {
       try {
         const productRes = await axios.get(
-          `http://localhost:5000/api/products/${id}`
+          `${API_URL}/api/products/${id}`
         );
         const productData = productRes.data;
         setProduct(productData);
 
         // Fetch related products
         const relatedRes = await axios.get(
-          `http://localhost:5000/api/list-products?categoryId=${productData.CategoryID}`
+          `${API_URL}/api/list-products?categoryId=${productData.CategoryID}`
         );
         // Exclude the current product from related products
         const filteredRelated = relatedRes.data.filter(
@@ -325,7 +326,7 @@ function ProductDetail() {
                     {/* HIỂN THỊ ẢNH THỰC TẾ */}
                     <div className="review-image-container">
                       {review.ImageURL ? (
-                        <img src={`http://localhost:5000${review.ImageURL}`} alt="Ảnh thực tế từ khách hàng" className="review-user-image" />
+                        <img src={`${API_URL}${review.ImageURL}`} alt="Ảnh thực tế từ khách hàng" className="review-user-image" />
                       ) : (
                         <p className="no-image-text">"Không có dữ liệu ảnh thực tế từ người dùng!"</p>
                       )}

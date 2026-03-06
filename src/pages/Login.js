@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "../assets/css/Login.css";
+import { API_URL } from '../config';
 
 function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -53,7 +54,7 @@ function Login() {
     try {
       // Gửi yêu cầu đăng nhập
       const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        `${API_URL}/api/auth/login`,
         formData
       );
       const { token, user } = response.data;
@@ -61,7 +62,7 @@ function Login() {
 
       // Lấy thông tin chi tiết user từ API
       const userDetailsResponse = await axios.get(
-        `http://localhost:5000/api/users/${user.id}`,
+        `${API_URL}/api/users/${user.id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

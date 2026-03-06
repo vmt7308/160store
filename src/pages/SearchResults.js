@@ -6,6 +6,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import "../assets/css/SearchResults.css";
 import product1 from "../assets/img/product1.jpg"; // Ảnh mặc định
+import { API_URL } from '../config';
 
 function SearchResults() {
   const [searchResults, setSearchResults] = useState([]);
@@ -43,7 +44,7 @@ function SearchResults() {
       try {
         // Tải danh mục để hiển thị trong header
         const catRes = await axios.get(
-          "http://localhost:5000/api/list-categories"
+          `${API_URL}/api/list-categories`
         );
         setCategories(catRes.data);
 
@@ -64,7 +65,7 @@ function SearchResults() {
           if (maxPrice) params.append("maxPrice", maxPrice);
 
           const response = await axios.get(
-            `http://localhost:5000/api/products/search?${params.toString()}`
+            `${API_URL}/api/products/search?${params.toString()}`
           );
           setSearchResults(response.data);
         } else {

@@ -4,6 +4,7 @@ import axios from "axios";
 import "../assets/css/Admin.css";
 import { Bar, Line, Pie, Doughnut, Radar, PolarArea, Bubble, Scatter } from 'react-chartjs-2';
 import 'chart.js/auto'; // Auto register Chart.js components
+import { API_URL } from '../config';
 
 function Admin() {
   const navigate = useNavigate();
@@ -159,15 +160,15 @@ function Admin() {
         newsletterRes,
         totalRevenueRes,
       ] = await Promise.all([
-        axios.get("http://localhost:5000/api/admin/users", { headers }),
-        axios.get("http://localhost:5000/api/categories", { headers }),
-        axios.get("http://localhost:5000/api/products", { headers }),
-        axios.get("http://localhost:5000/api/admin/orders", { headers }),
-        axios.get("http://localhost:5000/api/admin/stats", { headers }),
-        axios.get("http://localhost:5000/api/admin/profile", { headers }),
-        axios.get("http://localhost:5000/api/admin/reviews", { headers }),
-        axios.get("http://localhost:5000/api/admin/newsletter", { headers }),
-        axios.get("http://localhost:5000/api/admin/stats/total-revenue", { headers }),
+        axios.get(`${API_URL}/api/admin/users`, { headers }),
+        axios.get(`${API_URL}/api/categories`, { headers }),
+        axios.get(`${API_URL}/api/products`, { headers }),
+        axios.get(`${API_URL}/api/admin/orders`, { headers }),
+        axios.get(`${API_URL}/api/admin/stats`, { headers }),
+        axios.get(`${API_URL}/api/admin/profile`, { headers }),
+        axios.get(`${API_URL}/api/admin/reviews`, { headers }),
+        axios.get(`${API_URL}/api/admin/newsletter`, { headers }),
+        axios.get(`${API_URL}/api/admin/stats/total-revenue`, { headers }),
       ]);
 
       // SET LIST DATA (KHÔNG ĐỤNG FORM)
@@ -266,7 +267,7 @@ function Admin() {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/admin/login", {
+      const res = await axios.post(`${API_URL}/api/admin/login`, {
         email,
         password,
       });
@@ -314,7 +315,7 @@ function Admin() {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/admin/categories",
+        `${API_URL}/api/admin/categories`,
         { categoryName: formData.categoryName.trim() }, // trim để loại bỏ khoảng trắng thừa
         {
           headers: {
@@ -343,7 +344,7 @@ function Admin() {
 
     try {
       await axios.put(
-        `http://localhost:5000/api/admin/categories/${categoryId}`,
+        `${API_URL}/api/admin/categories/${categoryId}`,
         { categoryName: formData.categoryName },
         {
           headers: {
@@ -366,7 +367,7 @@ function Admin() {
 
     try {
       await axios.delete(
-        `http://localhost:5000/api/admin/categories/${categoryId}`,
+        `${API_URL}/api/admin/categories/${categoryId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
@@ -411,7 +412,7 @@ function Admin() {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/admin/products",
+        `${API_URL}/api/admin/products`,
         {
           categoryId: formData.categoryId,
           productName: formData.productName,
@@ -469,7 +470,7 @@ function Admin() {
 
     try {
       await axios.put(
-        `http://localhost:5000/api/admin/products/${productId}`,
+        `${API_URL}/api/admin/products/${productId}`,
         {
           categoryId: formData.categoryId,
           productName: formData.productName,
@@ -498,7 +499,7 @@ function Admin() {
 
     try {
       await axios.delete(
-        `http://localhost:5000/api/admin/products/${productId}`,
+        `${API_URL}/api/admin/products/${productId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
@@ -549,7 +550,7 @@ function Admin() {
 
     try {
       await axios.put(
-        `http://localhost:5000/api/admin/users/${userId}`,
+        `${API_URL}/api/admin/users/${userId}`,
         {
           fullName: formData.fullName,
           email: formData.userEmail,
@@ -578,7 +579,7 @@ function Admin() {
     }
 
     try {
-      await axios.delete(`http://localhost:5000/api/admin/users/${userId}`, {
+      await axios.delete(`${API_URL}/api/admin/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
         },
@@ -598,7 +599,7 @@ function Admin() {
 
     try {
       await axios.put(
-        `http://localhost:5000/api/admin/orders/${orderId}`,
+        `${API_URL}/api/admin/orders/${orderId}`,
         { status: formData.status },
         {
           headers: {
@@ -647,7 +648,7 @@ function Admin() {
         updateData.newPassword = formData.adminPassword.trim();       // Mật khẩu mới sẽ được BE mã hóa
       }
 
-      await axios.put("http://localhost:5000/api/admin/profile", updateData, {
+      await axios.put(`${API_URL}/api/admin/profile`, updateData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -683,7 +684,7 @@ function Admin() {
 
     try {
       await axios.delete(
-        `http://localhost:5000/api/admin/reviews/${reviewId}`,
+        `${API_URL}/api/admin/reviews/${reviewId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("adminToken")}`,

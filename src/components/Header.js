@@ -6,6 +6,7 @@ import logo from "../assets/img/logo.png";
 import "../assets/css/Header.css";
 import "../assets/font/font-awesome-pro-v6-6.2.0//css/all.min.css";
 import product1 from "../assets/img/product1.jpg";
+import { API_URL } from '../config';
 
 function Header({ scrollToSection = null }) {
   // STATE VÀ LOGIC SCROLL-TO-TOP
@@ -230,7 +231,7 @@ function Header({ scrollToSection = null }) {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/categories"
+          `${API_URL}/api/categories`
         );
         setCategories(response.data);
       } catch (error) {
@@ -278,7 +279,7 @@ function Header({ scrollToSection = null }) {
         }
 
         const response = await axios.get(
-          `http://localhost:5000/api/products/search?${params.toString()}`
+          `${API_URL}/api/products/search?${params.toString()}`
         );
         setSearchResults(response.data);
         setShowSearchResults(true);
@@ -343,7 +344,7 @@ function Header({ scrollToSection = null }) {
       }
 
       const response = await axios.get(
-        `http://localhost:5000/api/products/search?${params.toString()}`
+        `${API_URL}/api/products/search?${params.toString()}`
       );
       setSearchResults(response.data);
       setShowSearchResults(true);
@@ -367,7 +368,7 @@ function Header({ scrollToSection = null }) {
     try {
       // Gửi yêu cầu đăng nhập
       const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        `${API_URL}/api/auth/login`,
         {
           email,
           password,
@@ -379,7 +380,7 @@ function Header({ scrollToSection = null }) {
 
       // Lấy thông tin chi tiết user từ API
       const userDetailsResponse = await axios.get(
-        `http://localhost:5000/api/users/${user.id}`,
+        `${API_URL}/api/users/${user.id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

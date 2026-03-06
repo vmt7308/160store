@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../assets/css/Product.css";
+import { API_URL } from '../config';
 
 function Product({ id, title }) {
   const itemsPerPage = 5;
@@ -11,7 +12,7 @@ function Product({ id, title }) {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/products")
+      .get(`${API_URL}/api/products`)
       .then((response) => {
         setProducts(response.data);
       })
@@ -38,7 +39,7 @@ function Product({ id, title }) {
                 <img
                   src={
                     product.ImageURL
-                      ? `http://localhost:5000/${product.ImageURL}`
+                      ? `${API_URL}/${product.ImageURL}`
                       : "/assets/img/default-product.jpg"
                   }
                   alt={product.ProductName || "Sản phẩm"}

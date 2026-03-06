@@ -1,6 +1,7 @@
 const axios = require("axios");
 const crypto = require("crypto");
 const { poolPromise, sql } = require("../db");
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
 // Test keys công khai từ MoMo sandbox (chỉ dùng để test, không nhận tiền thật)
 const partnerCode = "MOMOUDLU20220629";
@@ -8,7 +9,7 @@ const accessKey = "ggoaaJa1ECRzBRYC";
 const secretKey = "nI4o1MBg53oY5MWP3IHnYcxoUD2x2dm8";
 
 // Cấu hình callback
-const redirectUrl = "http://localhost:3000/checkout/success"; // Trang success sau khi thanh toán test
+const redirectUrl = `${FRONTEND_URL}/checkout/success`; // Trang success sau khi thanh toán test
 const ipnUrl = "https://c264b6e31015.ngrok-free.app/api/momo/ipn"; // MoMo gọi về BE khi thanh toán (tùy chọn)
 const requestType = "captureWallet"; // Loại thanh toán test
 

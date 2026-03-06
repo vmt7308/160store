@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import "../assets/css/Checkout.css";
 import cod from "../assets/img/cod.jpg";
 import momo from "../assets/img/momo.jpg";
+import { API_URL } from '../config';
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const Checkout = () => {
   const fetchUserDetails = useCallback(async (userId, token, currentUser) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/users/${userId}`,
+        `${API_URL}/api/users/${userId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const updatedUserData = { ...currentUser, ...response.data };
@@ -120,7 +121,7 @@ const Checkout = () => {
       const token = localStorage.getItem("token");
       const userId = user.UserID || user.id; // Hỗ trợ cả UserID và id
       const response = await axios.put(
-        `http://localhost:5000/api/users/${userId}`,
+        `${API_URL}/api/users/${userId}`,
         {
           FullName,
           Email,
@@ -202,7 +203,7 @@ const Checkout = () => {
 
       // BƯỚC 1: TẠO ĐƠN HÀNG TRÊN DB TRƯỚC (chung cho cả COD và MoMo)
       const orderResponse = await axios.post(
-        "http://localhost:5000/api/orders",
+        `${API_URL}/api/orders`,
         orderData,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -215,7 +216,7 @@ const Checkout = () => {
       if (paymentMethod === "MOMO") {
         // GỌI API MOMO VỚI ORDERID THẬT
         const momoResponse = await axios.post(
-          "http://localhost:5000/api/momo/create",
+          `${API_URL}/api/momo/create`,
           {
             orderId: `ORDER_${orderId}`, // Dùng orderId thật
             amount: total,

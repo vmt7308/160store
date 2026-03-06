@@ -6,6 +6,8 @@ const {
   searchProducts,
 } = require("../models/productModel");
 const { poolPromise, sql } = require("../db");
+require('dotenv').config();
+const BASE_URL = process.env.BASE_URL || 'http://localhost:5000';
 
 // API: Lấy tất cả sản phẩm
 router.get("/", async (req, res) => {
@@ -14,7 +16,7 @@ router.get("/", async (req, res) => {
     products = products.map((product) => ({
       ...product,
       imageUrl: product.imagePath
-        ? `http://localhost:5000/uploads/${product.imagePath}`
+        ? `${BASE_URL}/uploads/${product.imagePath}`
         : null,
     }));
     res.json(products);
@@ -36,7 +38,7 @@ router.get("/category/:id", async (req, res) => {
     products = products.map((product) => ({
       ...product,
       imageUrl: product.imagePath
-        ? `http://localhost:5000/uploads/${product.imagePath}`
+        ? `${BASE_URL}/uploads/${product.imagePath}`
         : null,
     }));
 
@@ -72,7 +74,7 @@ router.get("/search", async (req, res) => {
     products = products.map((product) => ({
       ...product,
       imageUrl: product.imagePath
-        ? `http://localhost:5000/uploads/${product.imagePath}`
+        ? `${BASE_URL}/uploads/${product.imagePath}`
         : null,
     }));
 
@@ -105,7 +107,7 @@ router.get("/:id", async (req, res) => {
     res.json({
       ...product,
       imageUrl: product.ImageURL
-        ? `http://localhost:5000/${product.ImageURL}`
+        ? `${BASE_URL}/${product.ImageURL}`
         : null,
     });
   } catch (err) {

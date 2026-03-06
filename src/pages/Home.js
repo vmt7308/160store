@@ -18,6 +18,7 @@ import banner3 from "../assets/img/banner3.jpg";
 import banner4 from "../assets/img/banner4.jpg";
 import product1 from "../assets/img/product1.jpg";
 import "../assets/font/font-awesome-pro-v6-6.2.0/css/all.min.css";
+import { API_URL } from '../config';
 
 // Hàm tạo map màu cho các category
 const generateCategoryColors = (categories, colorPalette) => {
@@ -207,7 +208,7 @@ function Home() {
     const fetchData = async () => {
       try {
         const catRes = await axios.get(
-          "http://localhost:5000/api/list-categories"
+          `${API_URL}/api/list-categories`
         );
         setCategories(catRes.data);
 
@@ -224,7 +225,7 @@ function Home() {
 
         for (let category of catRes.data) {
           const res = await axios.get(
-            `http://localhost:5000/api/list-products?categoryId=${category.CategoryID}`
+            `${API_URL}/api/list-products?categoryId=${category.CategoryID}`
           );
           productsData[category.CategoryID] = res.data;
           initialPages[category.CategoryID] = 0; // Trang đầu tiên là 0

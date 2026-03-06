@@ -4,6 +4,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import "../assets/css/Chatbot.css";
+import { API_URL } from '../config';
 
 function Chatbot() {
   const [messages, setMessages] = useState([{ sender: "bot", text: "Xin chào! Tôi là Chatbot AI của 160store. Bạn cần hỗ trợ gì ạ? 😊" }]);
@@ -31,7 +32,7 @@ function Chatbot() {
     setMessages((prev) => [...prev, { sender: "bot", text: "typing" }]); // Message tạm với text đặc biệt
 
     try {
-      const response = await axios.post("http://localhost:5000/api/chatbot", { message: userMessage, userId: localStorage.getItem('userId') });
+      const response = await axios.post(`${API_URL}/api/chatbot`, { message: userMessage, userId: localStorage.getItem('userId') });
 
       // Xóa loading và thêm phản hồi thật
       setMessages((prev) => prev.filter(msg => msg.text !== "typing"));

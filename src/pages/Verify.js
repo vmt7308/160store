@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "../assets/css/Verify.css";
+import { API_URL } from '../config';
 
 const Verify = () => {
   const [message, setMessage] = useState("Đang xác thực tài khoản...");
@@ -18,7 +19,7 @@ const Verify = () => {
 
       try {
         const response = await fetch(
-          `http://localhost:5000/api/auth/verify?token=${token}`,
+          `${API_URL}/api/auth/verify?token=${token}`,
           {
             method: "GET",
             credentials: "include", // QUAN TRỌNG: Fix lỗi kết nối server

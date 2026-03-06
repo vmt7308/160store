@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import "../assets/css/ResetPassword.css";
+import { API_URL } from '../config';
 
 function ResetPassword() {
   const [searchParams] = useSearchParams();
@@ -44,7 +45,7 @@ function ResetPassword() {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/reset-password", { email });
+      const response = await axios.post(`${API_URL}/api/auth/reset-password`, { email });
       setSuccess(response.data.message);
     } catch (err) {
       setError(err.response?.data?.message || "Có lỗi xảy ra, thử lại sau.");
@@ -67,7 +68,7 @@ function ResetPassword() {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/reset", { token, newPassword });
+      const response = await axios.post(`${API_URL}/api/auth/reset`, { token, newPassword });
       setSuccess(response.data.message);
       setTimeout(() => (window.location.href = "/login"), 3000); // Redirect về login sau 3 giây
     } catch (err) {

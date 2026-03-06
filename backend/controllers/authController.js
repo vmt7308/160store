@@ -33,7 +33,7 @@ exports.register = async (req, res) => {
     const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
     // Link xác thực gọi BACKEND (để backend redirect)
-    const verificationLink = `http://localhost:5000/api/auth/verify?token=${verificationToken}`;
+    const verificationLink = `${process.env.BASE_URL || 'http://localhost:5000'}/api/auth/verify?token=${verificationToken}`;
 
     // Gửi email
     await transporter.sendMail({
@@ -128,16 +128,16 @@ exports.verifyEmail = async (req, res) => {
         </style>
 
         <script>
-          let time = 7;
-          const countdown = setInterval(() => {
-            time--;
-            document.getElementById("countdown").textContent = time;
-            if (time <= 0) {
-              clearInterval(countdown);
-              window.location.href = "http://localhost:3000/login";
-            }
-          }, 1000);
-        </script>
+        let time = 7;
+        const countdown = setInterval(() => {
+          time--;
+          document.getElementById("countdown").textContent = time;
+          if (time <= 0) {
+            clearInterval(countdown);
+            window.location.href = "${process.env.FRONTEND_URL || 'http://localhost:3000'}/login";
+          }
+        }, 1000);
+      </script>
       </body>
       </html>
     `);
@@ -155,7 +155,7 @@ exports.verifyEmail = async (req, res) => {
         <div style="background:white;padding:60px 50px;border-radius:25px;box-shadow:0 20px 50px rgba(0,0,0,0.3);text-align:center;max-width:500px;width:90%;">
           <h2 style="color:#e74c3c;font-size:32px;margin:20px 0;">Link đã hết hạn!</h2>
           <p style="color:#555;font-size:18px;">Vui lòng đăng ký lại để nhận link mới.</p>
-          <a href="http://localhost:3000/register" style="display:inline-block;margin-top:30px;padding:15px 40px;background:#e74c3c;color:white;border-radius:50px;text-decoration:none;font-weight:600;">Đăng ký lại</a>
+          <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/register" style="display:inline-block;margin-top:30px;padding:15px 40px;background:#e74c3c;color:white;border-radius:50px;text-decoration:none;font-weight:600;">Đăng ký lại</a>
         </div>
       </body>
       </html>
@@ -182,7 +182,7 @@ exports.login = async (req, res) => {
     if (!user.IsVerified) {
       return res.status(400).json({ message: "Tài khoản chưa xác thực email!" });
     }
-    
+
     const isMatch = await bcrypt.compare(password, user.PasswordHash);
     if (!isMatch) {
       return res.status(400).json({ message: "Mật khẩu không chính xác!" });
@@ -212,7 +212,7 @@ exports.requestResetPassword = async (req, res) => {
 
     const resetToken = jwt.sign({ userId: user.UserID }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    const resetLink = `http://localhost:3000/reset-password?token=${resetToken}`;
+    const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,

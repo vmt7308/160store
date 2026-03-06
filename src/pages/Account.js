@@ -4,6 +4,7 @@ import axios from "axios";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import "../assets/css/Account.css";
+import { API_URL } from '../config';
 
 function Account() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -73,7 +74,7 @@ function Account() {
       const fetchOrders = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:5000/api/orders/user/${currentUser.UserID}`,
+            `${API_URL}/api/orders/user/${currentUser.UserID}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -150,7 +151,7 @@ function Account() {
     ) {
       try {
         await axios.put(
-          `http://localhost:5000/api/users/${currentUser.UserID}`,
+          `${API_URL}/api/users/${currentUser.UserID}`,
           userInfo,
           {
             headers: {
@@ -189,7 +190,7 @@ function Account() {
     if (window.confirm("Bạn có chắc chắn muốn đổi mật khẩu không?")) {
       try {
         await axios.post(
-          `http://localhost:5000/api/auth/change-password`,
+          `${API_URL}/api/auth/change-password`,
           { currentPassword, newPassword },
           {
             headers: {
@@ -231,7 +232,7 @@ function Account() {
 
     try {
       await axios.post(
-        `http://localhost:5000/api/orders/cancel/${orderId}`,
+        `${API_URL}/api/orders/cancel/${orderId}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -263,13 +264,13 @@ function Account() {
       const fetchData = async () => {
         try {
           const ordersRes = await axios.get(
-            `http://localhost:5000/api/orders/user/${currentUser.UserID}`,
+            `${API_URL}/api/orders/user/${currentUser.UserID}`,
             { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
           );
           setOrders(ordersRes.data);
 
           const reviewedRes = await axios.get(
-            "http://localhost:5000/api/reviews/user-orders",
+            `${API_URL}/api/reviews/user-orders`,
             { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
           );
           setReviewedOrderIds(reviewedRes.data);
@@ -286,7 +287,7 @@ function Account() {
     if (!token) return;
 
     try {
-      await axios.post("http://localhost:5000/api/reviews", {
+      await axios.post(`${API_URL}/api/reviews`, {
         orderId: selectedOrderForReview.OrderID,
         productId: selectedProductForReview.ProductID,
         rating: reviewData.rating,

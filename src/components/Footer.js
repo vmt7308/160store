@@ -6,6 +6,7 @@ import dmcaProtected from "../assets/img/dmcaProtected.png";
 import spay from "../assets/img/spay.png";
 import vnpay from "../assets/img/vnpay.png";
 import cod from "../assets/img/cod.png";
+import { API_URL } from '../config';
 
 const Footer = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,7 +28,7 @@ const Footer = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/newsletter/subscribe", { email });
+      const response = await axios.post(`${API_URL}/api/newsletter/subscribe`, { email });
       toast({
         title: "Thành công!",
         message: response.data.message || "Đăng ký nhận tin thành công!",

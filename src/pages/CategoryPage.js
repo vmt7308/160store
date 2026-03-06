@@ -6,6 +6,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import "../assets/css/CategoryPage.css";
 import product1 from "../assets/img/product1.jpg"; // Ảnh mặc định
+import { API_URL } from '../config';
 
 function CategoryPage() {
   const { categoryId } = useParams();
@@ -32,7 +33,7 @@ function CategoryPage() {
       try {
         // Tải tất cả danh mục để đưa vào header
         const catRes = await axios.get(
-          "http://localhost:5000/api/list-categories"
+          `${API_URL}/api/list-categories`
         );
         setCategories(catRes.data);
 
@@ -46,7 +47,7 @@ function CategoryPage() {
 
           // Tải sản phẩm của danh mục
           const productsRes = await axios.get(
-            `http://localhost:5000/api/list-products?categoryId=${foundCategory.CategoryID}`
+            `${API_URL}/api/list-products?categoryId=${foundCategory.CategoryID}`
           );
           console.log("Products data:", productsRes.data); // Kiểm tra dữ liệu
           setProducts(productsRes.data);
