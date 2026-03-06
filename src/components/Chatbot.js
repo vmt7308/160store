@@ -18,6 +18,39 @@ function Chatbot() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const sendMessage = useCallback(async (e) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    const userMessage = input.trim();
+    setMessages((prev) => [...prev, { sender: "user", text: userMessage }]);
+    setInput("");
+
+    // Hiển thị loading indicator ngay lập tức
+    setIsLoading(true);
+    setMessages((prev) => [...prev, { sender: "bot", text: "typing" }]); // Message tạm với text đặc biệt
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/chatbot", { message: userMessage, userId: localStorage.getItem('userId') });
+
+      // Xóa loading và thêm phản hồi thật
+      setMessages((prev) => prev.filter(msg => msg.text !== "typing"));
+      const botReply = response.data.reply;
+      setMessages((prev) => [...prev, { sender: "bot", text: botReply }]);
+
+      // Play audio nếu backend trả về audioUrl (bằng tiếng Việt chất lượng cao từ TTS(Text to Speech))
+      if (response.data.audioUrl) {
+        const audio = new Audio(response.data.audioUrl);
+        audio.play().catch(err => console.error("Audio play error:", err));
+      }
+    } catch (error) {
+      setMessages((prev) => prev.filter(msg => msg.text !== "typing"));
+      setMessages((prev) => [...prev, { sender: "bot", text: "Lỗi, thử lại!" }]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [input]);
+
   useEffect(() => {
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -54,39 +87,6 @@ function Chatbot() {
       setIsRecording(true);
     }
   };
-
-  const sendMessage = useCallback(async (e) => {
-    e.preventDefault();
-    if (!input.trim()) return;
-
-    const userMessage = input.trim();
-    setMessages((prev) => [...prev, { sender: "user", text: userMessage }]);
-    setInput("");
-
-    // Hiển thị loading indicator ngay lập tức
-    setIsLoading(true);
-    setMessages((prev) => [...prev, { sender: "bot", text: "typing" }]); // Message tạm với text đặc biệt
-
-    try {
-      const response = await axios.post("http://localhost:5000/api/chatbot", { message: userMessage, userId: localStorage.getItem('userId') });
-
-      // Xóa loading và thêm phản hồi thật
-      setMessages((prev) => prev.filter(msg => msg.text !== "typing"));
-      const botReply = response.data.reply;
-      setMessages((prev) => [...prev, { sender: "bot", text: botReply }]);
-
-      // Play audio nếu backend trả về audioUrl (bằng tiếng Việt chất lượng cao từ TTS(Text to Speech))
-      if (response.data.audioUrl) {
-        const audio = new Audio(response.data.audioUrl);
-        audio.play().catch(err => console.error("Audio play error:", err));
-      }
-    } catch (error) {
-      setMessages((prev) => prev.filter(msg => msg.text !== "typing"));
-      setMessages((prev) => [...prev, { sender: "bot", text: "Lỗi, thử lại!" }]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [input]);
 
   return (
     <div className={`chatbot-container ${isOpen ? "open" : ""}`}>
