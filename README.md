@@ -6,6 +6,14 @@
 
 ---
 
+## Dự án 160STORE - Deploy thành công
+
+- **Frontend User (Vercel)**: [https://160store.vercel.app/](https://160store.vercel.app/)
+- **Frontend Admin (Vercel)**: [https://160store.vercel.app/admin](https://160store.vercel.app/admin)
+- **Backend API (Render)**: [https://one60store-backend.onrender.com/](https://one60store-backend.onrender.com/)
+- **Database**: Azure SQL (160storeDB) – Đã import schema & data thành công
+- **Repo source code**: [https://github.com/vmt7308/160store](https://github.com/vmt7308/160store)
+
 ## Mục lục
 
 1. [Cài đặt](#cài-đặt)
