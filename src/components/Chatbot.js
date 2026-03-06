@@ -1,7 +1,7 @@
 // Component FE cho chatbot (giao diện chat bubble) - Hỗ trợ audio từ backend. Bổ sung: Play audio từ response.data.audioUrl nếu có.
 // Ghi chú: Gửi message + userId (từ localStorage auth) đến BE. Hiển thị responses.
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import "../assets/css/Chatbot.css";
 
@@ -42,7 +42,7 @@ function Chatbot() {
         setMessages((prev) => [...prev, { sender: "bot", text: "Lỗi nhận diện giọng nói, thử lại!" }]);
       };
     }
-  }, []);
+  }, [sendMessage]);
 
   const toggleRecording = () => {
     if (isRecording) {
@@ -55,7 +55,7 @@ function Chatbot() {
     }
   };
 
-  const sendMessage = async (e) => {
+  const sendMessage = useCallback(async (e) => {
     e.preventDefault();
     if (!input.trim()) return;
 
@@ -86,7 +86,7 @@ function Chatbot() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [input]);
 
   return (
     <div className={`chatbot-container ${isOpen ? "open" : ""}`}>
